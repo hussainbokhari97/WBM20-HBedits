@@ -118,13 +118,13 @@ int MDCommon_PrecipitationDef () {
 			if (((_MDInCommon_PrecipitationMonthlyID   = MFVarGetID (MDVarCommon_PrecipitationMonthly,   "mm", MFInput,  MFFlux,  MFBoundary)) == CMfailed) ||
 				((_MDInCommon_PrecipitationDailyID     = MFVarGetID (MDVarCommon_PrecipitationDaily,     "mm", MFInput,  MFFlux,  MFBoundary)) == CMfailed) ||
                 ((_MDInCommon_PrecipitationReferenceID = MFVarGetID (MDVarCommon_PrecipitationReference, "mm", MFInput,  MFState, MFBoundary)) == CMfailed) ||
-                ((_MDOutCommon_PrecipitationID         = MFVarGetID (MDVarCommon_Precipitation,          "mm", MFOutput, MFFlux, MFBoundary)) == CMfailed) ||
+                ((_MDOutCommon_PrecipitationID         = MFVarGetID (MDVarCommon_Precipitation,          "mm", MFOutput, MFFlux,  MFBoundary)) == CMfailed) ||
                 (MFModelAddFunction (_MDPrecipDownscale) == CMfailed)) return (CMfailed);
 			break;
 		case MDfraction:
 			if (((_MDInCommon_PrecipitationMonthlyID  = MFVarGetID (MDVarCommon_PrecipitationMonthly,    "mm", MFInput,  MFFlux,  MFBoundary)) == CMfailed) ||
                 ((_MDInCommon_PrecipitationFractionID = MFVarGetID (MDVarCommon_PrecipitationFraction,   "mm", MFInput,  MFState, MFBoundary)) == CMfailed) ||
-                ((_MDOutCommon_PrecipitationID        = MFVarGetID (MDVarCommon_Precipitation,           "mm", MFOutput, MFFlux, MFBoundary)) == CMfailed) ||
+                ((_MDOutCommon_PrecipitationID        = MFVarGetID (MDVarCommon_Precipitation,           "mm", MFOutput, MFFlux,  MFBoundary)) == CMfailed) ||
                 (MFModelAddFunction (_MDPrecipFraction) == CMfailed)) return (CMfailed);
 			break;
 		default: MFOptionMessage (optName, optStr, options); return (CMfailed);
