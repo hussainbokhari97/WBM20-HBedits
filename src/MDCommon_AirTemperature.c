@@ -20,7 +20,7 @@ static int _MDInCommon_AirTemperatureReferenceID = MFUnset;
 
 static int _MDInCommon_ElevationID               = MFUnset;
 static int _MDInCommon_ElevationRefernceID       = MFUnset;
-static int _MDInCommon_LapseRateID               = MFUnset;
+static int _MDInCommon_AdiabaticLapseRateID      = MFUnset;
 
 // Output
 static int _MDOutCommon_AirTemperatureID         = MFUnset;
@@ -69,7 +69,7 @@ static void _MDAirTemperatureAdjustment (int itemID) {
 
 	elevation = MFVarGetFloat (_MDInCommon_ElevationID, itemID, 0.0);
 	elevRef   = MFVarGetFloat (_MDInCommon_ElevationRefernceID, itemID, elevation);
-	lapseRate = MFVarGetFloat (_MDInCommon_LapseRateID, itemID, 0.0098);
+	lapseRate = MFVarGetFloat (_MDInCommon_AdiabaticLapseRateID, itemID, 0.0098);
 	airTemp = airTemp + (elevRef - elevation) * lapseRate;
 	MFVarSetFloat (_MDOutCommon_AirTemperatureID, itemID, airTemp);
 }
@@ -98,17 +98,19 @@ int MDCommon_AirTemperatureDef () {
 			break;
 		default: MFOptionMessage (optName, optStr, options); return (CMfailed);
 	}
+	MFDefLeaving ("Air Temperature");
 	if ((optStr = MFOptionGet ("ElevationAdjustment")) != (char *) NULL) onoffID = CMoptLookup (onoff, optStr,true);
 	switch (onoffID) {
 		case MDon:
+			MFDefEntering ("Elevation Adjustment");
 			if (((_MDInCommon_ElevationID              = MFVarGetID (MDVarCommon_Elevation,                "m",      MFInput,  MFState, MFBoundary)) == CMfailed) ||
     	        ((_MDInCommon_ElevationRefernceID      = MFVarGetID (MDVarCommon_ElevationReference,       "m",      MFInput,  MFState, MFBoundary)) == CMfailed) ||
-        	    ((_MDInCommon_LapseRateID              = MFVarGetID (MDVarCommon_LapseRate,                "degC/m", MFInput,  MFState, MFBoundary)) == CMfailed) ||
+        	    ((_MDInCommon_AdiabaticLapseRateID     = MFVarGetID (MDVarCommon_LapseRate,                "degC/m", MFInput,  MFState, MFBoundary)) == CMfailed) ||
             	(MFModelAddFunction (_MDAirTemperatureAdjustment) == CMfailed)) return (CMfailed);
+			MFDefLeaving ("Elevation Adjustment");
 			break;
 		case MDoff: break;
 		default: MFOptionMessage ("ElevationAdjustment", optStr, onoff); return (CMfailed);
 	}
-	MFDefLeaving ("Air Temperature");
 	return (_MDOutCommon_AirTemperatureID);
 }
