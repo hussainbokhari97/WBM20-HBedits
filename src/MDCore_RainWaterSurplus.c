@@ -1,10 +1,10 @@
 /******************************************************************************
 
 GHAAS Water Balance/Transport Model
-Global Hydrologic Archive and Analysis System
+Global Hydrological Archive and Analysis System
 Copyright 1994-2021, UNH - ASRC/CUNY
 
-MDWaterSurplus.c
+MDCore_RainWaterSurplus.c
 
 bfekete@gc.cuny.edu
 
@@ -54,11 +54,11 @@ int MDCore_RainWaterSurplusDef () {
         ((ret != MFUnset) && ((_MDInIrrigation_AreaFracID = MDIrrigation_IrrAreaDef()) == CMfailed)))
         return (CMfailed);
 
-    if (((_MDInRainSMoistChgID     = MDCore_RainSMoistChgDef()) == CMfailed) ||
-        ((_MDInCommon_PrecipID            = MDCommon_PrecipitationDef()) == CMfailed) ||
-        ((_MDInSPackChgID          = MDCore_SnowPackChgDef()) == CMfailed) ||
-        ((_MDInRainEvapoTransID    = MFVarGetID (MDVarCore_RainEvapotranspiration, "mm", MFInput, MFFlux, MFBoundary)) == CMfailed) ||
-        ((_MDOutRainWaterSurplusID = MFVarGetID (MDVarCore_RainWaterSurplus, "mm", MFOutput, MFFlux, MFBoundary)) == CMfailed) ||
+    if (((_MDInRainSMoistChgID     = MDCore_RainSMoistChgDef ())   == CMfailed) ||
+        ((_MDInCommon_PrecipID     = MDCommon_PrecipitationDef ()) == CMfailed) ||
+        ((_MDInSPackChgID          = MDCore_SnowPackChgDef ())     == CMfailed) ||
+        ((_MDInRainEvapoTransID    = MFVarGetID (MDVarCore_RainEvapotranspiration, "mm", MFInput,  MFFlux, MFBoundary)) == CMfailed) ||
+        ((_MDOutRainWaterSurplusID = MFVarGetID (MDVarCore_RainWaterSurplus,       "mm", MFOutput, MFFlux, MFBoundary)) == CMfailed) ||
         (MFModelAddFunction (_MDRainWaterSurplus) == CMfailed)) return (CMfailed);
 	MFDefLeaving ("Rainfed Water Surplus");
 	return (_MDOutRainWaterSurplusID);

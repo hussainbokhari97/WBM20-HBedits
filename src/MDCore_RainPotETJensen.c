@@ -1,10 +1,10 @@
 /******************************************************************************
 
 GHAAS Water Balance/Transport Model
-Global Hydrologic Archive and Analysis System
+Global Hydrological Archive and Analysis System
 Copyright 1994-2021, UNH - ASRC/CUNY
 
-MDPotETJensen.c
+MDCore_RainPotETJensen.c
 
 bfekete@gc.cuny.edu
 
@@ -39,9 +39,9 @@ int MDCore_RainPotETJensenDef () {
 	if (_MDOutPetID != MFUnset) return (_MDOutPetID);
 
 	MFDefEntering ("Rainfed Potential Evapotranspiration (Jensen)");
-	if (((_MDInSolRadID = MDCommon_SolarRadDef()) == CMfailed) ||
-        ((_MDInCommon_AtMeanID = MFVarGetID (MDVarCommon_AirTemperature, "degC", MFInput, MFState, MFBoundary)) == CMfailed) ||
-        ((_MDOutPetID   = MFVarGetID (MDVarCore_RainPotEvapotrans, "mm", MFOutput, MFFlux, MFBoundary)) == CMfailed) ||
+	if (((_MDInSolRadID        = MDCommon_SolarRadDef())       == CMfailed) ||
+        ((_MDInCommon_AtMeanID = MDCommon_AirTemperatureDef ()) == CMfailed) ||
+        ((_MDOutPetID          = MFVarGetID (MDVarCore_RainPotEvapotrans, "mm", MFOutput, MFFlux, MFBoundary)) == CMfailed) ||
         (MFModelAddFunction (_MDRainPotETJensen) == CMfailed)) return (CMfailed);
 	MFDefLeaving  ("Rainfed Potential Evapotranspiration (Jensen)");
 	return (_MDOutPetID);

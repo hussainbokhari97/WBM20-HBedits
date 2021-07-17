@@ -1,7 +1,7 @@
 /******************************************************************************
 
 GHAAS Water Balance/Transport Model
-Global Hydrologic Archive and Analysis System
+Global Hydrological Archive and Analysis System
 Copyright 1994-2021, UNH - ASRC/CUNY
 
 MDParam_LandCover.c
@@ -39,7 +39,7 @@ static void _MDParam_Albedo (int itemID) {
 enum { MDinput, MDlookup };
 
 int MDParam_LCAlbedoDef () {
-	int optID = MFUnset;
+	int optID = MDinput;
 	const char *optStr, *optName = MDVarParam_Albedo;
 	const char *options [] = { MDInputStr, MDLookupStr, (char *) NULL };
 
@@ -47,7 +47,6 @@ int MDParam_LCAlbedoDef () {
 
 	MFDefEntering ("Albedo");
 	if ((optStr = MFOptionGet (optName)) != (char *) NULL) optID = CMoptLookup (options,optStr,true);
-
 	switch (optID) {
 		case MDinput:  _MDOutParam_AlbedoID = MFVarGetID (MDVarParam_Albedo, MFNoUnit, MFInput, MFState, MFBoundary); break;
 		case MDlookup:
@@ -81,7 +80,7 @@ static void _MDCParamCHeight (int itemID) {
 
 int MDParam_LCHeightDef ()
 	{
-	int optID = MFUnset;
+	int optID = MDinput;
 	const char *optStr, *optName = MDVarParam_CHeight;
 	const char *options [] = { MDInputStr, MDLookupStr, (char *) NULL };
 
@@ -89,7 +88,6 @@ int MDParam_LCHeightDef ()
 
 	MFDefEntering ("Canopy Height");
 	if ((optStr = MFOptionGet (optName)) != (char *) NULL) optID = CMoptLookup (options,optStr,true);
-
 	switch (optID) {
 		case MDinput:  _MDOutCParamCHeightID = MFVarGetID (MDVarParam_CHeight, "m", MFInput, MFState, MFBoundary); break;
 		case MDlookup:
@@ -121,7 +119,7 @@ static void _MDCParamLWidth (int itemID) {
 }
 
 int MDParam_LCLeafWidthDef () {
-	int optID = MFUnset;
+	int optID = MDinput;
 	const char *optStr, *optName = MDVarParam_LWidth;
 	const char *options [] = { MDInputStr, MDLookupStr, (char *) NULL };
 
@@ -129,7 +127,6 @@ int MDParam_LCLeafWidthDef () {
 
 	MFDefEntering ("Leaf Width");
 	if ((optStr = MFOptionGet (optName)) != (char *) NULL) optID = CMoptLookup (options,optStr,true);
-
 	switch (optID) {
 		case MDinput:  _MDOutCParamLWidthID = MFVarGetID (MDVarParam_LWidth, "mm", MFInput, MFState, MFBoundary); break;
 		case MDlookup:
@@ -148,7 +145,7 @@ static int _MDOutCParamRSSID = MFUnset;
 static void _MDCParamRSS (int itemID) { MFVarSetFloat (_MDOutCParamRSSID,itemID, MDConstRSS); }
 
 int MDParam_LCRSSDef () {
-	int optID = MFUnset;
+	int optID = MDinput;
 	const char *optStr, *optName = MDVarParam_RSS;
 	const char *options [] = { MDInputStr, MDLookupStr, (char *) NULL };
 
@@ -156,7 +153,6 @@ int MDParam_LCRSSDef () {
 
 	MFDefEntering ("RSS");
 	if ((optStr = MFOptionGet (optName)) != (char *) NULL) optID = CMoptLookup (options,optStr,true);
-
 	switch (optID) {
 		case MDinput:  _MDOutCParamRSSID = MFVarGetID (MDVarParam_RSS, "s/m", MFInput, MFState, MFBoundary); break;
 		case MDlookup:
@@ -188,7 +184,7 @@ static void _MDCParamR5 (int itemID) {
 }
 
 int MDParam_LCR5Def () {
-	int optID = MFUnset;
+	int optID = MDinput;
 	const char *optStr, *optName = MDVarParam_R5;
 	const char *options [] = { MDInputStr, MDLookupStr, (char *) NULL };
 
@@ -196,7 +192,6 @@ int MDParam_LCR5Def () {
 
 	MFDefEntering ("R5");
 	if ((optStr = MFOptionGet (optName)) != (char *) NULL) optID = CMoptLookup (options,optStr,true);
-
 	switch (optID) {
 		case MDinput:  _MDOutCParamR5ID = MFVarGetID (MDVarParam_R5, "W/m2", MFInput, MFState, MFBoundary); break;
 		case MDlookup:
@@ -227,7 +222,7 @@ static void _MDCParamCD (int itemID) {
 }
 
 int MDParam_LCCDDef () {
-	int optID = MFUnset;
+	int optID = MDinput;
 	const char *optStr, *optName = MDVarParam_CD;
 	const char *options [] = { MDInputStr, MDLookupStr, (char *) NULL };
 
@@ -235,7 +230,6 @@ int MDParam_LCCDDef () {
 
 	MFDefEntering ("CD");
 	if ((optStr = MFOptionGet (optName)) != (char *) NULL) optID = CMoptLookup (options,optStr,true);
-
 	switch (optID) {
 		case MDinput:  _MDOutCParamCDID = MFVarGetID (MDVarParam_CD, "kPa", MFInput, MFState, MFBoundary); break;
 		case MDlookup:
@@ -267,7 +261,7 @@ static void _MDCParamCR (int itemID) {
 }
 
 int MDParam_LCCRDef () {
-	int optID = MFUnset;
+	int optID = MDinput;
 	const char *optStr, *optName = MDVarParam_CR;
 	const char *options [] = { MDInputStr, MDLookupStr, (char *) NULL };
 
@@ -308,7 +302,7 @@ static void _MDCParamGLMax (int itemID) {
 
 int MDParam_LCGLMaxDef ()
 	{
-	int optID = MFUnset;
+	int optID = MDinput;
 	const char *optStr, *optName = MDVarParam_GLMax;
 	const char *options [] = { MDInputStr, MDLookupStr, (char *) NULL };
 
@@ -347,15 +341,14 @@ static void _MDCParamLPMax (int itemID) {
 }
 
 int MDParam_LCLPMaxDef () {
-	int optID = MFUnset;
+	int optID = MDinput;
 	const char *optStr, *optName = MDVarParam_LPMax;
 	const char *options [] = { MDInputStr, MDLookupStr, (char *) NULL };
 
 	if (_MDOutCParamLPMaxID != MFUnset) return (_MDOutCParamLPMaxID);
 
-	if ((optStr = MFOptionGet (optName)) != (char *) NULL) optID = CMoptLookup (options,optStr,true);
-
 	MFDefEntering ("LPMax");
+	if ((optStr = MFOptionGet (optName)) != (char *) NULL) optID = CMoptLookup (options,optStr,true);
 	switch (optID) {
 		case MDinput:  _MDOutCParamLPMaxID = MFVarGetID (MDVarParam_LPMax, MFNoUnit, MFInput, MFState, false); break;
 		case MDlookup:
@@ -386,15 +379,14 @@ static void _MDCParamZ0g (int itemID) {
 }
 
 int MDParam_LCZ0gDef () {
-	int optID = MFUnset;
+	int optID = MDinput;
 	const char *optStr, *optName = MDVarParam_Z0g;
 	const char *options [] = { MDInputStr, MDLookupStr, (char *) NULL };
 
 	if (_MDOutCParamZ0gID != MFUnset) return (_MDOutCParamZ0gID);
 
-	if ((optStr = MFOptionGet (optName)) != (char *) NULL) optID = CMoptLookup (options,optStr,true);
-
 	MFDefEntering ("Z0g");
+	if ((optStr = MFOptionGet (optName)) != (char *) NULL) optID = CMoptLookup (options,optStr,true);
 	switch (optID) {
 		case MDinput: _MDOutCParamZ0gID = MFVarGetID (MDVarParam_Z0g, "m", MFInput, MFState, false); break;
 		case MDlookup:

@@ -1,9 +1,9 @@
 /******************************************************************************
  GHAAS Water Balance/Transport Model
- Global Hydrologic Archive and Analysis System
+ Global Hydrological Archive and Analysis System
  Copyright 1994-2021, UNH - ASRC/CUNY
 
- MDSpecificHumidity.c
+ MDCommon_HumiditySpecific.c
 
  amiara@ccny.cuny.edu
 
@@ -47,27 +47,24 @@ static void _MDSpecificHumidity(int itemID) {
     MFVarSetFloat(_MDOutCommon_HumiditySpecificID, itemID, specifichumidity);
 }
 
-enum {
-    MDnone, MDinput, MDcalculate
-};
+enum { MDinput, MDcalculate };
 
 int MDCommon_HumiditySpecificDef () {
-    int optID = MFUnset;
+    int optID = MDinput;
     const char *optStr, *optName = MDOptWeather_SpecificHumidity;
     const char *options [] = { MDNoneStr, MDInputStr, MDCalculateStr, (char *) NULL};
     
-    if ((optStr = MFOptionGet (optName)) != (char *) NULL) optID = CMoptLookup (options, optStr, true);
-    if ((optID == MDnone) || (_MDOutCommon_HumiditySpecificID != MFUnset)) return (_MDOutCommon_HumiditySpecificID);
+    if (_MDOutCommon_HumiditySpecificID != MFUnset) return (_MDOutCommon_HumiditySpecificID);
     
     MFDefEntering ("SpecificHumidity");
-    
-    switch (optID) {
+    if ((optStr = MFOptionGet (optName)) != (char *) NULL) optID = CMoptLookup (options, optStr, true);
+        switch (optID) {
         case MDinput:
             if ((_MDOutCommon_HumiditySpecificID = MFVarGetID (MDVarCommon_HumiditySpecific, "%",      MFInput, MFState, MFBoundary)) == CMfailed) return (CMfailed);
             break;
         case MDcalculate:
             if (((_MDInCommon_HumidityRelativeID  = MDCommon_HumidityRelativeDef()) == CMfailed) ||
-                ((_MDInCommon_AirTemperatureID    = MFVarGetID (MDVarCommon_AirTemperature,   "degC", MFInput, MFState, MFBoundary)) == CMfailed) ||
+                ((_MDInCommon_AirTemperatureID    = MDCommon_AirTemperatureDef ())   == CMfailed) ||
                 ((_MDInCommon_AirPressureID       = MFVarGetID (MDVarCommon_AirPressure,      "kPa",  MFInput, MFState, MFBoundary)) == CMfailed) ||
                 ((_MDOutCommon_HumiditySpecificID = MFVarGetID (MDVarCommon_HumiditySpecific, "%",    MFOutput, MFState, MFBoundary)) == CMfailed) ||
                 ((MFModelAddFunction (_MDSpecificHumidity) == CMfailed))) return (CMfailed);

@@ -1,7 +1,7 @@
 /******************************************************************************
 
 GHAAS Water Balance/Transport Model
-Global Hydrologic Archive and Analysis System
+Global Hydrological Archive and Analysis System
 Copyright 1994-2021, UNH - ASRC/CUNY
 
 MD.h
@@ -66,6 +66,9 @@ extern "C" {
 
 // Common variables
 #define MDVarCommon_AirTemperature              "AirTemperature"
+#define MDVarCommon_AirTemperatureDaily         "AirTemperatureDaily"
+#define MDVarCommon_AirTemperatureMonthly       "AirTemperatureMonthly"
+#define MDVarCommon_AirTemperatureReference     "AirTemperatureReference"
 #define MDVarCommon_AirTempMinimum              "AirTempMinimum"
 #define MDVarCommon_AirTempMaximum              "AirTempMaximum"
 #define MDVarCommon_AirPressure                 "AirPressure"
@@ -76,8 +79,13 @@ extern "C" {
 #define	MDVarCommon_Elevation                   "Elevation"
 #define	MDVarCommon_ElevationMin                "ElevationMin"
 #define	MDVarCommon_ElevationMax                "ElevationMax"
+#define	MDVarCommon_ElevationReference          "ReferenceElevation"
+#define	MDVarCommon_LapseRate                   "LapseRate"
 #define MDVarCommon_Precipitation               "Precipitation"
-#define MDVarCommon_PrecipFraction              "PrecipitationFraction"
+#define MDVarCommon_PrecipitationDaily          "PrecipitationDaily"
+#define MDVarCommon_PrecipitationMonthly        "PrecipitationMonthly"
+#define MDVarCommon_PrecipitationReference      "PrecipitationReference"
+#define MDVarCommon_PrecipitationFraction       "PrecipitationFraction"
 #define MDVarCommon_PrecipMonthly               "MonthlyPrecipitation"
 #define MDVarCommon_SnowDepth                   "SnowDepth"
 #define MDVarCommon_SnowDensity                 "SnowDensity"
@@ -417,6 +425,7 @@ int MDAux_AvgNStepsDef ();
 int MDAux_MeanDiscargehDef ();
 int MDAux_MeanRunoffDef ();
 
+int MDCommon_AirTemperatureDef ();
 int MDCommon_CloudCoverDef ();
 int MDCommon_GrossRadDef ();
 int MDCommon_HumidityRelativeDef ();

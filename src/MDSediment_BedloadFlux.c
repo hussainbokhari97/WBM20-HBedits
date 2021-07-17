@@ -1,7 +1,7 @@
 /******************************************************************************
 Calculating the Bedload Flux using the modified Begnold(1966) equation
 
-MDBedloadFlux.c
+MDSediment_BedloadFlux.c
 
 Updated 3/28/2019 to include critical velocity parameter
 
@@ -136,8 +136,6 @@ static void _MDBedloadFlux (int itemID) {
 	if(Qb_kg_sec < 0.0) Qb_kg_sec = 0.0 ; // in kg/s  
 	MFVarSetFloat (_MDOutBedloadFluxID, itemID, Qb_kg_sec);
 }
-
-enum { MDinput, MDcalculate, MDcorrected };
 
 int MDSediment_BedloadFluxDef() {
 	

@@ -1,10 +1,10 @@
 /******************************************************************************
 
 GHAAS Water Balance/Transport Model
-Global Hydrologic Archive and Analysis System
+Global Hydrological Archive and Analysis System
 Copyright 1994-2021, UNH - ASRC/CUNY
 
-MDDischLevel3.c
+MDRouting_DischLevel3.c
 
 bfekete@gc.cuny.edu
 
@@ -18,7 +18,7 @@ enum { MDaccumulate, MDmuskingum, MDcascade };
 static int _MDDischLevel3ID = MFUnset;
 
 int MDRouting_DischargeInChannelDef() {
-	int optID = MFUnset;
+	int optID = MDaccumulate;
 	const char *optStr, *optName = MDOptConfig_Routing;
 	const char *options []    = { "accumulate", "muskingum", "cascade", (char *) NULL };
 
@@ -26,7 +26,6 @@ int MDRouting_DischargeInChannelDef() {
 
 	MFDefEntering ("Discharge Level 3");
 	if ((optStr = MFOptionGet (optName)) != (char *) NULL) optID = CMoptLookup (options,optStr,true);
-
 	switch (optID) {
 		case MDaccumulate: _MDDischLevel3ID = MDRouting_DischargeInChannelAccumulateDef(); break;
 		case MDmuskingum:  _MDDischLevel3ID = MDRouting_DischargeInChannelMuskingumDef(); break;

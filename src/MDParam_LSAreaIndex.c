@@ -1,10 +1,10 @@
 /******************************************************************************
 
 GHAAS Water Balance/Transport Model
-Global Hydrologic Archive and Analysis System
+Global Hydrological Archive and Analysis System
 Copyright 1994-2021, UNH - ASRC/CUNY
 
-MDLSAreaIndex.c
+MDParam_LSAreaIndex.c
 
 dominik.wisser@unh.edu
 
@@ -27,23 +27,21 @@ static void _MDParam_LeafAreaIndex (int itemID) {
 // Local
 	float lai;
 
-	cover = MFVarGetInt   (_MDInCommon_CoverID,       itemID, 7);
-	airT  = MFVarGetFloat (_MDInCommon_AtMeanID,      itemID, 0.0);
-	lpMax = MFVarGetFloat (_MDInParam_LPMaxID, itemID, 0.0);
+	cover = MFVarGetInt   (_MDInCommon_CoverID,  itemID, 7);
+	airT  = MFVarGetFloat (_MDInCommon_AtMeanID, itemID, 0.0);
+	lpMax = MFVarGetFloat (_MDInParam_LPMaxID,   itemID, 0.0);
 	
 	if (cover == 0) lai = lpMax;
 	else if (airT > 8.0) lai = lpMax;
 	else lai = 0.0;
-	//if (itemID==104)printf ("CoverType %i  arit%f lpMax %f\n",cover, airT, lai);
- 
 
-   MFVarSetFloat (_MDOutParam_LeafAreaIndexID,itemID,0.001 > lai ? 0.001 : lai);
+	MFVarSetFloat (_MDOutParam_LeafAreaIndexID,itemID,0.001 > lai ? 0.001 : lai);
 }
 
 enum { MDinput, MDstandard };
 
 int MDParam_LeafAreaIndexDef () {
-	int optID = MFUnset;
+	int optID = MDinput;
 	const char *optStr, *optName = MDVarCore_LeafAreaIndex;
 	const char *options [] = { MDInputStr, "standard", (char *) NULL };
 
@@ -54,10 +52,10 @@ int MDParam_LeafAreaIndexDef () {
 	switch (optID) {
 		case MDinput:  _MDOutParam_LeafAreaIndexID = MFVarGetID (MDVarCore_LeafAreaIndex, MFNoUnit, MFInput, MFState, MFBoundary); break;
 		case MDstandard:
-			if (((_MDInParam_LPMaxID    = MDParam_LCLPMaxDef()) == CMfailed) ||
-                ((_MDInCommon_CoverID          = MDParam_LandCoverMappingDef()) == CMfailed) ||
-                ((_MDInCommon_AtMeanID         = MFVarGetID (MDVarCommon_AirTemperature, "degC", MFInput, MFState, MFBoundary)) == CMfailed) ||
-                ((_MDOutParam_LeafAreaIndexID = MFVarGetID (MDVarCore_LeafAreaIndex, MFNoUnit, MFOutput, MFState, MFBoundary)) == CMfailed) ||
+			if (((_MDInParam_LPMaxID          = MDParam_LCLPMaxDef ()) == CMfailed) ||
+                ((_MDInCommon_CoverID         = MDParam_LandCoverMappingDef ()) == CMfailed) ||
+                ((_MDInCommon_AtMeanID        = MFVarGetID (MDVarCommon_AirTemperature, "degC",   MFInput,  MFState, MFBoundary)) == CMfailed) ||
+                ((_MDOutParam_LeafAreaIndexID = MFVarGetID (MDVarCore_LeafAreaIndex,    MFNoUnit, MFOutput, MFState, MFBoundary)) == CMfailed) ||
                 (MFModelAddFunction(_MDParam_LeafAreaIndex) == CMfailed)) return (CMfailed);
 			break;
 		default: MFOptionMessage (optName, optStr, options); return (CMfailed);
@@ -78,7 +76,7 @@ static void _MDStemAreaIndex (int itemID) {
 	float sai;
 
 	if (MFVarTestMissingVal (_MDInParam_LPMaxID,   itemID) ||
-		 MFVarTestMissingVal (_MDInCParamCHeightID, itemID)) { MFVarSetMissingVal (_MDOutStemAreaIndexID,itemID); return; }
+		MFVarTestMissingVal (_MDInCParamCHeightID, itemID)) { MFVarSetMissingVal (_MDOutStemAreaIndexID,itemID); return; }
 
 	lpMax   = MFVarGetFloat (_MDInParam_LPMaxID,   itemID, 0.0);
 	cHeight = MFVarGetFloat (_MDInCParamCHeightID, itemID, 0.0);
@@ -99,8 +97,8 @@ int MDParam_LCStemAreaIndexDef () {
 	switch (optID) {
 		case MDinput:  _MDOutStemAreaIndexID = MFVarGetID (MDVarCore_StemAreaIndex, MFNoUnit, MFInput, MFState, MFBoundary); break;
 		case MDstandard:
-			if (((_MDInParam_LPMaxID    = MDParam_LCLPMaxDef()) == CMfailed) ||
-                ((_MDInCParamCHeightID  = MDParam_LCHeightDef()) == CMfailed) ||
+			if (((_MDInParam_LPMaxID    = MDParam_LCLPMaxDef ())  == CMfailed) ||
+                ((_MDInCParamCHeightID  = MDParam_LCHeightDef ()) == CMfailed) ||
                 ((_MDOutStemAreaIndexID = MFVarGetID (MDVarCore_StemAreaIndex, MFNoUnit, MFOutput, MFState, MFBoundary)) == CMfailed) ||
                 (MFModelAddFunction (_MDStemAreaIndex) == CMfailed)) return (CMfailed);
 			break;

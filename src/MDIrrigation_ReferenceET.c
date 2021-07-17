@@ -1,7 +1,7 @@
 /******************************************************************************
 
 GHAAS Water Balance/Transport Model
-Global Hydrologic Archive and Analysis System
+Global Hydrological Archive and Analysis System
 Copyright 1994-2021, UNH - ASRC/CUNY
 
 MDIrrRefET.c
@@ -18,15 +18,14 @@ static int _MDOutIrrRefEvapotransID = MFUnset;
 enum { MDinput, MDhamon, MDfao };
 
 int MDIrrigation_ReferenceETDef () {
-	int optID = MFUnset;
+	int optID = MDinput;
 	const char *optStr, *optName = MDOptIrrigation_ReferenceET;
 	const char *options [] = { MDInputStr, "Hamon", "FAO", (char *) NULL };
 
 	if (_MDOutIrrRefEvapotransID != MFUnset) return (_MDOutIrrRefEvapotransID);
 
-	if ((optStr = MFOptionGet (optName)) != (char *) NULL) optID = CMoptLookup (options,optStr,true);
-
 	MFDefEntering ("Irrigation Reference Evapotranspiration");
+	if ((optStr = MFOptionGet (optName)) != (char *) NULL) optID = CMoptLookup (options,optStr,true);
 	if (MDCore_SnowPackChgDef() == CMfailed) return (CMfailed);
 
 	switch (optID) {

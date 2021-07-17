@@ -1,10 +1,10 @@
 /******************************************************************************
 
 GHAAS Water Balance/Transport Model
-Global Hydrologic Archive and Analysis System
+Global Hydrological Archive and Analysis System
 Copyright 1994-2021, UNH - ASRC/CUNY
 
-MDPrecipitation.c
+MDCommon_Precipitation.c
 
 bfekete@gc.cuny.edu
 ******************************************************************************/
@@ -29,10 +29,12 @@ bool MDEvent (int nSteps,int nEvents,int step) {
 	return (inv ? true : false);
 }
 
-static int _MDInCommon_PrecipID     = MFUnset;
-static int _MDInCommon_WetDaysID    = MFUnset;
-static int _MDInCommon_PrecipFracID = MFUnset;
-static int _MDOutCommon_PrecipID    = MFUnset;
+static int _MDInCommon_PrecipitationDailyID     = MFUnset;
+static int _MDInCommon_PrecipitationMonthlyID   = MFUnset;
+static int _MDInCommon_PrecipitationReferenceID = MFUnset;
+static int _MDInCommon_PrecipitationWetDaysID   = MFUnset;
+static int _MDInCommon_PrecipitationFractionID  = MFUnset;
+static int _MDOutCommon_PrecipitationID         = MFUnset;
 
 static void _MDPrecipWetDays (int itemID) {
 // Input 
@@ -45,12 +47,29 @@ static void _MDPrecipWetDays (int itemID) {
 
 	day      = MFDateGetCurrentDay ();
 	nDays    = MFDateGetMonthLength ();
-	precipIn = MFVarGetFloat (_MDInCommon_PrecipID,  itemID,  0.0);
-	wetDays  = MFVarGetInt   (_MDInCommon_WetDaysID, itemID, 31.0);
+	precipIn = MFVarGetFloat (_MDInCommon_PrecipitationMonthlyID, itemID,  0.0);
+	wetDays  = MFVarGetInt   (_MDInCommon_PrecipitationWetDaysID, itemID, 31.0);
 
 	precipOut = MDEvent (nDays,wetDays,day) ? precipIn * (float) nDays / (float) wetDays : 0.0;
 
-	MFVarSetFloat (_MDOutCommon_PrecipID, itemID, precipOut);
+	MFVarSetFloat (_MDOutCommon_PrecipitationID, itemID, precipOut);
+}
+
+static void _MDPrecipDownscale (int itemID) {
+// Input 
+	float precipDaily, precipMonthly, precipRef;
+// Output 
+	float precip;
+// Local
+	int nDays;
+	
+	nDays = MFDateGetMonthLength ();
+	precipDaily   = MFVarGetFloat (_MDInCommon_PrecipitationDailyID,     itemID, 0.0);
+	precipMonthly = MFVarGetFloat (_MDInCommon_PrecipitationMonthlyID,   itemID, 0.0);
+	precipRef     = MFVarGetFloat (_MDInCommon_PrecipitationReferenceID, itemID, 0.0);
+
+	precip = precipMonthly > 0.0 ? precipRef * precipDaily / (precipMonthly * nDays) : 0.0;
+	MFVarSetFloat (_MDOutCommon_PrecipitationID, itemID, precip);
 }
 
 static void _MDPrecipFraction (int itemID) {
@@ -62,49 +81,54 @@ static void _MDPrecipFraction (int itemID) {
 // Local 
 	int nDays    = MFDateGetMonthLength ();
 
-	if (MFVarTestMissingVal (_MDInCommon_PrecipID,     itemID) || MFVarTestMissingVal (_MDInCommon_PrecipFracID, itemID)) {
-		MFVarSetMissingVal (_MDOutCommon_PrecipID, itemID);
+	if (MFVarTestMissingVal (_MDInCommon_PrecipitationMonthlyID,  itemID) ||
+	    MFVarTestMissingVal (_MDInCommon_PrecipitationFractionID, itemID)) {
+		MFVarSetMissingVal  (_MDOutCommon_PrecipitationID, itemID);
 		return;
 	}
 
-	precipIn   = MFVarGetFloat (_MDInCommon_PrecipID,     itemID, 0.0);
-	precipFrac = MFVarGetFloat (_MDInCommon_PrecipFracID, itemID, 1.0 / nDays);
+	precipIn   = MFVarGetFloat (_MDInCommon_PrecipitationMonthlyID,  itemID, 0.0);
+	precipFrac = MFVarGetFloat (_MDInCommon_PrecipitationFractionID, itemID, 1.0 / nDays);
 
 	precipOut = precipIn *  precipFrac * nDays;
 	if (precipOut < 0.0){ CMmsgPrint (CMmsgUsrError, "Precip negative! itemID=%d precipIn=%f precipFrac =%fprecipFrac", itemID, precipIn, precipFrac);}
-	MFVarSetFloat (_MDOutCommon_PrecipID, itemID, precipOut);
+	MFVarSetFloat (_MDOutCommon_PrecipitationID, itemID, precipOut);
 }
 
-enum { MDinput, MDwetdays, MDfraction };
+enum { MDinput, MDdownscale, MDfraction, MDwetdays };
 
 int MDCommon_PrecipitationDef () {
-	int optID = MFUnset;
+	int optID = MDinput;
 	const char *optStr, *optName = MDVarCommon_Precipitation;
-	const char *options [] = { MDInputStr, "wetdays", "fraction",(char *) NULL };
+	const char *options [] = { MDInputStr, "downscale", "fraction", "wetdays", (char *) NULL };
 
-	if (_MDOutCommon_PrecipID != MFUnset) return (_MDOutCommon_PrecipID);
+	if (_MDOutCommon_PrecipitationID != MFUnset) return (_MDOutCommon_PrecipitationID);
 
 	MFDefEntering ("Precipitation");
-	
 	if ((optStr = MFOptionGet (optName)) != (char *) NULL) optID = CMoptLookup (options,optStr,true);
- 
-	switch (optID)
-		{
-		case MDinput: _MDOutCommon_PrecipID = MFVarGetID (MDVarCommon_Precipitation, "mm", MFInput, MFFlux, MFBoundary); break;
+	switch (optID) {
+		case MDinput: _MDOutCommon_PrecipitationID = MFVarGetID (MDVarCommon_Precipitation, "mm", MFInput, MFFlux, MFBoundary); break;
 		case MDwetdays:
-			if (((_MDInCommon_WetDaysID    = MDCommon_WetDaysDef()) == CMfailed) ||
-                ((_MDInCommon_PrecipID     = MFVarGetID (MDVarCommon_PrecipMonthly, "mm", MFInput, MFFlux, MFBoundary)) == CMfailed) ||
-                ((_MDOutCommon_PrecipID    = MFVarGetID (MDVarCommon_Precipitation, "mm", MFOutput, MFFlux, MFBoundary)) == CMfailed) ||
+			if (((_MDInCommon_PrecipitationWetDaysID    = MDCommon_WetDaysDef ()) == CMfailed) ||
+                ((_MDInCommon_PrecipitationMonthlyID    = MFVarGetID (MDVarCommon_PrecipMonthly, "mm", MFInput,  MFFlux, MFBoundary)) == CMfailed) ||
+                ((_MDOutCommon_PrecipitationID          = MFVarGetID (MDVarCommon_Precipitation, "mm", MFOutput, MFFlux, MFBoundary)) == CMfailed) ||
                 (MFModelAddFunction (_MDPrecipWetDays) == CMfailed)) return (CMfailed);
 			break;
+		case MDdownscale:
+			if (((_MDInCommon_PrecipitationMonthlyID   = MFVarGetID (MDVarCommon_PrecipitationMonthly,   "mm", MFInput,  MFFlux,  MFBoundary)) == CMfailed) ||
+				((_MDInCommon_PrecipitationDailyID     = MFVarGetID (MDVarCommon_PrecipitationDaily,     "mm", MFInput,  MFFlux,  MFBoundary)) == CMfailed) ||
+                ((_MDInCommon_PrecipitationReferenceID = MFVarGetID (MDVarCommon_PrecipitationReference, "mm", MFInput,  MFState, MFBoundary)) == CMfailed) ||
+                ((_MDOutCommon_PrecipitationID         = MFVarGetID (MDVarCommon_Precipitation,          "mm", MFOutput, MFFlux, MFBoundary)) == CMfailed) ||
+                (MFModelAddFunction (_MDPrecipDownscale) == CMfailed)) return (CMfailed);
+			break;
 		case MDfraction:
-			if (((_MDInCommon_PrecipID     = MFVarGetID (MDVarCommon_PrecipMonthly,  "mm", MFInput, MFFlux,  MFBoundary)) == CMfailed) ||
-                ((_MDInCommon_PrecipFracID = MFVarGetID (MDVarCommon_PrecipFraction, "mm", MFInput, MFState, MFBoundary)) == CMfailed) ||
-                ((_MDOutCommon_PrecipID    = MFVarGetID (MDVarCommon_Precipitation,  "mm", MFOutput, MFFlux, MFBoundary)) == CMfailed) ||
+			if (((_MDInCommon_PrecipitationMonthlyID  = MFVarGetID (MDVarCommon_PrecipitationMonthly,    "mm", MFInput,  MFFlux,  MFBoundary)) == CMfailed) ||
+                ((_MDInCommon_PrecipitationFractionID = MFVarGetID (MDVarCommon_PrecipitationFraction,   "mm", MFInput,  MFState, MFBoundary)) == CMfailed) ||
+                ((_MDOutCommon_PrecipitationID        = MFVarGetID (MDVarCommon_Precipitation,  "mm", MFOutput, MFFlux, MFBoundary)) == CMfailed) ||
                 (MFModelAddFunction (_MDPrecipFraction) == CMfailed)) return (CMfailed);
 			break;
 		default: MFOptionMessage (optName, optStr, options); return (CMfailed);
-		}
+	}
 	MFDefLeaving ("Precipitation");
-	return (_MDOutCommon_PrecipID);
+	return (_MDOutCommon_PrecipitationID);
 }

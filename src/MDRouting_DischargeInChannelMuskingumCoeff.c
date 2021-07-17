@@ -1,10 +1,10 @@
 /******************************************************************************
 
 GHAAS Water Balance/Transport Model
-Global Hydrologic Archive and Analysis System
+Global Hydrological Archive and Analysis System
 Copyright 1994-2021, UNH - ASRC/CUNY
 
-MDDichRouteMuskCoeff.c
+MDRouting_DichargeInChannelMuskingumCoeff.c
 
 bfekete@gc.cuny.edu
 
@@ -78,7 +78,7 @@ static void _MDDischRouteMuskingumCoeff (int itemID) {
 enum { MDinput, MDstatic };
 
 int MDRouting_DischargeInChannelMuskingumCoeffDef () {
-	int  optID = MFUnset;
+	int  optID = MDinput;
 	const char *optStr, *optName = MDOptRouting_Muskingum;
 	const char *options [] = { MDInputStr, "static", (char *) NULL };
 

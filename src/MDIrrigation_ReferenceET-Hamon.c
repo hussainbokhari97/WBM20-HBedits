@@ -1,10 +1,10 @@
 /******************************************************************************
 
 GHAAS Water Balance Model Library V1.0
-Global Hydrologic Archive and Analysis System
+Global Hydrological Archive and Analysis System
 Copyright 1994-2021, UNH - ASRC/CUNY
 
-MDIrrRefEtHamon.c
+MDIrrigation_ReferenceET-Hamon.c
 
 dominik.wisser@unh.edu
 
@@ -13,9 +13,9 @@ dominik.wisser@unh.edu
 #include <MF.h>
 #include <MD.h>
 
-static int _MDInDayLengthID = MFUnset;
-static int _MDInCommon_AtMeanID    = MFUnset;
-static int _MDOutPetID      = MFUnset;
+static int _MDInDayLengthID     = MFUnset;
+static int _MDInCommon_AtMeanID = MFUnset;
+static int _MDOutPetID          = MFUnset;
 
 static void _MDIrrRefEvapotransHamon (int itemID) {
 // Hamon (1963) PE in mm for day
@@ -40,9 +40,9 @@ int MDIrrigation_Reference_ETHamonDef () {
 	if (_MDOutPetID != MFUnset) return (_MDOutPetID);
 
 	MFDefEntering ("Hamon as ReferenceETP");
-	if (((_MDInDayLengthID = MDCommon_SolarRadDayLengthDef()) == CMfailed) ||
-        ((_MDInCommon_AtMeanID    = MFVarGetID (MDVarCommon_AirTemperature, "degC", MFInput, MFState, MFBoundary)) == CMfailed) ||
-        ((_MDOutPetID      = MFVarGetID (MDVarIrrigation_RefEvapotrans, "mm", MFOutput, MFFlux, MFBoundary)) == CMfailed) ||
+	if (((_MDInDayLengthID      = MDCommon_SolarRadDayLengthDef()) == CMfailed) ||
+        ((_MDInCommon_AtMeanID  = MDCommon_AirTemperatureDef ())    == CMfailed) ||
+        ((_MDOutPetID           = MFVarGetID (MDVarIrrigation_RefEvapotrans, "mm", MFOutput, MFFlux, MFBoundary)) == CMfailed) ||
         (MFModelAddFunction (_MDIrrRefEvapotransHamon) == CMfailed)) return (CMfailed);
 	MFDefLeaving ("Hamon as ReferenceETP");
 	return (_MDOutPetID);

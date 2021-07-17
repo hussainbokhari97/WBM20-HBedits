@@ -11,7 +11,8 @@ Particulate Nitrogen: PNpc = 0.116 * POCpc - 0.019
 Particulate Phosphorus: ln(1000 * PP) = -3.096 + 1.002*ln(1000*POC) 
 POC and PP are loads in Mg/yr ot t/yr
  
-MDParticulateNutrients
+MDSediment_ParticulateNutrients.c
+
 May 2013
 sagy.cohen@as.ua.edu
 *******************************************************************************/
@@ -116,8 +117,6 @@ static void _MDParticulateNutrients (int itemID) {
 	MFVarSetFloat (_MDOutPPhosphorusFluxID, itemID, PPf);	
 	
 }
-
-enum { MDinput, MDcalculate, MDcorrected };
 
 int MDSediment_ParticulateNutrientsDef() {
 	

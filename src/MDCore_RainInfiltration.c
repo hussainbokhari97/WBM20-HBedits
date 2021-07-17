@@ -1,7 +1,7 @@
 /******************************************************************************
 
 GHAAS Water Balance/Transport Model
-Global Hydrologic Archive and Analysis System
+Global Hydrological Archive and Analysis System
 Copyright 1994-2021, UNH - ASRC/CUNY
 
 MDInfiltration.c
@@ -17,7 +17,7 @@ bfekete@gc.cuny.edu
 // Input
 static int _MDInRainWaterSurplusID       = MFUnset;
 // Output
-static int _MDOutRainSurfCore_RunoffID        = MFUnset;
+static int _MDOutRainSurfCore_RunoffID   = MFUnset;
 static int _MDOutRainInfiltrationID      = MFUnset;
 static int _MDInRainInfiltrationID       = MFUnset;
 

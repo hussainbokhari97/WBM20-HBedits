@@ -1,10 +1,10 @@
 /******************************************************************************
 
 GHAAS Water Balance/Transport Model
-Global Hydrologic Archive and Analysis System
+Global Hydrological Archive and Analysis System
 Copyright 1994-2021, UNH - ASRC/CUNY
 
-MDSurfRunoff.c
+MDCore_SurfRunoff.c
 
 bfekete@gc.cuny.edu
 
@@ -41,8 +41,8 @@ int MDCore_SurfRunoffDef () {
 	     ((_MDInSmallResUptakeID = MFVarGetID (MDVarReservoir_FarmPontUptake, "mm", MFInput, MFFlux, MFBoundary)) == CMfailed)))
 	     return (CMfailed);
 	
-	if (((_MDInRainSurfCore_RunoffID  = MDCore_RainSurfRunoffDef()) == CMfailed) ||
-        ((_MDOutSurfCore_RunoffID     = MFVarGetID (MDVarCore_SurfRunoff, "mm", MFOutput, MFFlux, MFBoundary)) == CMfailed) ||
+	if (((_MDInRainSurfCore_RunoffID  = MDCore_RainSurfRunoffDef ()) == CMfailed) ||
+        ((_MDOutSurfCore_RunoffID     = MFVarGetID (MDVarCore_SurfRunoff,     "mm", MFOutput, MFFlux, MFBoundary)) == CMfailed) ||
         (MFModelAddFunction (_MDSurfRunoff) == CMfailed)) return (CMfailed);
 	MFDefLeaving ("Surface runoff");
 	return (_MDOutSurfCore_RunoffID);

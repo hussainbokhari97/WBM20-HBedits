@@ -1,7 +1,7 @@
 /******************************************************************************
 
 GHAAS Water Balance/Transport Model
-Global Hydrologic Archive and Analysis System
+Global Hydrological Archive and Analysis System
 Copyright 1994-2021, UNH - ASRC/CUNY
 
 MDDischMean.c
@@ -33,15 +33,14 @@ static void _MDAux_MeanDischarge (int itemID) {
 enum { MDinput, MDcalculate };
 
 int MDAux_MeanDiscargehDef () {
-	int  optID = MFUnset;
+	int  optID = MDinput;
 	const char *optStr, *optName = MDVarAux_DischMean;
 	const char *options [] = { MDInputStr, MDCalculateStr, (char *) NULL };
 
 	if (_MDOutAux_MeanDischargeID != MFUnset) return (_MDOutAux_MeanDischargeID);
+
 	MFDefEntering ("Discharge Mean");
-
 	if ((optStr = MFOptionGet (optName)) != (char *) NULL) optID = CMoptLookup (options, optStr, true);
-
 	switch (optID) {
 		case MDinput: _MDOutAux_MeanDischargeID  = MFVarGetID (MDVarAux_DischMean, "m3/s", MFInput, MFState, MFBoundary); break;
 		case MDcalculate:

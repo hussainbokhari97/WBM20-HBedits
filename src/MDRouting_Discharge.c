@@ -1,7 +1,7 @@
 /******************************************************************************
 
 GHAAS Water Balance/Transport Model
-Global Hydrologic Archive and Analysis System
+Global Hydrological Archive and Analysis System
 Copyright 1994-2021, UNH - ASRC/CUNY
 
 MDRouting_Discharge.c
@@ -35,7 +35,7 @@ static void _MDRouting_Discharge (int itemID) {
 enum { MDinput, MDcalculate, MDcorrected };
 
 int MDRouting_DischargeDef() {
-	int optID = MFUnset;
+	int optID = MDinput;
 	const char *optStr, *optName = MDOptConfig_Discharge;
 	const char *options [] = { MDInputStr, MDCalculateStr, "corrected", (char *) NULL };
 

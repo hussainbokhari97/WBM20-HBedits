@@ -60,7 +60,6 @@ static void _MDBQARTinputs (int itemID) {
 	MFVarSetInt   (_MDOutNumPixelsID, itemID, AccPixels); 	
 }
 
-
 int MDSediment_BQARTinputsDef() {
 	
 	MFDefEntering ("BQARTinputs");

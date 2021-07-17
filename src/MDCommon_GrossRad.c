@@ -1,7 +1,7 @@
 /******************************************************************************
 
 GHAAS Water Balance/Transport Model
-Global Hydrologic Archive and Analysis System
+Global Hydrological Archive and Analysis System
 Copyright 1994-2021, UNH - ASRC/CUNY
 
 MDCommon_GrossRad.c
@@ -73,7 +73,7 @@ static void _MDCommon_GrossRadianceOtto (int itemID) {
 enum { MDinput, MDstandard,  MDOtto }; 
 
 int MDCommon_GrossRadDef () {
-	int optID = MFUnset;
+	int optID = MDinput;
 	const char *optStr, *optName = MDVarCore_GrossRadiance;
 	const char *options [] = { MDInputStr, "standard", "Otto", (char *) NULL };
 	float par;
@@ -82,7 +82,6 @@ int MDCommon_GrossRadDef () {
 
 	MFDefEntering ("Gross Radiance");
 	if ((optStr = MFOptionGet (optName)) != (char *) NULL) optID = CMoptLookup (options, optStr, true);
-
 	switch (optID) {
 		case MDinput: _MDOutCommon_GrossRadID = MFVarGetID (MDVarCore_GrossRadiance, "MJ/m^2", MFInput, MFFlux, MFBoundary); break;
 		case MDstandard:

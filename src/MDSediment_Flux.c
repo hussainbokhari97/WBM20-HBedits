@@ -4,7 +4,8 @@ where Q is discharge [km3/yr] (calculated by WBM), A is the contributing area [k
 R is the maximum Relief [km], T is average temperature [c] and B is for geological 
 and human factors.
 
-MDSedimentFlux.c
+MDSediment_Flux.c
+
 WBMsedNEWS1.2 - reservoir trapping Te was changed to exclude the small res calculation 
 module (as a new larger reservoir dataset is now in use) and reduce the minimum threshold
 from >0.1 to >0.0
@@ -297,8 +298,6 @@ yearlyRand = 0.00001;// Eliminate Yearly randomness!!!
 	MFVarSetFloat (_MDOutQsConcID, itemID, QsConc);
 	MFVarSetFloat (_MDOutQsYieldID, itemID, QsYield); 
 }
-
-enum { MDinput, MDcalculate, MDcorrected };
 
 int MDSediment_FluxDef() {
 	

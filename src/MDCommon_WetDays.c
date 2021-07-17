@@ -1,10 +1,10 @@
 /******************************************************************************
 
 GHAAS Water Balance/Transport Model
-Global Hydrologic Archive and Analysis System
+Global Hydrological Archive and Analysis System
 Copyright 1994-2021, UNH - ASRC/CUNY
 
-MDWetDays.c
+MDCommon_WetDays.c
 
 bfekete@gc.cuny.edu
 
@@ -36,9 +36,9 @@ static void _MDWetDays (int itemID)
         MFVarTestMissingVal (_MDInParam_WetDaysAlphaID, itemID) ||
         MFVarTestMissingVal (_MDInParam_WetDaysBetaID, itemID)) { MFVarSetMissingVal (_MDOutCommon_WetDaysID, itemID); return; }
 
-	precip = MFVarGetFloat (_MDInCommon_PrecipID, itemID, 0.0);
+	precip = MFVarGetFloat (_MDInCommon_PrecipID,      itemID, 0.0);
 	alpha  = MFVarGetFloat (_MDInParam_WetDaysAlphaID, itemID, 1.0);
-	beta   = MFVarGetFloat (_MDInParam_WetDaysBetaID, itemID, 0.0);
+	beta   = MFVarGetFloat (_MDInParam_WetDaysBetaID,  itemID, 0.0);
 
 	nDays   = MFDateGetMonthLength ();
 	wetDays = (int) ((float) nDays * alpha * (1.0 - exp ((double) (beta * precip))));
@@ -52,7 +52,7 @@ enum { MDinput, MDlbg };
 
 int MDCommon_WetDaysDef ()
 	{
-	int optID = MFUnset;
+	int optID = MDinput;
 	const char *optStr, *optName = MDVarCommon_WetDays;
 	const char *options [] = { MDInputStr, "LBG", (char *) NULL };
 
@@ -60,7 +60,6 @@ int MDCommon_WetDaysDef ()
 
 	MFDefEntering ("Wet Days");
 	if ((optStr = MFOptionGet (optName)) != (char *) NULL) optID = CMoptLookup (options,optStr,true);
-
 	switch (optID)
 		{
 		case MDinput: _MDOutCommon_WetDaysID = MFVarGetID (MDVarCommon_WetDays, MFNoUnit, MFInput, MFState, MFBoundary); break;

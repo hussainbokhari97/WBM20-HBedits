@@ -1,10 +1,10 @@
 /******************************************************************************
 
 GHAAS Water Balance/Transport Model
-Global Hydrologic Archive and Analysis System
+Global Hydrological Archive and Analysis System
 Copyright 1994-2021, UNH - ASRC/CUNY
 
-MDRunoffVolume.c
+MDCore_RunoffVolume.c
 
 bfekete@gc.cuny.edu
 
@@ -30,7 +30,7 @@ static void _MDRunoffVolume (int itemID) {
 enum { MDinput, MDcalculate };
 
 int MDCore_RunoffVolumeDef () {
-	int optID = MFUnset;
+	int optID = MDinput;
 	const char *optStr, *optName = MDVarCore_RunoffVolume;
 	const char *options [] = { MDInputStr, MDCalculateStr, (char *) NULL };
 

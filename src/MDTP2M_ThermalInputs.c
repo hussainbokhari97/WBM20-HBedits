@@ -1,9 +1,10 @@
 /******************************************************************************
-GHAAS Water Balance/Transport Model
-Global Hydrologic Archive and Analysis System
-Copyright 1994-2007, University of New Hampshire
 
-MDThermalInputs3.c
+GHAAS Water Balance/Transport Model
+Global Hydrological Archive and Analysis System
+Copyright 1994-2021, UNH - ASRC/CUNY
+
+MDTP2M_ThermalInputs.c
 
 amiara@ccny.cuny.edu & rob.stewart@unh.edu
 

@@ -1,7 +1,7 @@
 /******************************************************************************
 
 GHAAS Water Balance/Transport Model
-Global Hydrologic Archive and Analysis System
+Global Hydrological Archive and Analysis System
 Copyright 1994-2021, UNH - ASRC/CUNY
 
 MDRouting_DischargeUptake.c
@@ -60,12 +60,12 @@ static void _MDRouting_DischargeUptake (int itemID) {
     MFVarSetFloat (_MDOutRouting_DischargeUptakeID,  itemID, discharge);
 }
 
-enum { MDnone, MDcalculate };
+enum { MDcalculate, MDnone };
 
 int MDRouting_DischargeUptake () {
-	int optID = MFUnset, ret;
+	int optID = MDcalculate, ret;
 	const char *optStr, *optName = "IrrUptakeRiver";
-	const char *options [] = { MDNoneStr, MDCalculateStr, (char *) NULL };
+	const char *options [] = { MDCalculateStr, MDNoneStr, (char *) NULL };
 
 	if (_MDOutRouting_DischargeUptakeID != MFUnset) return (_MDOutRouting_DischargeUptakeID);
 
@@ -82,7 +82,7 @@ int MDRouting_DischargeUptake () {
 				if  ((_MDOutIrrigation_UptakeRiverID   = MDIrrigation_UptakeRiverDef()) == CMfailed) return (CMfailed);
 			case MDnone:
 				if (((_MDInIrrigation_UptakeExternalID = MFVarGetID (MDVarIrrigation_UptakeExternal, "mm", MFInput, MFFlux, MFBoundary)) == CMfailed) ||
-                    ((_MDOutIrrigation_UptakeExcessID  = MFVarGetID (MDVarIrrigation_UptakeExcess, "mm", MFOutput, MFFlux, MFBoundary)) == CMfailed))
+                    ((_MDOutIrrigation_UptakeExcessID  = MFVarGetID (MDVarIrrigation_UptakeExcess,   "mm", MFOutput, MFFlux, MFBoundary)) == CMfailed))
 					return (CMfailed);
 				break;
 			default: MFOptionMessage (optName, optStr, options); return (CMfailed);

@@ -10,7 +10,8 @@ T = temperature in C
 rho = 1000(1 - (T+288.9414)/(508929.2*(T+68.12963))*(T-3.9863)^2)
 
  
-MDWaterDensity
+MDSediment_WaterDensity
+
 Aug 2013
 sagy.cohen@as.ua.edu
 *******************************************************************************/
@@ -59,8 +60,6 @@ static void _MDWaterDensity (int itemID) {
 	MFVarSetFloat (_MDInUpStreamWdID , itemID, (upstream_Wd*-1));
 	MFVarSetFloat (_MDInUpStreamWdID , itemID, Wd); 
 }
-
-enum { MDinput, MDcalculate, MDcorrected };
 
 int MDSediment_WaterDensityDef() {
 	

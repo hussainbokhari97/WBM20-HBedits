@@ -47,7 +47,6 @@ static int _MDOutMeanLogQMaxID = MFUnset;
 
 // use global arrays rather than static local vars in function 
 
-
 static void _MDQBARTpreprocess (int itemID) {
 	int TimeStep;
 	float Qday, Qbar,Qacc, Qbar_km3y,Qbar_m3s;
@@ -137,8 +136,6 @@ MFVarSetInt (_MDOutBQART_AID, itemID, A);
 	MFVarSetFloat (_MDOutBQART_TID, itemID, Tbar);
 	MFVarSetFloat (_MDOutBQART_Qbar_km3yID, itemID, Qbar_km3y);
 }
-
-enum { MDinput, MDcalculate, MDcorrected };
 
 int MDSediment_BQARTpreprocessDef () {
 	

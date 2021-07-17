@@ -273,8 +273,6 @@ yearlyRand = 0.00001;// Eliminate Yearly randomness!!!
 	MFVarSetFloat (_MDOutQsYieldID, itemID, QsYield); 
 }
 
-enum { MDinput, MDcalculate, MDcorrected };
-
 int MDSediment_FluxOLDDef() {
 	
 	MFDefEntering ("SedimentFlux");

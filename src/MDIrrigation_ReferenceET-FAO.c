@@ -1,10 +1,10 @@
 /******************************************************************************
 
 GHAAS Water Balance/Transport Model
-Global Hydrologic Archive and Analysis System
+Global Hydrological Archive and Analysis System
 Copyright 1994-2021, UNH - ASRC/CUNY
 
-MDIrrRefETFAO.c
+MDIrrigation_ReferenceET-FAO.c
 
 dominink.wisser@unh.edu
 
@@ -15,7 +15,7 @@ dominink.wisser@unh.edu
 #include <MD.h>
 
 // Input
-static int _MDInCommon_AtMeanID            = MFUnset;
+static int _MDInCommon_AtMeanID     = MFUnset;
 static int _MDInAtMaxID             = MFUnset;
 static int _MDInAtMinID             = MFUnset;
 static int _MDInSolRadID            = MFUnset;
@@ -96,16 +96,16 @@ int MDIrrigation_ReferenceETFAODef () {
 	if (_MDOutIrrRefEvapotransID != MFUnset) return (_MDOutIrrRefEvapotransID);
 
 	MFDefEntering ("Irrigation Reference ETP (FAO)");
-	if (((_MDInDayLengthID          = MDCommon_SolarRadDayLengthDef()) == CMfailed) ||
-        ((_MDInI0HDayID            = MDCommon_SolarRadI0HDayDef()) == CMfailed) ||
-        ((_MDInSolRadID            = MDCommon_SolarRadDef()) == CMfailed) ||
-        ((_MDInElevationID         = MFVarGetID (MDVarCommon_Elevation, "m", MFInput, MFState, MFBoundary)) == CMfailed) ||
-        ((_MDInCommon_AtMeanID            = MFVarGetID (MDVarCommon_AirTemperature, "degC", MFInput, MFState, MFBoundary)) == CMfailed) ||
-        ((_MDInAtMinID             = MFVarGetID (MDVarCommon_AirTempMinimum, "degC", MFInput, MFState, MFBoundary)) == CMfailed) ||
-        ((_MDInAtMaxID             = MFVarGetID (MDVarCommon_AirTempMaximum, "degC", MFInput, MFState, MFBoundary)) == CMfailed) ||
-        ((_MDInVPressID            = MFVarGetID (MDVarCore_VaporPressure, "kPa", MFInput, MFState, MFBoundary)) == CMfailed) ||
-        ((_MDInWSpeedID            = MFVarGetID (MDVarCommon_WindSpeed, "m/s", MFInput, MFState, MFBoundary)) == CMfailed) ||
-        ((_MDOutIrrRefEvapotransID = MFVarGetID (MDVarIrrigation_RefEvapotrans, "mm", MFOutput, MFFlux, MFBoundary)) == CMfailed)) return (CMfailed);
+	if (((_MDInDayLengthID         = MDCommon_SolarRadDayLengthDef ()) == CMfailed) ||
+        ((_MDInI0HDayID            = MDCommon_SolarRadI0HDayDef ())    == CMfailed) ||
+        ((_MDInSolRadID            = MDCommon_SolarRadDef ())          == CMfailed) ||
+        ((_MDInCommon_AtMeanID     = MDCommon_AirTemperatureDef ())     == CMfailed) ||
+        ((_MDInElevationID         = MFVarGetID (MDVarCommon_Elevation,         "m",    MFInput,  MFState, MFBoundary)) == CMfailed) ||
+        ((_MDInAtMinID             = MFVarGetID (MDVarCommon_AirTempMinimum,    "degC", MFInput,  MFState, MFBoundary)) == CMfailed) ||
+        ((_MDInAtMaxID             = MFVarGetID (MDVarCommon_AirTempMaximum,    "degC", MFInput,  MFState, MFBoundary)) == CMfailed) ||
+        ((_MDInVPressID            = MFVarGetID (MDVarCore_VaporPressure,       "kPa",  MFInput,  MFState, MFBoundary)) == CMfailed) ||
+        ((_MDInWSpeedID            = MFVarGetID (MDVarCommon_WindSpeed,         "m/s",  MFInput,  MFState, MFBoundary)) == CMfailed) ||
+        ((_MDOutIrrRefEvapotransID = MFVarGetID (MDVarIrrigation_RefEvapotrans, "mm",   MFOutput, MFFlux,  MFBoundary)) == CMfailed)) return (CMfailed);
     if (MFModelAddFunction (_MDIrrRefEvapotransFAO)== CMfailed) return (CMfailed);
 
 	MFDefLeaving ("Irrigation Reference ETP (FAO)");

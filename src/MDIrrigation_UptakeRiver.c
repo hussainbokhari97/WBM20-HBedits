@@ -1,7 +1,7 @@
 /******************************************************************************
 
 GHAAS Water Balance/Transport Model
-Global Hydrologic Archive and Analysis System
+Global Hydrological Archive and Analysis System
 Copyright 1994-2021, UNH - ASRC/CUNY
 
 MDIrrUptakeRiver.c
@@ -15,17 +15,16 @@ dominik.wisser@unh.edu
 
 static int _MDOutIrrigation_UptakeRiverID = MFUnset;
 
-enum { MDnone, MDcalculate };
+enum { MDcalculate, MDnone };
 
 int MDIrrigation_UptakeRiverDef() {
-	int optID = MFUnset;
+	int optID = MDcalculate;
 	const char *optStr, *optName = "IrrUptakeRiver";
-	const char *options [] = { MDNoneStr, MDCalculateStr, (char *) NULL };
+	const char *options [] = { MDCalculateStr, MDNoneStr, (char *) NULL };
 
-	if ((optStr = MFOptionGet (optName)) != (char *) NULL) optID = CMoptLookup (options, optStr, true);
-		
 	if ((optID == MDnone) || (_MDOutIrrigation_UptakeRiverID != MFUnset)) return (_MDOutIrrigation_UptakeRiverID);
 
+	if ((optStr = MFOptionGet (optName)) != (char *) NULL) optID = CMoptLookup (options, optStr, true);
 	if (optID == MDcalculate)
 		return (MFVarGetID (MDVarIrrigation_UptakeRiver, "mm", MFOutput, MFFlux, MFBoundary));
 	else MFOptionMessage (optName, optStr, options);

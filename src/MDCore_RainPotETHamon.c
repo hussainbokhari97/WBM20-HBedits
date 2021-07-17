@@ -1,10 +1,10 @@
 /******************************************************************************
 
 GHAAS Water Balance/Transport Model
-Global Hydrologic Archive and Analysis System
+Global Hydrological Archive and Analysis System
 Copyright 1994-2021, UNH - ASRC/CUNY
 
-MDPotETHamon.c
+MDCore_RainPotETHamon.c
 
 bfekete@gc.cuny.edu
 
@@ -42,9 +42,9 @@ int MDCore_RainPotETHamonDef () {
 	if (_MDOutPetID != MFUnset) return (_MDOutPetID);
 
 	MFDefEntering ("Rainfed Potential Evapotranspiration (Hamon)");
-	if (((_MDInDayLengthID = MDCommon_SolarRadDayLengthDef()) == CMfailed) ||
-        ((_MDInCommon_AtMeanID    = MFVarGetID (MDVarCommon_AirTemperature, "degC", MFInput, MFState, MFBoundary)) == CMfailed) ||
-        ((_MDOutPetID      = MFVarGetID (MDVarCore_RainPotEvapotrans, "mm", MFOutput, MFFlux, MFBoundary)) == CMfailed) ||
+	if (((_MDInDayLengthID      = MDCommon_SolarRadDayLengthDef()) == CMfailed) ||
+        ((_MDInCommon_AtMeanID  = MDCommon_AirTemperatureDef ())    == CMfailed) ||
+        ((_MDOutPetID           = MFVarGetID (MDVarCore_RainPotEvapotrans, "mm", MFOutput, MFFlux, MFBoundary)) == CMfailed) ||
         (MFModelAddFunction (_MDRainPotETHamon) == CMfailed)) return (CMfailed);
 	MFDefLeaving  ("Rainfed Potential Evapotranspiration (Hamon)");
 	return (_MDOutPetID);

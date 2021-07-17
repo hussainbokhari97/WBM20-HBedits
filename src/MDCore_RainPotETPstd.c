@@ -1,10 +1,10 @@
 /******************************************************************************
 
 GHAAS Water Balance/Transport Model
-Global Hydrologic Archive and Analysis System
+Global Hydrological Archive and Analysis System
 Copyright 1994-2021, UNH - ASRC/CUNY
 
-MDPotETPstd.c
+MDCore_RainPotETPstd.c
 
 bfekete@gc.cuny.edu
 
@@ -89,14 +89,14 @@ int MDCore_RainPotETPstdDef () {
 	if (_MDOutPetID != MFUnset) return (_MDOutPetID);
 
 	MFDefEntering ("Rainfed Potential Evapotranspiration (Penman Standard)");
-	if (((_MDInDayLengthID     = MDCommon_SolarRadDayLengthDef()) == CMfailed) ||
-        ((_MDInI0HDayID        = MDCommon_SolarRadI0HDayDef()) == CMfailed) ||
-        ((_MDInCParamAlbedoID  = MDParam_LCAlbedoDef()) == CMfailed) ||
-        ((_MDInSolRadID        = MDCommon_SolarRadDef()) == CMfailed) ||
-        ((_MDInCommon_AtMeanID  = MFVarGetID (MDVarCommon_AirTemperature, "degC", MFInput, MFState, MFBoundary)) == CMfailed) ||
-        ((_MDInVPressID  = MFVarGetID (MDVarCore_VaporPressure, "kPa", MFInput, MFState, MFBoundary)) == CMfailed) ||
-        ((_MDInWSpeedID  = MFVarGetID (MDVarCommon_WindSpeed, "m/s", MFInput, MFState, MFBoundary)) == CMfailed) ||
-        ((_MDOutPetID    = MFVarGetID (MDVarCore_RainPotEvapotrans, "mm", MFOutput, MFFlux, MFBoundary)) == CMfailed) ||
+	if (((_MDInDayLengthID     = MDCommon_SolarRadDayLengthDef ()) == CMfailed) ||
+        ((_MDInI0HDayID        = MDCommon_SolarRadI0HDayDef ())    == CMfailed) ||
+        ((_MDInCParamAlbedoID  = MDParam_LCAlbedoDef ())           == CMfailed) ||
+        ((_MDInSolRadID        = MDCommon_SolarRadDef ())          == CMfailed) ||
+        ((_MDInCommon_AtMeanID = MDCommon_AirTemperatureDef ())     == CMfailed) ||
+        ((_MDInVPressID  = MFVarGetID (MDVarCore_VaporPressure,     "kPa", MFInput,  MFState, MFBoundary)) == CMfailed) ||
+        ((_MDInWSpeedID  = MFVarGetID (MDVarCommon_WindSpeed,       "m/s", MFInput,  MFState, MFBoundary)) == CMfailed) ||
+        ((_MDOutPetID    = MFVarGetID (MDVarCore_RainPotEvapotrans, "mm",  MFOutput, MFFlux,  MFBoundary)) == CMfailed) ||
         (MFModelAddFunction (_MDRainPotETPstd) == CMfailed)) return (CMfailed);
 	MFDefLeaving  ("Rainfed Potential Evapotranspiration (Penman Standard)");
 	return (_MDOutPetID);

@@ -1,7 +1,7 @@
 /******************************************************************************
 
 GHAAS Water Balance/Transport Model
-Global Hydrologic Archive and Analysis System
+Global Hydrological Archive and Analysis System
 Copyright 1994-2021, UNH - ASRC/CUNY
 
 MDPotET.c
@@ -18,15 +18,14 @@ static int _MDPotETID = MFUnset;
 enum { MDinput, MDHamon, MDJensen, MDPsTaylor, MDPstd, MDPMday, MDPMdn, MDSWGday, MDSWGdn, MDTurc };
 
 int MDCore_RainPotETDef () {
-	int optID = MFUnset;
+	int optID = MDinput;
 	const char *optStr, *optName = MDVarCore_RainPotEvapotrans;
 	const char *options [] = { MDInputStr, "Hamon", "Jensen", "PsTaylor", "Pstd", "PMday", "PMdn", "SWGday", "SWGdn", "Turc", (char *) NULL };
 
 	if (_MDPotETID != MFUnset) return (_MDPotETID);
 
-	if ((optStr = MFOptionGet (optName)) != (char *) NULL) optID = CMoptLookup (options,optStr,true);
 	MFDefEntering ("Rainfed Potential Evapotranspiration");
-
+	if ((optStr = MFOptionGet (optName)) != (char *) NULL) optID = CMoptLookup (options,optStr,true);
 	switch (optID) {
 		case MDinput:    _MDPotETID = MFVarGetID (MDVarCore_RainPotEvapotrans, "mm", MFInput, MFFlux, false); break;
 		case MDHamon:    _MDPotETID = MDCore_RainPotETHamonDef(); break;

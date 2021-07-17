@@ -1,10 +1,10 @@
 /******************************************************************************
 
 GHAAS Water Balance/Transport Model
-Global Hydrologic Archive and Analysis System
+Global Hydrological Archive and Analysis System
 Copyright 1994-2021, UNH - ASRC/CUNY
 
-MDLandCover.c
+MDParam_LandCoverMapping.c
 
 dominik.wisser@unh.edu
 
@@ -95,7 +95,7 @@ static void _MDLCTEMVegToCover (int itemID) {
 enum { MDinput, MDLCSAGEVeg, MDLCTEMVeg };
 
 int MDParam_LandCoverMappingDef () {
-	int optID = MFUnset;
+	int optID = MDinput;
 	const char *optStr, *optName = MDVarCore_LandCoverWBM;
 	const char *options [] = { MDInputStr, "SAGEVeg", "TEMVeg",(char *) NULL };
 
@@ -107,12 +107,12 @@ int MDParam_LandCoverMappingDef () {
 		case MDinput: _MDOutCoverID = MFVarGetID (MDVarCore_LandCoverWBM, MFNoUnit, MFInput, MFState, MFBoundary); break;
 		case MDLCSAGEVeg:
 			  if (((_MDInSAGEVegID  = MFVarGetID (MDVarCore_LandCoverSAGE, MFNoUnit, MFInput, MFState, MFBoundary)) == CMfailed) ||
-                  ((_MDOutCoverID   = MFVarGetID (MDVarCore_LandCoverWBM, MFNoUnit, MFByte, MFState, MFBoundary)) == CMfailed) ||
+                  ((_MDOutCoverID   = MFVarGetID (MDVarCore_LandCoverWBM, MFNoUnit,  MFByte,  MFState, MFBoundary)) == CMfailed) ||
                   (MFModelAddFunction (_MDLCSAGEVegToCover) == CMfailed)) return (CMfailed);
 			break;
 		case MDLCTEMVeg:
 			  if (((_MDInTEMVegID   = MFVarGetID (MDVarCore_LandCoverTEM, MFNoUnit, MFInput, MFState, MFBoundary)) == CMfailed) ||
-                  ((_MDOutCoverID   = MFVarGetID (MDVarCore_LandCoverWBM, MFNoUnit, MFByte, MFState, MFBoundary)) == CMfailed) ||
+                  ((_MDOutCoverID   = MFVarGetID (MDVarCore_LandCoverWBM, MFNoUnit, MFByte,  MFState, MFBoundary)) == CMfailed) ||
                   (MFModelAddFunction (_MDLCTEMVegToCover) == CMfailed)) return (CMfailed);
 			break;
 		default: MFOptionMessage (optName, optStr, options); return (CMfailed);

@@ -69,7 +69,7 @@ static void _MDDischargeBF (int itemID) {
 enum { MDinput, MDcalculate, MDcorrected };
 
 int MDSediment_DischargeBFDef () {
-	int optID = MFUnset;
+	int optID = MDinput;
 	const char *optStr, *optName = MDOptConfig_Discharge;
 	const char *options [] = { MDInputStr, MDCalculateStr, "corrected", (char *) NULL };
 

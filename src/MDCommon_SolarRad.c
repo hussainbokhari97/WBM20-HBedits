@@ -1,10 +1,10 @@
 /******************************************************************************
 
 GHAAS Water Balance/Transport Model
-Global Hydrologic Archive and Analysis System
+Global Hydrological Archive and Analysis System
 Copyright 1994-2021, UNH - ASRC/CUNY
 
-MDSolarRad.c
+MDCommon_SolarRad.c
 
 bfekete@gc.cuny.edu
 
@@ -144,7 +144,7 @@ static void _MDSolarRadiationSun (int itemID) {
 enum { MDinput, MDcloud, MDsun };
 
 int MDCommon_SolarRadDef () {
-	int optID = MFUnset;
+	int optID = MDinput;
 	const char *optStr, *optName = MDVarCore_SolarRadiation;
 	const char *options [] = { MDInputStr, "cloud", "sun", (char *) NULL };
 
@@ -152,7 +152,6 @@ int MDCommon_SolarRadDef () {
 
 	MFDefEntering ("Solar Radiation");
 	if ((optStr = MFOptionGet (optName)) != (char *) NULL) optID = CMoptLookup (options, optStr, true);
-
 	switch (optID) {
 		case MDinput: _MDOutCommon_SolarRadID = MFVarGetID (MDVarCore_SolarRadiation, "MJ/m^2", MFInput, MFState, MFBoundary); break;
 		case MDcloud:

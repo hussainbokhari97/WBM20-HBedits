@@ -1,10 +1,10 @@
 /******************************************************************************
 
 GHAAS Water Balance/Transport Model
-Global Hydrologic Archive and Analysis System
+Global Hydrological Archive and Analysis System
 Copyright 1994-2021, UNH - ASRC/CUNY
 
-MDSoilAvailWaterCap.c
+MDCore_SoilAvailWaterCap.c
 
 bfekete@gc.cuny.edu
 
@@ -43,15 +43,14 @@ int MDCore_SoilAvailWaterCapDef () {
 	if (_MDOutSoilAvailWaterCapID != MFUnset) return (_MDOutSoilAvailWaterCapID);
 
 	MFDefEntering ("Soil available water capacity");
-
 	if ((optStr = MFOptionGet (optName)) != (char *) NULL) optID = CMoptLookup (options, optStr, true);
 		switch (optID) {
 		case MDinput: _MDOutSoilAvailWaterCapID = MFVarGetID (MDVarCore_SoilAvailWaterCap, "mm", MFInput, MFState, MFBoundary); break;
 		case MDcalculate:
-			if (((_MDInSoilFieldCapacityID  = MFVarGetID (MDVarCore_SoilFieldCapacity, "mm/m", MFInput, MFState, MFBoundary)) == CMfailed) ||
-                ((_MDInSoilWiltingPointID   = MFVarGetID (MDVarCore_SoilWiltingPoint, "mm/m", MFInput, MFState, MFBoundary)) == CMfailed) ||
-                ((_MDInSoilRootingDepthID   = MFVarGetID (MDVarCore_SoilRootingDepth, "mm", MFInput, MFState, MFBoundary)) == CMfailed) ||
-                ((_MDOutSoilAvailWaterCapID = MFVarGetID (MDVarCore_SoilAvailWaterCap, "mm", MFOutput, MFState, MFBoundary)) == CMfailed) ||
+			if (((_MDInSoilFieldCapacityID  = MFVarGetID (MDVarCore_SoilFieldCapacity,     "mm/m", MFInput,  MFState, MFBoundary)) == CMfailed) ||
+                ((_MDInSoilWiltingPointID   = MFVarGetID (MDVarCore_SoilWiltingPoint,      "mm/m", MFInput,  MFState, MFBoundary)) == CMfailed) ||
+                ((_MDInSoilRootingDepthID   = MFVarGetID (MDVarCore_SoilRootingDepth,      "mm",   MFInput,  MFState, MFBoundary)) == CMfailed) ||
+                ((_MDOutSoilAvailWaterCapID = MFVarGetID (MDVarCore_SoilAvailWaterCap,     "mm",   MFOutput, MFState, MFBoundary)) == CMfailed) ||
                 (MFModelAddFunction (_MDSoilAvailWaterCap) == CMfailed)) return (CMfailed);
 			break;
 		default: MFOptionMessage (optName, optStr, options); return (CMfailed);

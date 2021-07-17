@@ -1,10 +1,10 @@
 /******************************************************************************
 
 GHAAS Water Balance/Transport Model
-Global Hydrologic Archive and Analysis System
+Global Hydrological Archive and Analysis System
 Copyright 1994-2021, UNH - ASRC/CUNY
 
-MDSPackChg.c
+MDCore_SPackChg.c
 
 bfekete@gc.cuny.edu
 
@@ -105,14 +105,14 @@ int MDCore_SnowPackChgDef () {
 	if (((optStr = MFOptionGet (MDParSnowFallThreshold)) != (char *) NULL) && (sscanf (optStr, "%f", &par) == 1))
 		_MDFallThreshold= par;
 
-	if (((_MDInCommon_PrecipID       = MDCommon_PrecipitationDef()) == CMfailed) ||
-        ((_MDInCommon_AtMeanID       = MFVarGetID (MDVarCommon_AirTemperature, "degC", MFInput, MFState, MFBoundary)) == CMfailed) ||
-        ((_MDOutSnowFallID    = MFVarGetID (MDVarCommon_SnowFall, "mm", MFOutput, MFFlux, MFBoundary)) == CMfailed) ||
-        ((_MDOutSnowMeltID    = MFVarGetID (MDVarCore_SnowMelt, "mm", MFOutput, MFFlux, MFBoundary)) == CMfailed) ||
-        ((_MDOutSnowDensityID = MFVarGetID (MDVarCommon_SnowDensity, "mm", MFOutput, MFState, MFBoundary)) == CMfailed) ||
-        ((_MDOutSnowDepthID   = MFVarGetID (MDVarCommon_SnowDepth, "mm", MFOutput, MFState, MFBoundary)) == CMfailed) ||
-        ((_MDOutSnowPackID    = MFVarGetID (MDVarCore_SnowPack, "mm", MFOutput, MFState, MFInitial)) == CMfailed) ||
-        ((_MDOutSPackChgID    = MFVarGetID (MDVarCore_SnowPackChange, "mm", MFOutput, MFFlux, MFBoundary)) == CMfailed) ||
+	if (((_MDInCommon_PrecipID       = MDCommon_PrecipitationDef ()) == CMfailed) ||
+        ((_MDInCommon_AtMeanID       = MDCommon_AirTemperatureDef ()) == CMfailed) ||
+        ((_MDOutSnowFallID    = MFVarGetID (MDVarCommon_SnowFall,     "mm", MFOutput, MFFlux,  MFBoundary)) == CMfailed) ||
+        ((_MDOutSnowMeltID    = MFVarGetID (MDVarCore_SnowMelt,       "mm", MFOutput, MFFlux,  MFBoundary)) == CMfailed) ||
+        ((_MDOutSnowDensityID = MFVarGetID (MDVarCommon_SnowDensity,  "mm", MFOutput, MFState, MFBoundary)) == CMfailed) ||
+        ((_MDOutSnowDepthID   = MFVarGetID (MDVarCommon_SnowDepth,    "mm", MFOutput, MFState, MFBoundary)) == CMfailed) ||
+        ((_MDOutSnowPackID    = MFVarGetID (MDVarCore_SnowPack,       "mm", MFOutput, MFState, MFInitial))  == CMfailed) ||
+        ((_MDOutSPackChgID    = MFVarGetID (MDVarCore_SnowPackChange, "mm", MFOutput, MFFlux,  MFBoundary)) == CMfailed) ||
         (MFModelAddFunction (_MDSPackChg) == CMfailed)) return (CMfailed);
 	MFDefLeaving ("Snow Pack Change");
 	return (_MDOutSPackChgID);
@@ -122,7 +122,7 @@ int MDCore_SnowPackMeltDef () {
 
 	if (_MDOutSnowMeltID != MFUnset) return (_MDOutSnowMeltID);
 
-	if ((MDCore_SnowPackChgDef() == CMfailed) ||
+	if ((MDCore_SnowPackChgDef () == CMfailed) ||
         ((_MDOutSnowMeltID   = MFVarGetID (MDVarCore_SnowMelt, "mm", MFInput, MFFlux, MFBoundary)) == CMfailed))
 		return (CMfailed);
 	return (_MDOutSnowMeltID);

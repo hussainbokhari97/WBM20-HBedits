@@ -1,7 +1,7 @@
 /******************************************************************************
 
 GHAAS Water Balance/Transport Model
-Global Hydrologic Archive and Analysis System
+Global Hydrological Archive and Analysis System
 Copyright 1994-2021, UNH - ASRC/CUNY
 
 MDIntercept.c
@@ -15,7 +15,7 @@ bfekete@gc.cuny.edu
 
 static int _MDInSPackChgID      = MFUnset;
 static int _MDInPetID           = MFUnset;
-static int _MDInCommon_PrecipID        = MFUnset;
+static int _MDInCommon_PrecipID = MFUnset;
 static int _MDInCParamCHeightID = MFUnset;
 static int _MDInLeafAreaIndexID = MFUnset;
 static int _MDInStemAreaIndexID = MFUnset;
@@ -58,12 +58,12 @@ static void _MDRainIntercept (int itemID) {
 	MFVarSetFloat (_MDOutInterceptID,itemID, intercept);	
 }
 
-enum { MDnone, MDinput, MDcalc };
+enum { MDinput, MDcalculate, MDnone };
 
 int MDCore_RainInterceptDef () {
-	int optID = MFUnset;
+	int optID = MDinput;
 	const char *optStr, *optName = MDVarCore_RainInterception;
-	const char *options [] = { MDNoneStr, MDInputStr, MDCalculateStr, (char *) NULL };
+	const char *options [] = { MDInputStr, MDCalculateStr, MDNoneStr, (char *) NULL };
 
 	if ((optStr = MFOptionGet (optName)) != (char *) NULL) optID = CMoptLookup (options,optStr,true);
 
@@ -72,10 +72,9 @@ int MDCore_RainInterceptDef () {
 	MFDefEntering ("Rainfed Intercept");
 
 	switch (optID) {
-		case MDinput: _MDOutInterceptID = MFVarGetID (MDVarCore_RainInterception, "mm", MFInput, MFFlux, false); break;
-		case MDcalc:
-			if (((_MDInCommon_PrecipID        = MDCommon_PrecipitationDef()) == CMfailed) ||
-
+		case MDinput: _MDOutInterceptID = MFVarGetID (MDVarCore_RainInterception, "mm", MFInput, MFFlux, MFBoundary); break;
+		case MDcalculate:
+			if (((_MDInCommon_PrecipID = MDCommon_PrecipitationDef()) == CMfailed) ||
                 ((_MDInSPackChgID      = MDCore_SnowPackChgDef()) == CMfailed) ||
                 ((_MDInLeafAreaIndexID = MDParam_LeafAreaIndexDef()) == CMfailed) ||
                 ((_MDInStemAreaIndexID = MDParam_LCStemAreaIndexDef()) == CMfailed) ||

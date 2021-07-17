@@ -1,10 +1,10 @@
 /*****************************************************************************
 
 GHAAS Water Balance/Transport Model
-Global Hydrologic Archive and Analysis System
+Global Hydrological Archive and Analysis System
 Copyright 1994-2021, UNH - ASRC/CUNY
 
-MDPotETSWGdn.c
+MDCore_RainPotETSWGdn.c
 
 bfekete@gc.cuny.edu
 
@@ -186,26 +186,26 @@ int MDCore_RainPotETSWGdnDef () {
 	if (_MDOutPetID != MFUnset) return (_MDOutPetID);
 
 	MFDefEntering ("Rainfed Potential Evapotranspiration (Shuttleworth - Wallace [day-night])");
-	if (((_MDInDayLengthID     = MDCommon_SolarRadDayLengthDef()) == CMfailed) ||
-        ((_MDInI0HDayID        = MDCommon_SolarRadI0HDayDef()) == CMfailed) ||
-            ((_MDInCParamAlbedoID  = MDParam_LCAlbedoDef()) == CMfailed) ||
-            ((_MDInCParamCHeightID = MDParam_LCHeightDef()) == CMfailed) ||
-            ((_MDInCParamLWidthID  = MDParam_LCLeafWidthDef()) == CMfailed) ||
-            ((_MDInCParamRSSID     = MDParam_LCRSSDef()) == CMfailed) ||
-            ((_MDInCParamR5ID      = MDParam_LCR5Def()) == CMfailed) ||
-            ((_MDInCParamCDID      = MDParam_LCCDDef()) == CMfailed) ||
-            ((_MDInCParamCRID      = MDParam_LCCRDef()) == CMfailed) ||
-            ((_MDInCParamGLMaxID   = MDParam_LCGLMaxDef()) == CMfailed) ||
-            ((_MDInCParamZ0gID     = MDParam_LCZ0gDef()) == CMfailed) ||
-            ((_MDInLeafAreaIndexID = MDParam_LeafAreaIndexDef()) == CMfailed) ||
-            ((_MDInStemAreaIndexID = MDParam_LCStemAreaIndexDef()) == CMfailed) ||
-            ((_MDInSolRadID        = MDCommon_SolarRadDef()) == CMfailed) ||
-            ((_MDInCommon_AtMeanID  = MFVarGetID (MDVarCommon_AirTemperature, "degC", MFInput, MFState, MFBoundary)) == CMfailed) ||
-			((_MDInAtMinID   = MFVarGetID (MDVarCommon_AirTempMinimum, "degC", MFInput, MFState, MFBoundary)) == CMfailed) ||
-			((_MDInAtMaxID   = MFVarGetID (MDVarCommon_AirTempMaximum, "degC", MFInput, MFState, MFBoundary)) == CMfailed) ||
-			((_MDInVPressID  = MFVarGetID (MDVarCore_VaporPressure, "kPa", MFInput, MFState, MFBoundary)) == CMfailed) ||
-			((_MDInWSpeedID  = MFVarGetID (MDVarCommon_WindSpeed, "m/s", MFInput, MFState, MFBoundary)) == CMfailed) ||
-			((_MDOutPetID    = MFVarGetID (MDVarCore_RainPotEvapotrans, "mm", MFOutput, MFFlux, MFBoundary)) == CMfailed) ||
+	if (((_MDInDayLengthID     = MDCommon_SolarRadDayLengthDef ())  == CMfailed) ||
+        ((_MDInI0HDayID        = MDCommon_SolarRadI0HDayDef ())     == CMfailed) ||
+            ((_MDInCParamAlbedoID  = MDParam_LCAlbedoDef ())        == CMfailed) ||
+            ((_MDInCParamCHeightID = MDParam_LCHeightDef ())        == CMfailed) ||
+            ((_MDInCParamLWidthID  = MDParam_LCLeafWidthDef ())     == CMfailed) ||
+            ((_MDInCParamRSSID     = MDParam_LCRSSDef ())           == CMfailed) ||
+            ((_MDInCParamR5ID      = MDParam_LCR5Def ())            == CMfailed) ||
+            ((_MDInCParamCDID      = MDParam_LCCDDef ())            == CMfailed) ||
+            ((_MDInCParamCRID      = MDParam_LCCRDef ())            == CMfailed) ||
+            ((_MDInCParamGLMaxID   = MDParam_LCGLMaxDef ())         == CMfailed) ||
+            ((_MDInCParamZ0gID     = MDParam_LCZ0gDef ())           == CMfailed) ||
+            ((_MDInLeafAreaIndexID = MDParam_LeafAreaIndexDef ())   == CMfailed) ||
+            ((_MDInStemAreaIndexID = MDParam_LCStemAreaIndexDef ()) == CMfailed) ||
+            ((_MDInSolRadID        = MDCommon_SolarRadDef ())       == CMfailed) ||
+            ((_MDInCommon_AtMeanID = MDCommon_AirTemperatureDef ())  == CMfailed) ||
+			((_MDInAtMinID   = MFVarGetID (MDVarCommon_AirTempMinimum,  "degC", MFInput, MFState, MFBoundary)) == CMfailed) ||
+			((_MDInAtMaxID   = MFVarGetID (MDVarCommon_AirTempMaximum,  "degC", MFInput, MFState, MFBoundary)) == CMfailed) ||
+			((_MDInVPressID  = MFVarGetID (MDVarCore_VaporPressure,     "kPa",  MFInput, MFState, MFBoundary)) == CMfailed) ||
+			((_MDInWSpeedID  = MFVarGetID (MDVarCommon_WindSpeed,       "m/s",  MFInput, MFState, MFBoundary)) == CMfailed) ||
+			((_MDOutPetID    = MFVarGetID (MDVarCore_RainPotEvapotrans, "mm",  MFOutput, MFFlux,  MFBoundary)) == CMfailed) ||
             (MFModelAddFunction (_MDRainPotETSWGdn) == CMfailed)) return (CMfailed);
 	MFDefLeaving  ("Rainfed Potential Evapotranspiration (Shuttleworth - Wallace [day-night])");
 	return (_MDOutPetID);

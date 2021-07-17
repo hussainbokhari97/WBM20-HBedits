@@ -1,7 +1,7 @@
 /******************************************************************************
 
 GHAAS Water Balance/Transport Model
-Global Hydrologic Archive and Analysis System
+Global Hydrological Archive and Analysis System
 Copyright 1994-2021, UNH - ASRC/CUNY
 
 MDIrrUptakeGrdWater.c
@@ -15,12 +15,12 @@ dominik.wisser@unh.edu
 
 static int _MDOutCommon_IrrUptakeGrdWaterID = MFUnset;
 
-enum { MDnone, MDcalculate };
+enum { MDcalculate, MDnone };
 
 int MDIrrigation_UptakeGrdWaterDef() {
-	int optID = MFUnset;
+	int optID = MDcalculate;
 	const char *optStr, *optName = "IrrUptakeGrdWater";
-	const char *options [] = { MDNoneStr, MDCalculateStr, (char *) NULL };
+	const char *options [] = { MDCalculateStr, MDNoneStr, (char *) NULL };
 
 	if ((optStr = MFOptionGet (optName)) != (char *) NULL) optID = CMoptLookup (options, optStr, true);
 		

@@ -1,10 +1,10 @@
 /******************************************************************************
 
 GHAAS Water Balance/Transport Model
-Global Hydrologic Archive and Analysis System
+Global Hydrological Archive and Analysis System
 Copyright 1994-2021, UNH - ASRC/CUNY
 
-MDTempSurfRunoff.c
+MDTP2M_TempSurfRunoff.c
 
 wil.wollheim@unh.edu
 
@@ -50,13 +50,11 @@ int MDTP2M_WTempSurfRunoffDef () {
 	if (_MDOutWTempSurfROID != MFUnset) return (_MDOutWTempSurfROID);
 
 	MFDefEntering ("Surface runoff temperature");
-
 	if (((_MDInSnowMeltID     = MDCore_SnowPackMeltDef()) == CMfailed) ||
         ((_MDInWetBulbTempID  = MDCommon_WetBulbTempDef()) == CMfailed) ||
         ((_MDInCommon_AirTemperatureID      = MFVarGetID (MDVarCommon_AirTemperature, "degC", MFInput,  MFState, MFBoundary)) == CMfailed) ||
         ((_MDOutWTempSurfROID = MFVarGetID (MDVarTP2M_WTempSurfRunoff,  "degC", MFOutput, MFState, MFBoundary)) == CMfailed) ||
         (MFModelAddFunction (_MDWTempSurfRunoff) == CMfailed)) return (CMfailed);
-
 	MFDefLeaving ("Surface runoff temperature");
 	return (_MDOutWTempSurfROID);
 }

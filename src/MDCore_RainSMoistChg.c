@@ -1,7 +1,7 @@
 /******************************************************************************
 
 GHAAS Water Balance/Transport Model
-Global Hydrologic Archive and Analysis System
+Global Hydrological Archive and Analysis System
 Copyright 1994-2021, UNH - ASRC/CUNY
 
 MDRainSMoistChg.c
@@ -17,13 +17,13 @@ bfekete@gc.cuny.edu
 static float _MDSoilMoistALPHA = 5.0;
 
 // Input
-static int _MDInAirTemperatureID            = MFUnset;
-static int _MDInCommon_PrecipID              = MFUnset;
+static int _MDInAirTemperatureID      = MFUnset;
+static int _MDInCommon_PrecipID       = MFUnset;
 static int _MDInPotETID               = MFUnset;
 static int _MDInInterceptID           = MFUnset;
 static int _MDInSPackChgID            = MFUnset;
 static int _MDInSoilAvailWaterCapID   = MFUnset;
-static int _MDInIrrigation_AreaFracID         = MFUnset;
+static int _MDInIrrigation_AreaFracID = MFUnset;
 static int _MDInRelativeIceContent    = MFUnset;
 // Output
 static int _MDOutEvaptrsID            = MFUnset;
@@ -52,8 +52,8 @@ static void _MDRainSMoistChg (int itemID) {
 	float awCap;
 	float gm;
 	float iceContent;
-	airT         = MFVarGetFloat (_MDInAirTemperatureID,          itemID, 0.0);
-	precip       = MFVarGetFloat (_MDInCommon_PrecipID,            itemID, 0.0);
+	airT         = MFVarGetFloat (_MDInAirTemperatureID,    itemID, 0.0);
+	precip       = MFVarGetFloat (_MDInCommon_PrecipID,     itemID, 0.0);
  	sPackChg     = MFVarGetFloat (_MDInSPackChgID,          itemID, 0.0);
 	pet          = MFVarGetFloat (_MDInPotETID,             itemID, 0.0);
 	awCap        = MFVarGetFloat (_MDInSoilAvailWaterCapID, itemID, 0.0);
@@ -84,8 +84,6 @@ static void _MDRainSMoistChg (int itemID) {
 	if (_MDOutLiquidSoilMoistureID != MFUnset) MFVarSetFloat (_MDOutLiquidSoilMoistureID,itemID, sMoist/awCap);
 }
 
-enum { MFnone, MFcalculate };
-
 int MDCore_RainSMoistChgDef () {
 	int ret = 0;
 	float par;
@@ -100,16 +98,16 @@ int MDCore_RainSMoistChgDef () {
 	if ((ret = MDIrrigation_GrossDemandDef()) == CMfailed) return (CMfailed);
 	if ((ret != MFUnset) && ((_MDInIrrigation_AreaFracID = MDIrrigation_IrrAreaDef()) == CMfailed) ) return (CMfailed);
 
-	if (((_MDInCommon_PrecipID            = MDCommon_PrecipitationDef()) == CMfailed) ||
-        ((_MDInSPackChgID          = MDCore_SnowPackChgDef()) == CMfailed) ||
-        ((_MDInPotETID             = MDCore_RainPotETDef()) == CMfailed) ||
-        ((_MDInInterceptID         = MDCore_RainInterceptDef()) == CMfailed) ||
-        ((_MDInSoilAvailWaterCapID = MDCore_SoilAvailWaterCapDef()) == CMfailed) ||
-        ((_MDInAirTemperatureID          = MFVarGetID (MDVarCommon_AirTemperature, "degC", MFInput, MFState, MFBoundary)) == CMfailed) ||
-        ((_MDOutEvaptrsID          = MFVarGetID (MDVarCore_RainEvapotranspiration, "mm", MFOutput, MFFlux, MFBoundary)) == CMfailed) ||
-        ((_MDOutSoilMoistCellID    = MFVarGetID (MDVarCore_RainSoilMoistureCell, "mm", MFOutput, MFState, MFInitial)) == CMfailed) ||
-        ((_MDOutSoilMoistID        = MFVarGetID (MDVarCore_RainSoilMoisture, "mm", MFOutput, MFState, MFBoundary)) == CMfailed) ||
-        ((_MDOutSMoistChgID        = MFVarGetID (MDVarCore_RainSoilMoistChange, "mm", MFOutput, MFState, MFBoundary)) == CMfailed) ||
+	if (((_MDInCommon_PrecipID     = MDCommon_PrecipitationDef ())   == CMfailed) ||
+        ((_MDInSPackChgID          = MDCore_SnowPackChgDef ())       == CMfailed) ||
+        ((_MDInPotETID             = MDCore_RainPotETDef ())         == CMfailed) ||
+        ((_MDInInterceptID         = MDCore_RainInterceptDef ())     == CMfailed) ||
+        ((_MDInSoilAvailWaterCapID = MDCore_SoilAvailWaterCapDef ()) == CMfailed) ||
+        ((_MDInAirTemperatureID    = MFVarGetID (MDVarCommon_AirTemperature,      "degC", MFInput, MFState, MFBoundary))  == CMfailed) ||
+        ((_MDOutEvaptrsID          = MFVarGetID (MDVarCore_RainEvapotranspiration, "mm",  MFOutput, MFFlux, MFBoundary))  == CMfailed) ||
+        ((_MDOutSoilMoistCellID    = MFVarGetID (MDVarCore_RainSoilMoistureCell,   "mm",  MFOutput, MFState, MFInitial))  == CMfailed) ||
+        ((_MDOutSoilMoistID        = MFVarGetID (MDVarCore_RainSoilMoisture,       "mm",  MFOutput, MFState, MFInitial))  == CMfailed) ||
+        ((_MDOutSMoistChgID        = MFVarGetID (MDVarCore_RainSoilMoistChange,    "mm",  MFOutput, MFState, MFBoundary)) == CMfailed) ||
         (MFModelAddFunction (_MDRainSMoistChg) == CMfailed)) return (CMfailed);
 	MFDefLeaving ("Rainfed Soil Moisture");
 	return (_MDOutSMoistChgID);

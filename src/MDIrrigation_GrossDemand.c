@@ -1,7 +1,7 @@
 /******************************************************************************
 
 GHAAS Water Balance/Transport Model
-Global Hydrologic Archive and Analysis System
+Global Hydrological Archive and Analysis System
 Copyright 1994-2021, UNH - ASRC/CUNY
 
 MDIrrigation.c
@@ -345,12 +345,12 @@ static void _MDIrrGrossDemand (int itemID) {
 
 #define MDParIrrigationCropFileName "CropParameterFileName"
  
-enum { MDnone, MDinput, MDcalculate };
+enum { MDinput, MDcalculate, MDnone };
 
 int MDIrrigation_GrossDemandDef () {
-	int optID = MFUnset;
+	int optID = MDinput;
 	const char *optStr, *optName = MDOptConfig_Irrigation;
-	const char *options [] = { MDNoneStr, MDInputStr, MDCalculateStr, (char *) NULL };
+	const char *options [] = { MDInputStr, MDCalculateStr, MDNoneStr, (char *) NULL };
 	const char *cropParameterFileName;
 	int cropID;
 	char cropFractionName  [128];
@@ -358,12 +358,10 @@ int MDIrrigation_GrossDemandDef () {
 	char cropSMoistName    [128];
 	char cropActSMoistName [128];
 
-	if ((optStr = MFOptionGet (optName)) != (char *) NULL) optID = CMoptLookup (options,optStr,true);
-
 	if ((optID == MDnone) || (_MDOutIrrGrossDemandID != MFUnset)) return (_MDOutIrrGrossDemandID);
 
 	MFDefEntering ("Irrigation Gross Demand");
-
+	if ((optStr = MFOptionGet (optName)) != (char *) NULL) optID = CMoptLookup (options,optStr,true);
 	switch (optID) {
 		case MDinput:
 			if (((_MDOutIrrGrossDemandID = MFVarGetID (MDVarIrrigation_GrossDemand, "mm", MFInput, MFFlux, MFBoundary)) == CMfailed) ||

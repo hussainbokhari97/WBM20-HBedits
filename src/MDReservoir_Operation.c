@@ -1,10 +1,10 @@
 /******************************************************************************
 
 GHAAS Water Balance/Transport Model
-Global Hydrologic Archive and Analysis System
+Global Hydrological Archive and Analysis System
 Copyright 1994-2021, UNH - ASRC/CUNY
 
-MDReservoirs.c
+MDReservoir_Operation.c
 
 dominik.wisser@unh.edu
 
@@ -95,32 +95,27 @@ static void _MDReservoir (int itemID) {
 	MFVarSetFloat (_MDOutResStorageID,    itemID, resStorage);
 	MFVarSetFloat (_MDOutResStorageChgID, itemID, resStorageChg);
 	MFVarSetFloat (_MDOutResReleaseID,    itemID, resRelease);
-
-//	if ((itemID == 25014) && (year < 1980)) printf("y = %f, m= %d, d= %d, dt = %f, balance = %f, resCapacity = %f, Q = %f, meanQ = %f, resRelease = %f, resStorage = %f, prevResStorage = %f\n", year, MFDateGetCurrentMonth(), MFDateGetCurrentDay(), dt, balance, resCapacity, discharge, meanDischarge, resRelease, resStorage*1000000000, prevResStorage*1000000000);
-
-
 }
 
-enum { MDnone, MDcalculate };
+enum { MDcalculate, MDnone };
 
 int MDReservoir_OperationDef () {
-	int optID = MFUnset;
+	int optID = MDcalculate;
 	const char *optStr, *optName = MDOptConfig_Reservoirs;
-	const char *options [] = { MDNoneStr, MDCalculateStr, (char *) NULL };
- 
-	if ((optStr = MFOptionGet (optName)) != (char *) NULL) optID = CMoptLookup (options, optStr, true);
+	const char *options [] = { MDCalculateStr, MDNoneStr, (char *) NULL };
  
 	if ((optID == MDnone) || (_MDOutResReleaseID != MFUnset)) return (_MDOutResReleaseID);
 
 	MFDefEntering ("Reservoirs");
-	switch (optID) {
+	if ((optStr = MFOptionGet (optName)) != (char *) NULL) optID = CMoptLookup (options, optStr, true);
+ 	switch (optID) {
 		case MDcalculate:
-			if (((_MDInAux_MeanDischargeID      = MDAux_MeanDiscargehDef()) == CMfailed) ||
-                ((_MDInRouting_DischargeID      = MDRouting_DischargeUptake()) == CMfailed) ||
-                ((_MDInResCapacityID    = MFVarGetID (MDVarReservoir_Capacity, "km3", MFInput, MFState, MFBoundary)) == CMfailed) ||
-                ((_MDOutResStorageID    = MFVarGetID (MDVarReservoir_Storage, "km3", MFOutput, MFState, MFInitial)) == CMfailed) ||
-                ((_MDOutResStorageChgID = MFVarGetID (MDVarReservoir_StorageChange, "km3", MFOutput, MFState, MFBoundary)) == CMfailed) ||		//RJS, changed MFBoundary o MFIniial
-			    ((_MDOutResReleaseID    = MFVarGetID (MDVarReservoir_Release, "m3/s", MFOutput, MFFlux, MFBoundary)) == CMfailed) ||
+			if (((_MDInAux_MeanDischargeID = MDAux_MeanDiscargehDef ())    == CMfailed) ||
+                ((_MDInRouting_DischargeID = MDRouting_DischargeUptake ()) == CMfailed) ||
+                ((_MDInResCapacityID       = MFVarGetID (MDVarReservoir_Capacity,      "km3",  MFInput,  MFState, MFBoundary)) == CMfailed) ||
+                ((_MDOutResStorageID       = MFVarGetID (MDVarReservoir_Storage,       "km3",  MFOutput, MFState, MFInitial))  == CMfailed) ||
+                ((_MDOutResStorageChgID    = MFVarGetID (MDVarReservoir_StorageChange, "km3",  MFOutput, MFState, MFBoundary)) == CMfailed) ||
+			    ((_MDOutResReleaseID       = MFVarGetID (MDVarReservoir_Release,       "m3/s", MFOutput, MFFlux,  MFBoundary)) == CMfailed) ||
                 (MFModelAddFunction (_MDReservoir) == CMfailed)) return (CMfailed);
 			break;
 		default: MFOptionMessage (optName, optStr, options); return (CMfailed);

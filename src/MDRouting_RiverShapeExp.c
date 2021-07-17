@@ -1,10 +1,10 @@
 /******************************************************************************
 
 GHAAS Water Balance/Transport Model
-Global Hydrologic Archive and Analysis System
+Global Hydrological Archive and Analysis System
 Copyright 1994-2021, UNH - ASRC/CUNY
 
-MDRiverShapeExp.c
+MDRouting_RiverShapeExp.c
 
 bfekete@gc.cuny.edu
 
@@ -69,7 +69,7 @@ static void _MDRiverShapeExponent (int itemID) {
 enum { MDinput, MDindependent, MDdependent };
 
 int MDRouting_RiverShapeExponentDef () {
-	int  optID = MFUnset;
+	int  optID = MDinput;
 	const char *optStr, *optName = MDOptRouting_Riverbed;
 	const char *options [] = { MDInputStr, "slope-independent", "slope-dependent", (char *) NULL };
 
@@ -77,7 +77,6 @@ int MDRouting_RiverShapeExponentDef () {
 
 	MFDefEntering ("River Shape Exponent");
 	if ((optStr = MFOptionGet (optName)) != (char *) NULL) optID = CMoptLookup (options,optStr,true);
-
 	switch (optID) {
 		case MDinput:
 			if (((_MDOutRiverAvgDepthMeanID  = MFVarGetID (MDVarRouting_RiverAvgDepthMean, "m", MFInput, MFState, MFBoundary)) == CMfailed) ||

@@ -1,10 +1,10 @@
 /******************************************************************************
 
 GHAAS Water Balance/Transport Model
-Global Hydrologic Archive and Analysis System
+Global Hydrological Archive and Analysis System
 Copyright 1994-2021, UNH - ASRC/CUNY
 
-MDRiverWidth.c
+MDRouting_RiverWidth.c
 
 bfekete@gc.cuny.edu
 
@@ -69,12 +69,12 @@ int MDRouting_RiverWidthDef () {
 	MFDefEntering ("River Geometry");
 
 	if (((_MDInRiverbedShapeExponentID = MDRouting_RiverShapeExponentDef()) == CMfailed) ||
-	    ((_MDInRouting_DischargeID     = MFVarGetID (MDVarRouting_Discharge,            "m3/s", MFRoute,  MFState, MFBoundary)) == CMfailed) ||
+	    ((_MDInRouting_DischargeID     = MFVarGetID (MDVarRouting_Discharge,         "m3/s", MFRoute,  MFState, MFBoundary)) == CMfailed) ||
         ((_MDInRiverbedAvgDepthMeanID  = MFVarGetID (MDVarRouting_RiverAvgDepthMean, "m",    MFInput,  MFState, MFBoundary)) == CMfailed) ||
         ((_MDInRiverbedWidthMeanID     = MFVarGetID (MDVarRouting_RiverWidthMean,    "m",    MFInput,  MFState, MFBoundary)) == CMfailed) ||
         ((_MDInRiverbedVelocityMeanID  = MFVarGetID (MDVarRouting_RiverVelocityMean, "m/s",  MFInput,  MFState, MFBoundary)) == CMfailed) ||
-        ((_MDOutRiverDepthID           = MFVarGetID (MDVarRouting_RiverDepth,           "m",    MFOutput, MFState, MFBoundary)) == CMfailed) ||
-        ((_MDOutRiverWidthID           = MFVarGetID (MDVarRouting_RiverWidth,           "m",    MFOutput, MFState, MFBoundary)) == CMfailed) ||
+        ((_MDOutRiverDepthID           = MFVarGetID (MDVarRouting_RiverDepth,        "m",    MFOutput, MFState, MFBoundary)) == CMfailed) ||
+        ((_MDOutRiverWidthID           = MFVarGetID (MDVarRouting_RiverWidth,        "m",    MFOutput, MFState, MFBoundary)) == CMfailed) ||
         (MFModelAddFunction (_MDRiverWidth) == CMfailed)) return (CMfailed);
 	MFDefLeaving ("River Geometry");
 

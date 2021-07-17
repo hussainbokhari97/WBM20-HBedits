@@ -1,10 +1,10 @@
 /******************************************************************************
 
 GHAAS Water Balance/Transport Model
-Global Hydrologic Archive and Analysis System
+Global Hydrological Archive and Analysis System
 Copyright 1994-2021, UNH - ASRC/CUNY
 
-MDRunoff.c
+MDCore_Runoff.c
 
 bfekete@gc.cuny.edu
 
@@ -35,7 +35,7 @@ static void _MDRunoff (int itemID) {
 enum { MDinput, MDcalculate, MDcorrected };
 
 int MDCore_RunoffDef () {
-	int  optID = MFUnset;
+	int  optID = MDinput;
 	const char *optStr, *optName = MDVarCore_Runoff;
 	const char *options [] = { MDInputStr, MDCalculateStr, "corrected", (char *) NULL };
 
@@ -49,7 +49,7 @@ int MDCore_RunoffDef () {
 			if ((_MDInRunoffCorrID  = MFVarGetID (MDVarDataAssim_RunoffCorretion, MFNoUnit, MFInput, MFState, MFBoundary)) == CMfailed)
 				return (CMfailed);
 		case MDcalculate:		
-			if (((_MDInBaseFlowID   = MDCore_BaseFlowDef()) == CMfailed) ||
+			if (((_MDInBaseFlowID        = MDCore_BaseFlowDef()) == CMfailed) ||
                 ((_MDInSurfCore_RunoffID = MDCore_SurfRunoffDef()) == CMfailed) ||
                 ((_MDOutCore_RunoffID    = MFVarGetID (MDVarCore_Runoff, "mm", MFOutput, MFFlux, MFBoundary)) == CMfailed) ||
                 (MFModelAddFunction (_MDRunoff) == CMfailed)) return (CMfailed);

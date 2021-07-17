@@ -1,10 +1,12 @@
 /******************************************************************************
+
 Phase 1.5 of the WBMsed model.
 Calculate bankfull discharge based on 2-yaers and 5-rears maximum discharge reacurance (Q2 and Q5).
 It reads the log yearly-maximum discharge  per pixel from a text file (Scripts/year_max_logQ.txt)
 generated at the MDBQARTpreprocess module. It then calculate the sum, mean, standard deviation and
 skew of its distribution. The Q2 and Q5 are calculated based on the logaritmic Pearson III distribution.
-MDQBankfullQcalc.c
+MDRouting_QBankfullQcalc.c
+
 sagy.cohen@colorado.edu.au
 last update: May 16 2011
 *******************************************************************************/
@@ -29,8 +31,6 @@ static int _MDOutBankfullQ25ID   	= MFUnset;
 static int _MDOutBankfullQ50ID   	= MFUnset;
 static int _MDOutBankfullQ100ID   	= MFUnset;
 static int _MDOutBankfullQ200ID   	= MFUnset;
-
-
 
 static void _MDBankfullQcalc (int itemID) {
 	/*static int p=1;*/
@@ -60,19 +60,19 @@ static void _MDBankfullQcalc (int itemID) {
 		K100 = 0.0023*pow(Skew,4) - 0.0192*pow(Skew,3) - 0.0151*pow(Skew,2) + 0.7322*Skew + 2.3212;
 		K200 = 0.0020*pow(Skew,4) - 0.0243*pow(Skew,3) + 0.0115*pow(Skew,2) + 0.9272*Skew + 2.5679;
 		
-		LogQ2 = Mean + K2*StdDev;
-		LogQ5 = Mean + K5*StdDev;
-		LogQ10 = Mean + K10*StdDev;
-		LogQ25 = Mean + K25*StdDev;
-		LogQ50 = Mean + K50*StdDev;
+		LogQ2   = Mean + K2*StdDev;
+		LogQ5   = Mean + K5*StdDev;
+		LogQ10  = Mean + K10*StdDev;
+		LogQ25  = Mean + K25*StdDev;
+		LogQ50  = Mean + K50*StdDev;
 		LogQ100 = Mean + K100*StdDev;
 		LogQ200 = Mean + K200*StdDev;
 	
-		BankfullQ2 = pow(10,LogQ2);
-		BankfullQ5 = pow(10,LogQ5);
-		BankfullQ10 = pow(10,LogQ10);
-		BankfullQ25 = pow(10,LogQ25);
-		BankfullQ50 = pow(10,LogQ50);
+		BankfullQ2   = pow(10,LogQ2);
+		BankfullQ5   = pow(10,LogQ5);
+		BankfullQ10  = pow(10,LogQ10);
+		BankfullQ25  = pow(10,LogQ25);
+		BankfullQ50  = pow(10,LogQ50);
 		BankfullQ100 = pow(10,LogQ100);
 		BankfullQ200 = pow(10,LogQ200);
 
@@ -85,8 +85,6 @@ static void _MDBankfullQcalc (int itemID) {
 		MFVarSetFloat (_MDOutBankfullQ200ID, itemID, BankfullQ200);
 	}
 }
-
-enum { MDinput, MDcalculate, MDcorrected };
 
 int MDRouting_BankfullQcalcDef () {
 
