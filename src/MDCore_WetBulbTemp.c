@@ -141,7 +141,7 @@ int MDCommon_WetBulbTempDef () {
         case MDcalculate:
             if (((_MDInCommon_HumiditySpecificID = MDCommon_HumiditySpecificDef ()) == CMfailed) ||
                 ((_MDInCommon_HumidityRelativeID = MDCommon_HumidityRelativeDef ()) == CMfailed) ||
-                ((_MDInCommon_AirTemperatureID   = MDCommon_AirTemperatureDef ())    == CMfailed) ||
+                ((_MDInCommon_AirTemperatureID   = MDCommon_AirTemperatureDef ())   == CMfailed) ||
                 ((_MDInCommon_AirPressureID      = MFVarGetID (MDVarCommon_AirPressure, "kPa",  MFInput,  MFState, MFBoundary)) == CMfailed) ||
                 ((_MDOutWetBulbTempID            = MFVarGetID (MDVarCommon_WetBulbTemp, "degC", MFOutput, MFState, MFBoundary)) == CMfailed) ||
                 ((MFModelAddFunction (_MDWetBulbTemp) == CMfailed))) return (CMfailed);

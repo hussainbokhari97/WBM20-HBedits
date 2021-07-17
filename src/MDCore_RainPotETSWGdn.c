@@ -200,7 +200,7 @@ int MDCore_RainPotETSWGdnDef () {
             ((_MDInLeafAreaIndexID = MDParam_LeafAreaIndexDef ())   == CMfailed) ||
             ((_MDInStemAreaIndexID = MDParam_LCStemAreaIndexDef ()) == CMfailed) ||
             ((_MDInSolRadID        = MDCommon_SolarRadDef ())       == CMfailed) ||
-            ((_MDInCommon_AtMeanID = MDCommon_AirTemperatureDef ())  == CMfailed) ||
+            ((_MDInCommon_AtMeanID = MDCommon_AirTemperatureDef ()) == CMfailed) ||
 			((_MDInAtMinID   = MFVarGetID (MDVarCommon_AirTempMinimum,  "degC", MFInput, MFState, MFBoundary)) == CMfailed) ||
 			((_MDInAtMaxID   = MFVarGetID (MDVarCommon_AirTempMaximum,  "degC", MFInput, MFState, MFBoundary)) == CMfailed) ||
 			((_MDInVPressID  = MFVarGetID (MDVarCore_VaporPressure,     "kPa",  MFInput, MFState, MFBoundary)) == CMfailed) ||

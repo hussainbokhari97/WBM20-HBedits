@@ -105,7 +105,7 @@ int MDCore_SnowPackChgDef () {
 	if (((optStr = MFOptionGet (MDParSnowFallThreshold)) != (char *) NULL) && (sscanf (optStr, "%f", &par) == 1))
 		_MDFallThreshold= par;
 
-	if (((_MDInCommon_PrecipID       = MDCommon_PrecipitationDef ()) == CMfailed) ||
+	if (((_MDInCommon_PrecipID       = MDCommon_PrecipitationDef ())  == CMfailed) ||
         ((_MDInCommon_AtMeanID       = MDCommon_AirTemperatureDef ()) == CMfailed) ||
         ((_MDOutSnowFallID    = MFVarGetID (MDVarCommon_SnowFall,     "mm", MFOutput, MFFlux,  MFBoundary)) == CMfailed) ||
         ((_MDOutSnowMeltID    = MFVarGetID (MDVarCore_SnowMelt,       "mm", MFOutput, MFFlux,  MFBoundary)) == CMfailed) ||

@@ -136,7 +136,7 @@ int MDCore_RainPotETPMdayDef () {
         ((_MDInLeafAreaIndexID = MDParam_LeafAreaIndexDef ())      == CMfailed) ||
         ((_MDInStemAreaIndexID = MDParam_LCStemAreaIndexDef ())    == CMfailed) ||
         ((_MDInSolRadID        = MDCommon_SolarRadDef ())          == CMfailed) ||
-        ((_MDInCommon_AtMeanID = MDCommon_AirTemperatureDef ())     == CMfailed) ||
+        ((_MDInCommon_AtMeanID = MDCommon_AirTemperatureDef ())    == CMfailed) ||
 		((_MDInVPressID        = MFVarGetID (MDVarCore_VaporPressure,     "kPa", MFInput,  MFState, MFBoundary)) == CMfailed) ||
 		((_MDInWSpeedID        = MFVarGetID (MDVarCommon_WindSpeed,       "m/s", MFInput,  MFState, MFBoundary)) == CMfailed) ||
 		((_MDOutPetID          = MFVarGetID (MDVarCore_RainPotEvapotrans, "mm",  MFOutput, MFFlux,  MFBoundary)) == CMfailed) ||

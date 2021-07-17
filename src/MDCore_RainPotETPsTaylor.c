@@ -79,7 +79,7 @@ int MDCore_RainPotETPsTaylorDef () {
         ((_MDInI0HDayID        = MDCommon_SolarRadI0HDayDef ())    == CMfailed) ||
         ((_MDInCParamAlbedoID  = MDParam_LCAlbedoDef ())           == CMfailed) ||
         ((_MDInSolRadID        = MDCommon_SolarRadDef ())          == CMfailed) ||
-        ((_MDInCommon_AtMeanID = MDCommon_AirTemperatureDef ())     == CMfailed) ||
+        ((_MDInCommon_AtMeanID = MDCommon_AirTemperatureDef ())    == CMfailed) ||
         ((_MDInVPressID  = MFVarGetID (MDVarCore_VaporPressure,     "kPa", MFInput,  MFState, MFBoundary)) == CMfailed) ||
         ((_MDOutPetID    = MFVarGetID (MDVarCore_RainPotEvapotrans, "mm",  MFOutput, MFFlux,  MFBoundary)) == CMfailed) ||
         (MFModelAddFunction (_MDRainPotETPsTaylor) == CMfailed)) return (CMfailed);

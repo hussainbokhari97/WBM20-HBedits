@@ -41,7 +41,7 @@ int MDIrrigation_Reference_ETHamonDef () {
 
 	MFDefEntering ("Hamon as ReferenceETP");
 	if (((_MDInDayLengthID      = MDCommon_SolarRadDayLengthDef()) == CMfailed) ||
-        ((_MDInCommon_AtMeanID  = MDCommon_AirTemperatureDef ())    == CMfailed) ||
+        ((_MDInCommon_AtMeanID  = MDCommon_AirTemperatureDef ())   == CMfailed) ||
         ((_MDOutPetID           = MFVarGetID (MDVarIrrigation_RefEvapotrans, "mm", MFOutput, MFFlux, MFBoundary)) == CMfailed) ||
         (MFModelAddFunction (_MDIrrRefEvapotransHamon) == CMfailed)) return (CMfailed);
 	MFDefLeaving ("Hamon as ReferenceETP");

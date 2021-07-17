@@ -39,7 +39,7 @@ int MDCore_RainPotETTurcDef () {
 	if (_MDOutPetID != MFUnset) return (_MDOutPetID);
 
 	MFDefEntering ("Rainfed Potential Evapotranspiration (Turc)");
-	if (((_MDInSolRadID        = MDCommon_SolarRadDef ())      == CMfailed) ||
+	if (((_MDInSolRadID        = MDCommon_SolarRadDef ())       == CMfailed) ||
         ((_MDInCommon_AtMeanID = MDCommon_AirTemperatureDef ()) == CMfailed) ||
         ((_MDOutPetID          = MFVarGetID (MDVarCore_RainPotEvapotrans, "mm", MFOutput, MFFlux, MFBoundary)) == CMfailed) ||
         (MFModelAddFunction (_MDRainPotETTurc) == CMfailed)) return (CMfailed);
