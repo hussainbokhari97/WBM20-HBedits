@@ -358,10 +358,10 @@ int MDIrrigation_GrossDemandDef () {
 	char cropSMoistName    [128];
 	char cropActSMoistName [128];
 
+	if ((optStr = MFOptionGet (optName)) != (char *) NULL) optID = CMoptLookup (options,optStr,true);
 	if ((optID == MDnone) || (_MDOutIrrGrossDemandID != MFUnset)) return (_MDOutIrrGrossDemandID);
 
 	MFDefEntering ("Irrigation Gross Demand");
-	if ((optStr = MFOptionGet (optName)) != (char *) NULL) optID = CMoptLookup (options,optStr,true);
 	switch (optID) {
 		case MDinput:
 			if (((_MDOutIrrGrossDemandID = MFVarGetID (MDVarIrrigation_GrossDemand, "mm", MFInput, MFFlux, MFBoundary)) == CMfailed) ||

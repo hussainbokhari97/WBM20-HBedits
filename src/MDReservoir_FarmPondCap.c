@@ -62,10 +62,11 @@ int MDReservoir_FarmPondCapacityDef () {
 	const char *optStr, *optName = MDVarReservoir_FarmPondSmallResCapacity;
 	const char *options [] = { MDInputStr, MDCalculateStr, MDNoneStr, (char *) NULL };
 
+	
 	if ((optStr = MFOptionGet (optName)) != (char *) NULL) optID = CMoptLookup (options, optStr, true);
-		
-	MFDefEntering("SmallReservoirCapacity");
 	if ((optID == MDnone) || (_MDOutSmallResCapacityID != MFUnset)) return (_MDOutSmallResCapacityID);
+
+	MFDefEntering("SmallReservoirCapacity");
 	if ((_MDInIrrigation_GrossDemandID = MDIrrigation_GrossDemandDef()) != MFUnset) {
 		switch (optID) {
 			case MDinput:

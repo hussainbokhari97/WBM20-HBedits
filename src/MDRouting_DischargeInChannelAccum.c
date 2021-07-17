@@ -14,7 +14,7 @@ bfekete@gc.cuny.edu
 #include <MD.h>
 
 // Input
-static int _MDInAux_RunoffVolumeID  = MFUnset;
+static int _MDInAux_RunoffVolumeID      = MFUnset;
 static int _MDInRouting_DischargeID     = MFUnset;
 // Output
 static int _MDOutRouting_DischLevel3ID  = MFUnset;
