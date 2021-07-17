@@ -107,7 +107,7 @@ int MDCommon_PrecipitationDef () {
 	MFDefEntering ("Precipitation");
 	if ((optStr = MFOptionGet (optName)) != (char *) NULL) optID = CMoptLookup (options,optStr,true);
 	switch (optID) {
-		case MDinput: _MDOutCommon_PrecipitationID = MFVarGetID (MDVarCommon_Precipitation,              "mm", MFInput, MFFlux, MFBoundary); break;
+		case MDinput: _MDOutCommon_PrecipitationID      = MFVarGetID (MDVarCommon_Precipitation,         "mm", MFInput, MFFlux, MFBoundary); break;
 		case MDwetdays:
 			if (((_MDInCommon_PrecipitationWetDaysID    = MDCommon_WetDaysDef ()) == CMfailed) ||
                 ((_MDInCommon_PrecipitationMonthlyID    = MFVarGetID (MDVarCommon_PrecipMonthly,         "mm", MFInput,  MFFlux, MFBoundary)) == CMfailed) ||
