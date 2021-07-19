@@ -15,12 +15,12 @@ dominink.wisser@unh.edu
 
 static int _MDOutIrrRefEvapotransID = MFUnset;
 
-enum { MDinput, MDhamon, MDfao };
+enum { MDinput, MDhamon, MDfao, MDhelp };
 
 int MDIrrigation_ReferenceETDef () {
 	int optID = MDinput;
 	const char *optStr, *optName = MDOptIrrigation_ReferenceET;
-	const char *options [] = { MDInputStr, "Hamon", "FAO", (char *) NULL };
+	const char *options [] = { MFinputStr, "Hamon", "FAO", MFhelpStr, (char *) NULL };
 
 	if (_MDOutIrrRefEvapotransID != MFUnset) return (_MDOutIrrRefEvapotransID);
 
@@ -29,6 +29,7 @@ int MDIrrigation_ReferenceETDef () {
 	if (MDCore_SnowPackChgDef() == CMfailed) return (CMfailed);
 
 	switch (optID) {
+		case MDhelp:  MFOptionMessage (optName, optStr, options);
 		case MDinput: _MDOutIrrRefEvapotransID = MFVarGetID (MDVarIrrigation_RefEvapotrans, "mm", MFInput, MFFlux, false); break;
 		case MDhamon: _MDOutIrrRefEvapotransID = MDIrrigation_Reference_ETHamonDef(); break;
 		case MDfao:   _MDOutIrrRefEvapotransID = MDIrrigation_ReferenceETFAODef(); break;

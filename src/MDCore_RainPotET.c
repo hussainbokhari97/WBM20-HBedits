@@ -15,19 +15,20 @@ bfekete@gc.cuny.edu
 
 static int _MDPotETID = MFUnset;
 
-enum { MDinput, MDHamon, MDJensen, MDPsTaylor, MDPstd, MDPMday, MDPMdn, MDSWGday, MDSWGdn, MDTurc };
+enum { MDinput, MDHamon, MDJensen, MDPsTaylor, MDPstd, MDPMday, MDPMdn, MDSWGday, MDSWGdn, MDTurc, MDhelp };
 
 int MDCore_RainPotETDef () {
 	int optID = MDinput;
 	const char *optStr, *optName = MDVarCore_RainPotEvapotrans;
-	const char *options [] = { MDInputStr, "Hamon", "Jensen", "PsTaylor", "Pstd", "PMday", "PMdn", "SWGday", "SWGdn", "Turc", (char *) NULL };
+	const char *options [] = { MFinputStr, "Hamon", "Jensen", "PsTaylor", "Pstd", "PMday", "PMdn", "SWGday", "SWGdn", "Turc", MFhelpStr, (char *) NULL };
 
 	if (_MDPotETID != MFUnset) return (_MDPotETID);
 
 	MFDefEntering ("Rainfed Potential Evapotranspiration");
 	if ((optStr = MFOptionGet (optName)) != (char *) NULL) optID = CMoptLookup (options,optStr,true);
 	switch (optID) {
-		case MDinput:    _MDPotETID = MFVarGetID (MDVarCore_RainPotEvapotrans, "mm", MFInput, MFFlux, false); break;
+		case MDhelp:  MFOptionMessage (optName, optStr, options);
+		case MDinput: _MDPotETID = MFVarGetID (MDVarCore_RainPotEvapotrans, "mm", MFInput, MFFlux, false); break;
 		case MDHamon:    _MDPotETID = MDCore_RainPotETHamonDef ();    break;
 		case MDJensen:   _MDPotETID = MDCore_RainPotETJensenDef ();   break;
 		case MDPsTaylor: _MDPotETID = MDCore_RainPotETPsTaylorDef (); break;

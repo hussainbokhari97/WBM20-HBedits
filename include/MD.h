@@ -17,11 +17,6 @@ bfekete@gc.cuny.edu
 extern "C" {
 #endif
 
-#define MDNoneStr      "none"
-#define MDInputStr     "input"
-#define MDLookupStr    "lookup"
-#define MDCalculateStr "calculate"
-
 // Configuration options
 #define MDOptConfig_Discharge                   "Discharge"
 #define MDOptConfig_Irrigation                  "Irrigation"

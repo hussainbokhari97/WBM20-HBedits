@@ -66,18 +66,19 @@ static void _MDRiverShapeExponent (int itemID) {
 	MFVarSetFloat (_MDOutRiverShapeExponentID,     itemID, 2.0);
 }
 
-enum { MDinput, MDindependent, MDdependent };
+enum { MDinput, MDindependent, MDdependent, MDhelp };
 
 int MDRouting_RiverShapeExponentDef () {
 	int  optID = MDinput;
 	const char *optStr, *optName = MDOptRouting_Riverbed;
-	const char *options [] = { MDInputStr, "slope-independent", "slope-dependent", (char *) NULL };
+	const char *options [] = { MFinputStr, "slope-independent", "slope-dependent", MFhelpStr, (char *) NULL };
 
 	if (_MDOutRiverShapeExponentID != MFUnset) return (_MDOutRiverShapeExponentID);
 
 	MFDefEntering ("River Shape Exponent");
 	if ((optStr = MFOptionGet (optName)) != (char *) NULL) optID = CMoptLookup (options,optStr,true);
 	switch (optID) {
+		case MDhelp:  MFOptionMessage (optName, optStr, options);
 		case MDinput:
 			if (((_MDOutRiverAvgDepthMeanID  = MFVarGetID (MDVarRouting_RiverAvgDepthMean, "m", MFInput, MFState, MFBoundary)) == CMfailed) ||
                 ((_MDOutRiverWidthMeanID     = MFVarGetID (MDVarRouting_RiverWidthMean, "m", MFInput, MFState, MFBoundary)) == CMfailed) ||

@@ -30,18 +30,19 @@ static void _MDAux_MeanDischarge (int itemID) {
 	MFVarSetFloat (_MDOutAux_MeanDischargeID, itemID, dischMean);
 }
 
-enum { MDinput, MDcalculate };
+enum { MDinput, MDcalculate, MDhelp };
 
 int MDAux_MeanDiscargehDef () {
 	int  optID = MDinput;
 	const char *optStr, *optName = MDVarAux_DischMean;
-	const char *options [] = { MDInputStr, MDCalculateStr, (char *) NULL };
+	const char *options [] = { MFinputStr, MFcalculateStr, MFhelpStr, (char *) NULL};
 
 	if (_MDOutAux_MeanDischargeID != MFUnset) return (_MDOutAux_MeanDischargeID);
 
 	MFDefEntering ("Discharge Mean");
 	if ((optStr = MFOptionGet (optName)) != (char *) NULL) optID = CMoptLookup (options, optStr, true);
 	switch (optID) {
+		case MDhelp:  MFOptionMessage (optName, optStr, options);
 		case MDinput: _MDOutAux_MeanDischargeID  = MFVarGetID (MDVarAux_DischMean, "m3/s", MFInput, MFState, MFBoundary); break;
 		case MDcalculate:
 			if (((_MDInAux_AccumRunoffID    = MDAux_AccumRunoffDef()) == CMfailed) ||

@@ -75,8 +75,8 @@ int main (int argc,char *argv []) {
         case MDBQARTpreprocess:           return (MFModelRun(argc, argv, argNum, MDSediment_BQARTpreprocessDef));
         case MDsedimentflux:              return (MFModelRun(argc, argv, argNum, MDSediment_FluxDef));
         case MDbedloadflux:               return (MFModelRun(argc, argv, argNum, MDSediment_BedloadFluxDef));
-        case MDparticulatenutrients:      return (MFModelRun (argc,argv,argNum,  MDSediment_ParticulateNutrientsDef));
-        case MDwaterdensity:              return (MFModelRun (argc,argv,argNum,  MDSediment_WaterDensityDef));
+        case MDparticulatenutrients:      return (MFModelRun(argc,argv,argNum,   MDSediment_ParticulateNutrientsDef));
+        case MDwaterdensity:              return (MFModelRun(argc,argv,argNum,   MDSediment_WaterDensityDef));
     }
     MFOptionMessage(optName, optStr, options);
     return (CMfailed);

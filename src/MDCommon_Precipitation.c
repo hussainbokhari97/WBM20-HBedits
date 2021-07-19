@@ -95,19 +95,20 @@ static void _MDPrecipWetDays (int itemID) {
 	MFVarSetFloat (_MDOutCommon_PrecipitationID, itemID, precipOut);
 }
 
-enum { MDinput, MDdownscale, MDfraction, MDwetdays };
+enum { MDinput, MDdownscale, MDfraction, MDwetdays, MDhelp };
 
 int MDCommon_PrecipitationDef () {
 	int optID = MDinput;
 	const char *optStr, *optName = MDVarCommon_Precipitation;
-	const char *options [] = { MDInputStr, "downscale", "fraction", "wetdays", (char *) NULL };
+	const char *options [] = { MFinputStr, "downscale", "fraction", "wetdays", MFhelpStr, (char *) NULL };
 
 	if (_MDOutCommon_PrecipitationID != MFUnset) return (_MDOutCommon_PrecipitationID);
 
 	MFDefEntering ("Precipitation");
 	if ((optStr = MFOptionGet (optName)) != (char *) NULL) optID = CMoptLookup (options,optStr,true);
 	switch (optID) {
-		case MDinput: _MDOutCommon_PrecipitationID      = MFVarGetID (MDVarCommon_Precipitation,         "mm", MFInput, MFFlux, MFBoundary); break;
+		case MDhelp:  MFOptionMessage (optName, optStr, options);
+		case MDinput: _MDOutCommon_PrecipitationID = MFVarGetID (MDVarCommon_Precipitation, "mm", MFInput, MFFlux, MFBoundary); break;
 		case MDdownscale:
 			if (((_MDInCommon_PrecipitationMonthlyID   = MFVarGetID (MDVarCommon_PrecipitationMonthly,   "mm", MFInput,  MFFlux,  MFBoundary)) == CMfailed) ||
 				((_MDInCommon_PrecipitationDailyID     = MFVarGetID (MDVarCommon_PrecipitationDaily,     "mm", MFInput,  MFFlux,  MFBoundary)) == CMfailed) ||

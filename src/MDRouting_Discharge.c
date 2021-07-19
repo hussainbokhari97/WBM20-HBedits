@@ -32,18 +32,19 @@ static void _MDRouting_Discharge (int itemID) {
 	MFVarSetFloat (_MDOutRouting_DischargeID, itemID, discharge);
 }
 
-enum { MDinput, MDcalculate, MDcorrected };
+enum { MDinput, MDcalculate, MDcorrected, MDhelp };
 
 int MDRouting_DischargeDef() {
 	int optID = MDinput;
 	const char *optStr, *optName = MDOptConfig_Discharge;
-	const char *options [] = { MDInputStr, MDCalculateStr, "corrected", (char *) NULL };
+	const char *options [] = { MFinputStr, MFcalculateStr, "corrected", MFhelpStr, (char *) NULL };
 
 	if (_MDOutRouting_DischargeID != MFUnset) return (_MDOutRouting_DischargeID);
 
 	MFDefEntering ("Discharge");
 	if ((optStr = MFOptionGet (optName)) != (char *) NULL) optID = CMoptLookup (options,optStr,true);
 	switch (optID) {
+		case MDhelp:  MFOptionMessage (optName, optStr, options);
 		case MDinput: _MDOutRouting_DischargeID = MFVarGetID (MDVarRouting_Discharge, "m3/s", MFInput, MFState, MFBoundary); break;
 		case MDcorrected:
 			if ((_MDInDataAssim_DischObservedID = MFVarGetID (MDVarDataAssim_DischObserved, "m3/s", MFInput, MFState, MFBoundary)) == CMfailed)

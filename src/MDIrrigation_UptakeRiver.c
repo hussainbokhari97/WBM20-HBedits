@@ -15,18 +15,21 @@ dominik.wisser@unh.edu
 
 static int _MDOutIrrigation_UptakeRiverID = MFUnset;
 
-enum { MDcalculate, MDnone };
+enum { MDcalculate, MDnone, MDhelp };
 
 int MDIrrigation_UptakeRiverDef() {
 	int optID = MDcalculate;
 	const char *optStr, *optName = "IrrUptakeRiver";
-	const char *options [] = { MDCalculateStr, MDNoneStr, (char *) NULL };
+	const char *options [] = { MFcalculateStr, MFnoneStr, MFhelpStr, (char *) NULL };
 
-	if ((optID == MDnone) || (_MDOutIrrigation_UptakeRiverID != MFUnset)) return (_MDOutIrrigation_UptakeRiverID);
+	if (_MDOutIrrigation_UptakeRiverID != MFUnset) return (_MDOutIrrigation_UptakeRiverID);
 
 	if ((optStr = MFOptionGet (optName)) != (char *) NULL) optID = CMoptLookup (options, optStr, true);
-	if (optID == MDcalculate)
-		return (MFVarGetID (MDVarIrrigation_UptakeRiver, "mm", MFOutput, MFFlux, MFBoundary));
-	else MFOptionMessage (optName, optStr, options);
-	return (CMfailed);
+	switch (optID) {
+		case MDhelp:      MFOptionMessage (optName, optStr, options);
+		case MDcalculate: _MDOutIrrigation_UptakeRiverID = MFVarGetID (MDVarIrrigation_UptakeRiver, "mm", MFOutput, MFFlux, MFBoundary); break;
+		case MDnone: break;
+		default: MFOptionMessage (optName, optStr, options); return CMfailed;
+	}
+	return (_MDOutIrrigation_UptakeRiverID);
 }

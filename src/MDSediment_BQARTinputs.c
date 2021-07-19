@@ -64,7 +64,7 @@ int MDSediment_BQARTinputsDef() {
 	
 	MFDefEntering ("BQARTinputs");
 	
-	if (((_MDInAirTempID            = MFVarGetID (MDVarCommon_AirTemperature,      "degC",   MFInput,  MFState, MFBoundary)) == CMfailed) ||
+	if (((_MDInAirTempID            = MDCommon_AirTemperatureDef ()) == CMfailed) ||
 	    ((_MDInElevationID          = MFVarGetID (MDVarCommon_Elevation,           "m",      MFInput,  MFState, MFBoundary)) == CMfailed) ||
 	    ((_MDInBQART_LithologyID    = MFVarGetID (MDVarSediment_BQART_Lithology,   MFNoUnit, MFInput,  MFState, MFBoundary)) == CMfailed) ||
 	    ((_MDInPopulationID         = MFVarGetID (MDVarSediment_Population,        MFNoUnit, MFInput,  MFState, MFBoundary)) == CMfailed) ||

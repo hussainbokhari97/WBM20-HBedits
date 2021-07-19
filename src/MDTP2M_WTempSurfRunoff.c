@@ -50,9 +50,9 @@ int MDTP2M_WTempSurfRunoffDef () {
 	if (_MDOutWTempSurfROID != MFUnset) return (_MDOutWTempSurfROID);
 
 	MFDefEntering ("Surface runoff temperature");
-	if (((_MDInSnowMeltID     = MDCore_SnowPackMeltDef()) == CMfailed) ||
-        ((_MDInWetBulbTempID  = MDCommon_WetBulbTempDef()) == CMfailed) ||
-        ((_MDInCommon_AirTemperatureID      = MFVarGetID (MDVarCommon_AirTemperature, "degC", MFInput,  MFState, MFBoundary)) == CMfailed) ||
+	if (((_MDInSnowMeltID              = MDCore_SnowPackMeltDef ())     == CMfailed) ||
+        ((_MDInWetBulbTempID           = MDCommon_WetBulbTempDef ())    == CMfailed) ||
+        ((_MDInCommon_AirTemperatureID = MDCommon_AirTemperatureDef ()) == CMfailed) ||
         ((_MDOutWTempSurfROID = MFVarGetID (MDVarTP2M_WTempSurfRunoff,  "degC", MFOutput, MFState, MFBoundary)) == CMfailed) ||
         (MFModelAddFunction (_MDWTempSurfRunoff) == CMfailed)) return (CMfailed);
 	MFDefLeaving ("Surface runoff temperature");

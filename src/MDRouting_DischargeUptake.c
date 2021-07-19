@@ -60,12 +60,12 @@ static void _MDRouting_DischargeUptake (int itemID) {
     MFVarSetFloat (_MDOutRouting_DischargeUptakeID,  itemID, discharge);
 }
 
-enum { MDcalculate, MDnone };
+enum { MDcalculate, MDnone, MDhelp };
 
 int MDRouting_DischargeUptake () {
 	int optID = MDcalculate, ret;
 	const char *optStr, *optName = "IrrUptakeRiver";
-	const char *options [] = { MDCalculateStr, MDNoneStr, (char *) NULL };
+	const char *options [] = { MFcalculateStr, MFnoneStr, MFhelpStr, (char *) NULL };
 
 	if (_MDOutRouting_DischargeUptakeID != MFUnset) return (_MDOutRouting_DischargeUptakeID);
 
@@ -78,10 +78,11 @@ int MDRouting_DischargeUptake () {
 		if (ret == CMfailed) return (CMfailed);
 		if ((optStr = MFOptionGet (optName)) != (char *) NULL) optID = CMoptLookup (options, optStr, true);
 		switch (optID) {
+			case MDhelp:  MFOptionMessage (optName, optStr, options);
 			case MDcalculate:
 				if  ((_MDOutIrrigation_UptakeRiverID   = MDIrrigation_UptakeRiverDef()) == CMfailed) return (CMfailed);
 			case MDnone:
-				if (((_MDInIrrigation_UptakeExternalID = MFVarGetID (MDVarIrrigation_UptakeExternal, "mm", MFInput, MFFlux, MFBoundary)) == CMfailed) ||
+				if (((_MDInIrrigation_UptakeExternalID = MFVarGetID (MDVarIrrigation_UptakeExternal, "mm", MFInput, MFFlux, MFBoundary))  == CMfailed) ||
                     ((_MDOutIrrigation_UptakeExcessID  = MFVarGetID (MDVarIrrigation_UptakeExcess,   "mm", MFOutput, MFFlux, MFBoundary)) == CMfailed))
 					return (CMfailed);
 				break;

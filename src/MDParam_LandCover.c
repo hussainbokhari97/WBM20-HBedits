@@ -36,18 +36,19 @@ static void _MDParam_Albedo (int itemID) {
 	MFVarSetFloat (_MDOutParam_AlbedoID,itemID,snowPack > 0.0 ? albedoSnow[cover] : albedo[cover]);	
 }
 
-enum { MDinput, MDlookup };
+enum { MDinput, MDlookup, MDhelp };
 
 int MDParam_LCAlbedoDef () {
 	int optID = MDinput;
 	const char *optStr, *optName = MDVarParam_Albedo;
-	const char *options [] = { MDInputStr, MDLookupStr, (char *) NULL };
+	const char *options [] = { MFinputStr, MFlookupStr, MFhelpStr, (char *) NULL };
 
 	if (_MDOutParam_AlbedoID != MFUnset) return (_MDOutParam_AlbedoID);
 
 	MFDefEntering ("Albedo");
 	if ((optStr = MFOptionGet (optName)) != (char *) NULL) optID = CMoptLookup (options,optStr,true);
 	switch (optID) {
+		case MDhelp:   MFOptionMessage (optName, optStr, options);
 		case MDinput:  _MDOutParam_AlbedoID = MFVarGetID (MDVarParam_Albedo, MFNoUnit, MFInput, MFState, MFBoundary); break;
 		case MDlookup:
 			if (((_MDInCommon_CoverID    = MDParam_LandCoverMappingDef()) == CMfailed) ||
@@ -82,13 +83,14 @@ int MDParam_LCHeightDef ()
 	{
 	int optID = MDinput;
 	const char *optStr, *optName = MDVarParam_CHeight;
-	const char *options [] = { MDInputStr, MDLookupStr, (char *) NULL };
+	const char *options [] = { MFinputStr, MFlookupStr, MFhelpStr, (char *) NULL };
 
 	if (_MDOutCParamCHeightID != MFUnset) return (_MDOutCParamCHeightID);
 
 	MFDefEntering ("Canopy Height");
 	if ((optStr = MFOptionGet (optName)) != (char *) NULL) optID = CMoptLookup (options,optStr,true);
 	switch (optID) {
+		case MDhelp:   MFOptionMessage (optName, optStr, options);
 		case MDinput:  _MDOutCParamCHeightID = MFVarGetID (MDVarParam_CHeight, "m", MFInput, MFState, MFBoundary); break;
 		case MDlookup:
 			if (((_MDInCommon_CoverID = MDParam_LandCoverMappingDef()) == CMfailed) ||
@@ -121,13 +123,14 @@ static void _MDCParamLWidth (int itemID) {
 int MDParam_LCLeafWidthDef () {
 	int optID = MDinput;
 	const char *optStr, *optName = MDVarParam_LWidth;
-	const char *options [] = { MDInputStr, MDLookupStr, (char *) NULL };
+	const char *options [] = { MFinputStr, MFlookupStr, MFhelpStr, (char *) NULL };
 
 	if (_MDOutCParamLWidthID != MFUnset) return (_MDOutCParamLWidthID);
 
 	MFDefEntering ("Leaf Width");
 	if ((optStr = MFOptionGet (optName)) != (char *) NULL) optID = CMoptLookup (options,optStr,true);
 	switch (optID) {
+		case MDhelp:   MFOptionMessage (optName, optStr, options);
 		case MDinput:  _MDOutCParamLWidthID = MFVarGetID (MDVarParam_LWidth, "mm", MFInput, MFState, MFBoundary); break;
 		case MDlookup:
 			if (((_MDInCommon_CoverID         = MDParam_LandCoverMappingDef()) == CMfailed) ||
@@ -147,13 +150,14 @@ static void _MDCParamRSS (int itemID) { MFVarSetFloat (_MDOutCParamRSSID,itemID,
 int MDParam_LCRSSDef () {
 	int optID = MDinput;
 	const char *optStr, *optName = MDVarParam_RSS;
-	const char *options [] = { MDInputStr, MDLookupStr, (char *) NULL };
+	const char *options [] = { MFinputStr, MFlookupStr, MFhelpStr, (char *) NULL };
 
 	if (_MDOutCParamRSSID != MFUnset) return (_MDOutCParamRSSID);
 
 	MFDefEntering ("RSS");
 	if ((optStr = MFOptionGet (optName)) != (char *) NULL) optID = CMoptLookup (options,optStr,true);
 	switch (optID) {
+		case MDhelp:   MFOptionMessage (optName, optStr, options);
 		case MDinput:  _MDOutCParamRSSID = MFVarGetID (MDVarParam_RSS, "s/m", MFInput, MFState, MFBoundary); break;
 		case MDlookup:
 			if (((_MDInCommon_CoverID = MDParam_LandCoverMappingDef()) == CMfailed) ||
@@ -186,13 +190,14 @@ static void _MDCParamR5 (int itemID) {
 int MDParam_LCR5Def () {
 	int optID = MDinput;
 	const char *optStr, *optName = MDVarParam_R5;
-	const char *options [] = { MDInputStr, MDLookupStr, (char *) NULL };
+	const char *options [] = { MFinputStr, MFlookupStr, MFhelpStr, (char *) NULL };
 
 	if (_MDOutCParamR5ID != MFUnset) return (_MDOutCParamR5ID);
 
 	MFDefEntering ("R5");
 	if ((optStr = MFOptionGet (optName)) != (char *) NULL) optID = CMoptLookup (options,optStr,true);
 	switch (optID) {
+		case MDhelp:   MFOptionMessage (optName, optStr, options);
 		case MDinput:  _MDOutCParamR5ID = MFVarGetID (MDVarParam_R5, "W/m2", MFInput, MFState, MFBoundary); break;
 		case MDlookup:
 			if (((_MDInCommon_CoverID = MDParam_LandCoverMappingDef()) == CMfailed) ||
@@ -224,13 +229,14 @@ static void _MDCParamCD (int itemID) {
 int MDParam_LCCDDef () {
 	int optID = MDinput;
 	const char *optStr, *optName = MDVarParam_CD;
-	const char *options [] = { MDInputStr, MDLookupStr, (char *) NULL };
+	const char *options [] = { MFinputStr, MFlookupStr, MFhelpStr, (char *) NULL };
 
 	if (_MDOutCParamCDID != MFUnset) return (_MDOutCParamCDID);
 
 	MFDefEntering ("CD");
 	if ((optStr = MFOptionGet (optName)) != (char *) NULL) optID = CMoptLookup (options,optStr,true);
 	switch (optID) {
+		case MDhelp:   MFOptionMessage (optName, optStr, options);
 		case MDinput:  _MDOutCParamCDID = MFVarGetID (MDVarParam_CD, "kPa", MFInput, MFState, MFBoundary); break;
 		case MDlookup:
 			if (((_MDInCommon_CoverID = MDParam_LandCoverMappingDef()) == CMfailed) ||
@@ -263,7 +269,7 @@ static void _MDCParamCR (int itemID) {
 int MDParam_LCCRDef () {
 	int optID = MDinput;
 	const char *optStr, *optName = MDVarParam_CR;
-	const char *options [] = { MDInputStr, MDLookupStr, (char *) NULL };
+	const char *options [] = { MFinputStr, MFlookupStr, MFhelpStr, (char *) NULL };
 
 	if (_MDOutCParamCRID != MFUnset) return (_MDOutCParamCRID);
 
@@ -271,6 +277,7 @@ int MDParam_LCCRDef () {
 	if ((optStr = MFOptionGet (optName)) != (char *) NULL) optID = CMoptLookup (options,optStr,true);
 
 	switch (optID) {
+		case MDhelp:  MFOptionMessage (optName, optStr, options);
 		case MDinput:  _MDOutCParamCRID = MFVarGetID (MDVarParam_CR, MFNoUnit, MFInput, MFState, MFBoundary); break;
 		case MDlookup:
 			if (((_MDInCommon_CoverID = MDParam_LandCoverMappingDef()) == CMfailed) ||
@@ -304,7 +311,7 @@ int MDParam_LCGLMaxDef ()
 	{
 	int optID = MDinput;
 	const char *optStr, *optName = MDVarParam_GLMax;
-	const char *options [] = { MDInputStr, MDLookupStr, (char *) NULL };
+	const char *options [] = { MFinputStr, MFlookupStr, MFhelpStr, (char *) NULL };
 
 	if (_MDOutCParamGLMaxID != MFUnset) return (_MDOutCParamGLMaxID);
 
@@ -312,6 +319,7 @@ int MDParam_LCGLMaxDef ()
 	if ((optStr = MFOptionGet (optName)) != (char *) NULL) optID = CMoptLookup (options,optStr,true);
 
 	switch (optID) {
+		case MDhelp:   MFOptionMessage (optName, optStr, options);
 		case MDinput:  _MDOutCParamGLMaxID = MFVarGetID (MDVarParam_GLMax, "m/s", MFInput, MFState, MFBoundary); break;
 		case MDlookup:
 			if (((_MDInCommon_CoverID = MDParam_LandCoverMappingDef()) == CMfailed) ||
@@ -343,13 +351,14 @@ static void _MDCParamLPMax (int itemID) {
 int MDParam_LCLPMaxDef () {
 	int optID = MDinput;
 	const char *optStr, *optName = MDVarParam_LPMax;
-	const char *options [] = { MDInputStr, MDLookupStr, (char *) NULL };
+	const char *options [] = { MFinputStr, MFlookupStr, MFhelpStr, (char *) NULL };
 
 	if (_MDOutCParamLPMaxID != MFUnset) return (_MDOutCParamLPMaxID);
 
 	MFDefEntering ("LPMax");
 	if ((optStr = MFOptionGet (optName)) != (char *) NULL) optID = CMoptLookup (options,optStr,true);
 	switch (optID) {
+		case MDhelp:   MFOptionMessage (optName, optStr, options);
 		case MDinput:  _MDOutCParamLPMaxID = MFVarGetID (MDVarParam_LPMax, MFNoUnit, MFInput, MFState, false); break;
 		case MDlookup:
 			if (((_MDInCommon_CoverID = MDParam_LandCoverMappingDef()) == CMfailed) ||
@@ -381,14 +390,15 @@ static void _MDCParamZ0g (int itemID) {
 int MDParam_LCZ0gDef () {
 	int optID = MDinput;
 	const char *optStr, *optName = MDVarParam_Z0g;
-	const char *options [] = { MDInputStr, MDLookupStr, (char *) NULL };
+	const char *options [] = { MFinputStr, MFlookupStr, MFhelpStr, (char *) NULL };
 
 	if (_MDOutCParamZ0gID != MFUnset) return (_MDOutCParamZ0gID);
 
 	MFDefEntering ("Z0g");
 	if ((optStr = MFOptionGet (optName)) != (char *) NULL) optID = CMoptLookup (options,optStr,true);
 	switch (optID) {
-		case MDinput: _MDOutCParamZ0gID = MFVarGetID (MDVarParam_Z0g, "m", MFInput, MFState, false); break;
+		case MDhelp:   MFOptionMessage (optName, optStr, options);
+		case MDinput:  _MDOutCParamZ0gID = MFVarGetID (MDVarParam_Z0g, "m", MFInput, MFState, false); break;
 		case MDlookup:
 			if (((_MDInCommon_CoverID = MDParam_LandCoverMappingDef()) == CMfailed) ||
                 ((_MDOutCParamZ0gID = MFVarGetID (MDVarParam_Z0g, "m", MFOutput, MFState, false)) == CMfailed) ||

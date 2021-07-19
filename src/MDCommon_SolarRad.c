@@ -141,18 +141,19 @@ static void _MDSolarRadiationSun (int itemID) {
 	MFVarSetFloat (_MDOutCommon_SolarRadID,  itemID, solarRad);
 }
 
-enum { MDinput, MDcloud, MDsun };
+enum { MDinput, MDcloud, MDsun, MDhelp };
 
 int MDCommon_SolarRadDef () {
 	int optID = MDinput;
 	const char *optStr, *optName = MDVarCore_SolarRadiation;
-	const char *options [] = { MDInputStr, "cloud", "sun", (char *) NULL };
+	const char *options [] = { MFinputStr, "cloud", "sun", MFhelpStr, (char *) NULL };
 
 	if (_MDOutCommon_SolarRadID != MFUnset) return (_MDOutCommon_SolarRadID);
 
 	MFDefEntering ("Solar Radiation");
 	if ((optStr = MFOptionGet (optName)) != (char *) NULL) optID = CMoptLookup (options, optStr, true);
 	switch (optID) {
+		case MDhelp:  MFOptionMessage (optName, optStr, options);
 		case MDinput: _MDOutCommon_SolarRadID = MFVarGetID (MDVarCore_SolarRadiation, "MJ/m^2", MFInput, MFState, MFBoundary); break;
 		case MDcloud:
 		//	printf ("Option: Cloud!!!");

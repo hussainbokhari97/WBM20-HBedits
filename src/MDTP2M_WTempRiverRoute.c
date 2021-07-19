@@ -345,13 +345,13 @@ int MDTP2M_WTempRiverRouteDef () {
         ((_MDInRiverWidthID              = MDRouting_RiverWidthDef ())      == CMfailed) ||
         ((_MDInAux_RunoffVolumeID        = MDCore_RunoffVolumeDef ())       == CMfailed) ||
         ((_MDInCloudCoverID              = MDCommon_CloudCoverDef ())       == CMfailed) ||
+        ((_MDInCommon_AirTemperatureID   = MDCommon_AirTemperatureDef ())   == CMfailed) ||
         (((MDReservoir_OperationDef ()   != CMfailed) && 
-         (((_MDInResStorageChangeID = MFVarGetID (MDVarReservoir_StorageChange, "km3", MFInput, MFState, MFBoundary)) == CMfailed) ||
-          ((_MDInResStorageID       = MFVarGetID (MDVarReservoir_Storage,       "km3", MFInput, MFState, MFInitial))  == CMfailed) ||
-          ((_MDInResCapacityID      = MFVarGetID (MDVarReservoir_Capacity,      "km3", MFInput, MFState, MFBoundary)) == CMfailed)))) ||
+         (((_MDInResStorageChangeID      = MFVarGetID (MDVarReservoir_StorageChange,     "km3",       MFInput,  MFState, MFBoundary)) == CMfailed) ||
+          ((_MDInResStorageID            = MFVarGetID (MDVarReservoir_Storage,           "km3",       MFInput,  MFState, MFInitial))  == CMfailed) ||
+          ((_MDInResCapacityID           = MFVarGetID (MDVarReservoir_Capacity,          "km3",       MFInput,  MFState, MFBoundary)) == CMfailed)))) ||
         ((_MDInDischargeIncomingID       = MFVarGetID (MDVarRouting_Discharge0,          "m3/s",      MFInput,  MFState, MFInitial))  == CMfailed) ||
         ((_MDInWindSpeedID               = MFVarGetID (MDVarCommon_WindSpeed,            "m/s",       MFInput,  MFState, MFBoundary)) == CMfailed) ||
-        ((_MDInCommon_AirTemperatureID   = MFVarGetID (MDVarCommon_AirTemperature,       "degC",      MFInput,  MFState, MFBoundary)) == CMfailed) ||
         ((_MDInRiverStorageChgID         = MFVarGetID (MDVarRouting_RiverStorageChg,     "m3",        MFInput,  MFFlux,  MFBoundary)) == CMfailed) ||
         ((_MDInRiverStorageID            = MFVarGetID (MDVarRouting_RiverStorage,        "m3",        MFInput,  MFState, MFInitial))  == CMfailed) ||
         ((_MDInCommon_SnowPackID         = MFVarGetID (MDVarCore_SnowPack,               "mm",        MFInput,  MFState, MFInitial))  == CMfailed) ||

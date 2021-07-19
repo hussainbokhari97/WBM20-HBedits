@@ -27,21 +27,20 @@ static void _MDRunoffVolume (int itemID) {
 	MFVarSetFloat (_MDOutRunoffVolumeID, itemID, runoff);
 }
  
-enum { MDinput, MDcalculate };
+enum { MDinput, MDcalculate, MDhelp };
 
 int MDCore_RunoffVolumeDef () {
 	int optID = MDinput;
 	const char *optStr, *optName = MDVarCore_RunoffVolume;
-	const char *options [] = { MDInputStr, MDCalculateStr, (char *) NULL };
+	const char *options [] = { MFinputStr, MFcalculateStr, MFhelpStr, (char *) NULL };
 
 	if (_MDOutRunoffVolumeID != MFUnset) return (_MDOutRunoffVolumeID);
 
 	MFDefEntering ("Runoff Volume");
 	if ((optStr = MFOptionGet (optName)) != (char *) NULL) optID = CMoptLookup (options, optStr, true);
 	switch (optID) {
-		case MDinput:
-			_MDOutRunoffVolumeID = MFVarGetID (MDVarCore_RunoffVolume, "m3/s", MFInput, MFState, MFBoundary);
-			break;
+		case MDhelp:   MFOptionMessage (optName, optStr, options); 
+		case MDinput: _MDOutRunoffVolumeID = MFVarGetID (MDVarCore_RunoffVolume, "m3/s", MFInput, MFState, MFBoundary); break;
 		case MDcalculate:
 			if (((_MDInCore_RunoffID        = MDCore_RunoffDef()) == CMfailed) ||
                 ((_MDOutRunoffVolumeID = MFVarGetID (MDVarCore_RunoffVolume, "m3/s", MFOutput, MFState, MFBoundary)) == CMfailed) ||

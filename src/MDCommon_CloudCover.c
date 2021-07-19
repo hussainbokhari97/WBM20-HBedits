@@ -49,21 +49,20 @@ static void _MDCommon_CloudCover(int itemID) {             // should it be InClo
     MFVarSetFloat(_MDOutCommon_CloudCoverID, itemID, cloud_cover); // should this be InCloudCover?
 }
 
-enum { MDinput, MDcalculate };
+enum { MDinput, MDcalculate, MDhelp };
 
 int MDCommon_CloudCoverDef() {
     int optID = MDinput;
     const char *optStr, *optName = MDOptWeather_CloudCover;
-    const char *options [] = { MDNoneStr, MDInputStr, MDCalculateStr, (char *) NULL};
+    const char *options [] = { MFnoneStr, MFinputStr, MFcalculateStr, MFhelpStr, (char *) NULL};
 
     if (_MDOutCommon_CloudCoverID != MFUnset) return (_MDOutCommon_CloudCoverID);
  
     MFDefEntering("CloudCover");
     if ((optStr = MFOptionGet(optName)) != (char *) NULL) optID = CMoptLookup(options, optStr, true);
     switch (optID) {
-        case MDinput:
-            if ((_MDOutCommon_CloudCoverID = MFVarGetID(MDVarCommon_CloudCover, "fraction", MFInput, MFState, MFBoundary)) == CMfailed) return (CMfailed);
-            break;
+        case MDhelp:  MFOptionMessage(optName, optStr, options);
+        case MDinput: _MDOutCommon_CloudCoverID = MFVarGetID(MDVarCommon_CloudCover, "fraction", MFInput, MFState, MFBoundary); break;
         case MDcalculate:
             if (((_MDInCommon_Common_GrossRadID    = MDCommon_GrossRadDef()) == CMfailed) ||
                 ((_MDInCommon_Common_SolarRadID    = MFVarGetID (MDVarCore_SolarRadiation, "MJ/m^2", MFInput,  MFState, MFBoundary)) == CMfailed) ||

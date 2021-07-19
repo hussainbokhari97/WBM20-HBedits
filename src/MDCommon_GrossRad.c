@@ -70,12 +70,12 @@ static void _MDCommon_GrossRadianceOtto (int itemID) {
 	MFVarSetFloat (_MDOutCommon_GrossRadID,  itemID, grossRad / 24.0);
 }
 
-enum { MDinput, MDstandard,  MDOtto }; 
+enum { MDinput, MDstandard,  MDOtto, MDhelp }; 
 
 int MDCommon_GrossRadDef () {
 	int optID = MDinput;
 	const char *optStr, *optName = MDVarCore_GrossRadiance;
-	const char *options [] = { MDInputStr, "standard", "Otto", (char *) NULL };
+	const char *options [] = { MFinputStr, "standard", "Otto", MFhelpStr, (char *) NULL };
 	float par;
 
 	if (_MDOutCommon_GrossRadID != MFUnset) return (_MDOutCommon_GrossRadID);
@@ -83,6 +83,7 @@ int MDCommon_GrossRadDef () {
 	MFDefEntering ("Gross Radiance");
 	if ((optStr = MFOptionGet (optName)) != (char *) NULL) optID = CMoptLookup (options, optStr, true);
 	switch (optID) {
+		case MDhelp:  MFOptionMessage (optName, optStr, options);
 		case MDinput: _MDOutCommon_GrossRadID = MFVarGetID (MDVarCore_GrossRadiance, "MJ/m^2", MFInput, MFFlux, MFBoundary); break;
 		case MDstandard:
 			if (((optStr = MFOptionGet (MDParGrossRadTAU)) != (char *) NULL) && (sscanf (optStr,"%f",&par) == 1)) _MDGrossRadStdTAU = par;

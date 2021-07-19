@@ -32,22 +32,24 @@ static void _MDRunoff (int itemID) {
 	MFVarSetFloat (_MDOutCore_RunoffID, itemID, (baseFlow + surfaceRO) * runoffCorr);
 }
  
-enum { MDinput, MDcalculate, MDcorrected };
+enum { MDinput, MDcalculate, MDcorrected, MDhelp };
 
 int MDCore_RunoffDef () {
 	int  optID = MDinput;
 	const char *optStr, *optName = MDVarCore_Runoff;
-	const char *options [] = { MDInputStr, MDCalculateStr, "corrected", (char *) NULL };
+	const char *options [] = { MFinputStr, MFcalculateStr, "corrected", MFhelpStr, (char *) NULL };
 
 	if (_MDOutCore_RunoffID != MFUnset) return (_MDOutCore_RunoffID);
 
 	MFDefEntering ("Runoff");
 	if ((optStr = MFOptionGet (optName)) != (char *) NULL) optID = CMoptLookup (options, optStr, true);
 	switch (optID) {
+		case MDhelp:  MFOptionMessage (optName, optStr, options);
 		case MDinput: _MDOutCore_RunoffID = MFVarGetID (MDVarCore_Runoff, "mm", MFInput, MFFlux, MFBoundary); break;
 		case MDcorrected:
 			if ((_MDInRunoffCorrID  = MFVarGetID (MDVarDataAssim_RunoffCorretion, MFNoUnit, MFInput, MFState, MFBoundary)) == CMfailed)
 				return (CMfailed);
+			break;
 		case MDcalculate:		
 			if (((_MDInBaseFlowID        = MDCore_BaseFlowDef()) == CMfailed) ||
                 ((_MDInSurfCore_RunoffID = MDCore_SurfRunoffDef()) == CMfailed) ||

@@ -10,6 +10,7 @@ bfekete@gc.cuny.edu
 
 *******************************************************************************/
 
+#include <string.h>
 #include <math.h>
 #include <MF.h>
 #include <MD.h>
@@ -89,9 +90,11 @@ int MDCore_RainSMoistChgDef () {
 	float par;
 	const char *optStr;
 	if (_MDOutSMoistChgID != MFUnset) return (_MDOutSMoistChgID);
-	const char *soilTemperatureOptions [] = { "none", "calculate", (char *) NULL };
 
-	if (((optStr = MFOptionGet (MDParSoilMoistALPHA))  != (char *) NULL) && (sscanf (optStr,"%f",&par) == 1)) _MDSoilMoistALPHA = par;
+	if ((optStr = MFOptionGet (MDParSoilMoistALPHA))  != (char *) NULL) {
+		if (strcmp(optStr,MFhelpStr) == 0) CMmsgPrint (CMmsgInfo,"%s = %f",MDParSoilMoistALPHA, _MDSoilMoistALPHA);
+		_MDSoilMoistALPHA = sscanf (optStr,"%f",&par) == 1 ? par : _MDSoilMoistALPHA;
+	}
 	
 	MFDefEntering ("Rainfed Soil Moisture");
 
@@ -103,7 +106,7 @@ int MDCore_RainSMoistChgDef () {
         ((_MDInPotETID             = MDCore_RainPotETDef ())         == CMfailed) ||
         ((_MDInInterceptID         = MDCore_RainInterceptDef ())     == CMfailed) ||
         ((_MDInSoilAvailWaterCapID = MDCore_SoilAvailWaterCapDef ()) == CMfailed) ||
-        ((_MDInAirTemperatureID    = MFVarGetID (MDVarCommon_AirTemperature,      "degC", MFInput, MFState, MFBoundary))  == CMfailed) ||
+        ((_MDInAirTemperatureID    = MDCommon_AirTemperatureDef ())  == CMfailed) ||
         ((_MDOutEvaptrsID          = MFVarGetID (MDVarCore_RainEvapotranspiration, "mm",  MFOutput, MFFlux, MFBoundary))  == CMfailed) ||
         ((_MDOutSoilMoistCellID    = MFVarGetID (MDVarCore_RainSoilMoistureCell,   "mm",  MFOutput, MFState, MFInitial))  == CMfailed) ||
         ((_MDOutSoilMoistID        = MFVarGetID (MDVarCore_RainSoilMoisture,       "mm",  MFOutput, MFState, MFInitial))  == CMfailed) ||

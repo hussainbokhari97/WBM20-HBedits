@@ -141,10 +141,10 @@ int MDSediment_BQARTpreprocessDef () {
 	
 	MFDefEntering ("QBARTpreprocess");
 	
-	if (((_MDInDischargeID  = MDSediment_DischargeBFDef ()) == CMfailed) || 
-	    ((_MDInDischMeanID  = MDAux_MeanDiscargehDef ())    == CMfailed) ||
-	    ((_MDInBankfullQ5ID = MDRouting_BankfullQcalcDef()) == CMfailed) ||
-        ((_MDInAirTempID             = MFVarGetID (MDVarCommon_AirTemperature,           "degC",    MFInput,  MFState, MFBoundary)) == CMfailed) ||
+	if (((_MDInDischargeID  = MDSediment_DischargeBFDef ())  == CMfailed) || 
+	    ((_MDInDischMeanID  = MDAux_MeanDiscargehDef ())     == CMfailed) ||
+	    ((_MDInBankfullQ5ID = MDRouting_BankfullQcalcDef ()) == CMfailed) ||
+        ((_MDInAirTempID    = MDCommon_AirTemperatureDef ()) == CMfailed) ||
 	    ((_MDInContributingAreaAccID = MFVarGetID (MDVarSediment_ContributingAreaAcc,    "km2",     MFRoute,  MFState, MFBoundary)) == CMfailed) ||
 	    ((_MDInAirTempAcc_timeID     = MFVarGetID (MDVarSediment_AirTemperatureAcc_time, "degC",    MFOutput, MFState, MFInitial))  == CMfailed) ||
 	    ((_MDInAirTempAcc_spaceID    = MFVarGetID (MDVarSediment_AirTemperatureAcc_space, "degC",   MFRoute,  MFState, MFBoundary)) == CMfailed) ||

@@ -74,21 +74,22 @@ static void _MDAirTemperatureAdjustment (int itemID) {
 	MFVarSetFloat (_MDOutCommon_AirTemperatureID, itemID, airTemp);
 }
 
-enum { MDinput, MDdownscale };
-enum { MDon,    MDoff};
+enum { MDhelp,      MDinput, MDdownscale };
+enum { MDonoffHelp, MDoff,    MDon};
 
 int MDCommon_AirTemperatureDef () {
 	int optID = MDinput, onoffID = MDoff;
 	const char *optStr, *optName = MDVarCommon_AirTemperature;
-	const char *options [] = { MDInputStr, "downscale", (char *) NULL };
-	const char *onoff   [] = { "on", "off", (char *) NULL };
+	const char *options [] = { MFhelpStr, MFinputStr, "downscale", (char *) NULL };
+	const char *onoff   [] = { MFhelpStr, "off",       "on",       (char *) NULL };
 
 	if (_MDOutCommon_AirTemperatureID != MFUnset) return (_MDOutCommon_AirTemperatureID);
 
 	MFDefEntering ("Air Temperature");
 	if ((optStr = MFOptionGet (optName)) != (char *) NULL) optID = CMoptLookup (options,optStr,true);
 	switch (optID) {
-		case MDinput: _MDOutCommon_AirTemperatureID     = MFVarGetID (MDVarCommon_AirTemperature,          "degC",   MFInput, MFState, MFBoundary); break;
+		case MDhelp:  MFOptionMessage (optName, optStr, options);
+		case MDinput: _MDOutCommon_AirTemperatureID = MFVarGetID (MDVarCommon_AirTemperature, "degC",   MFInput,  MFState, MFBoundary); break;
 		case MDdownscale:
 			if (((_MDInCommon_AirTemperatureDailyID     = MFVarGetID (MDVarCommon_AirTemperatureDaily,     "degC",   MFInput,  MFState, MFBoundary)) == CMfailed) ||
                 ((_MDInCommon_AirTemperatureMonthlyID   = MFVarGetID (MDVarCommon_AirTemperatureMonthly,   "degC",   MFInput,  MFState, MFBoundary)) == CMfailed) ||
@@ -99,8 +100,12 @@ int MDCommon_AirTemperatureDef () {
 		default: MFOptionMessage (optName, optStr, options); return (CMfailed);
 	}
 	MFDefLeaving ("Air Temperature");
+
+	MFDefEntering ("Elevation Adjustment");
 	if ((optStr = MFOptionGet ("ElevationAdjustment")) != (char *) NULL) onoffID = CMoptLookup (onoff, optStr,true);
 	switch (onoffID) {
+		case MDonoffHelp: MFOptionMessage ("ElevationAdjustment", optStr, onoff);
+		case MDoff:  break;
 		case MDon:
 			MFDefEntering ("Elevation Adjustment");
 			if (((_MDInCommon_ElevationID              = MFVarGetID (MDVarCommon_Elevation,                "m",      MFInput,  MFState, MFBoundary)) == CMfailed) ||
@@ -109,8 +114,8 @@ int MDCommon_AirTemperatureDef () {
             	(MFModelAddFunction (_MDAirTemperatureAdjustment) == CMfailed)) return (CMfailed);
 			MFDefLeaving ("Elevation Adjustment");
 			break;
-		case MDoff: break;
 		default: MFOptionMessage ("ElevationAdjustment", optStr, onoff); return (CMfailed);
 	}
+	MFDefLeaving ("Elevation Adjustment");
 	return (_MDOutCommon_AirTemperatureID);
 }

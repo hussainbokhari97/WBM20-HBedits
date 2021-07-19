@@ -97,18 +97,19 @@ static void _MDReservoir (int itemID) {
 	MFVarSetFloat (_MDOutResReleaseID,    itemID, resRelease);
 }
 
-enum { MDcalculate, MDnone };
+enum { MDcalculate, MDnone, MDhelp };
 
 int MDReservoir_OperationDef () {
 	int optID = MDcalculate;
 	const char *optStr, *optName = MDOptConfig_Reservoirs;
-	const char *options [] = { MDCalculateStr, MDNoneStr, (char *) NULL };
+	const char *options [] = { MFcalculateStr, MFnoneStr, MFhelpStr, (char *) NULL };
  
-	if ((optID == MDnone) || (_MDOutResReleaseID != MFUnset)) return (_MDOutResReleaseID);
+	if (_MDOutResReleaseID != MFUnset) return (_MDOutResReleaseID);
 
 	MFDefEntering ("Reservoirs");
 	if ((optStr = MFOptionGet (optName)) != (char *) NULL) optID = CMoptLookup (options, optStr, true);
  	switch (optID) {
+		case MDhelp: MFOptionMessage (optName, optStr, options);
 		case MDcalculate:
 			if (((_MDInAux_MeanDischargeID = MDAux_MeanDiscargehDef ())    == CMfailed) ||
                 ((_MDInRouting_DischargeID = MDRouting_DischargeUptake ()) == CMfailed) ||
@@ -118,6 +119,7 @@ int MDReservoir_OperationDef () {
 			    ((_MDOutResReleaseID       = MFVarGetID (MDVarReservoir_Release,       "m3/s", MFOutput, MFFlux,  MFBoundary)) == CMfailed) ||
                 (MFModelAddFunction (_MDReservoir) == CMfailed)) return (CMfailed);
 			break;
+		case MDnone: break;
 		default: MFOptionMessage (optName, optStr, options); return (CMfailed);
 	}
 	MFDefLeaving ("Reservoirs");

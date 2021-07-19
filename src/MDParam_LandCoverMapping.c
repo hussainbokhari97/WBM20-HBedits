@@ -92,18 +92,19 @@ static void _MDLCTEMVegToCover (int itemID) {
 	}
 }
 
-enum { MDinput, MDLCSAGEVeg, MDLCTEMVeg };
+enum { MDinput, MDLCSAGEVeg, MDLCTEMVeg, MDhelp };
 
 int MDParam_LandCoverMappingDef () {
 	int optID = MDinput;
 	const char *optStr, *optName = MDVarCore_LandCoverWBM;
-	const char *options [] = { MDInputStr, "SAGEVeg", "TEMVeg",(char *) NULL };
+	const char *options [] = { MFinputStr, "SAGEVeg", "TEMVeg", MFhelpStr, (char *) NULL };
 
 	if (_MDOutCoverID != MFUnset) return (_MDOutCoverID);
 
 	MFDefEntering ("Landcover");
 	if ((optStr = MFOptionGet (optName)) != (char *) NULL) optID = CMoptLookup (options,optStr,true);
 	switch (optID) {
+		case MDhelp:  MFOptionMessage (optName, optStr, options);
 		case MDinput: _MDOutCoverID = MFVarGetID (MDVarCore_LandCoverWBM, MFNoUnit, MFInput, MFState, MFBoundary); break;
 		case MDLCSAGEVeg:
 			  if (((_MDInSAGEVegID  = MFVarGetID (MDVarCore_LandCoverSAGE, MFNoUnit, MFInput, MFState, MFBoundary)) == CMfailed) ||

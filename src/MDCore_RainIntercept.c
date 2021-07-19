@@ -58,12 +58,12 @@ static void _MDRainIntercept (int itemID) {
 	MFVarSetFloat (_MDOutInterceptID,itemID, intercept);	
 }
 
-enum { MDinput, MDcalculate, MDnone };
+enum { MDinput, MDcalculate, MDnone, MDhelp };
 
 int MDCore_RainInterceptDef () {
 	int optID = MDinput;
 	const char *optStr, *optName = MDVarCore_RainInterception;
-	const char *options [] = { MDInputStr, MDCalculateStr, MDNoneStr, (char *) NULL };
+	const char *options [] = { MFinputStr, MFcalculateStr, MFnoneStr, MFhelpStr, (char *) NULL };
 
 	if ((optStr = MFOptionGet (optName)) != (char *) NULL) optID = CMoptLookup (options,optStr,true);
 
@@ -72,6 +72,7 @@ int MDCore_RainInterceptDef () {
 	MFDefEntering ("Rainfed Intercept");
 
 	switch (optID) {
+		case MDhelp:  MFOptionMessage (optName, optStr, options);
 		case MDinput: _MDOutInterceptID = MFVarGetID (MDVarCore_RainInterception, "mm", MFInput, MFFlux, MFBoundary); break;
 		case MDcalculate:
 			if (((_MDInCommon_PrecipID = MDCommon_PrecipitationDef()) == CMfailed) ||

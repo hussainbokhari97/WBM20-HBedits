@@ -306,7 +306,7 @@ int MDSediment_FluxDef() {
 	if (((_MDInDischargeID 		     = MDRouting_DischargeDef ())          == CMfailed) ||
 		((_MDInSmallResCapacityID    = MDReservoir_FarmPondCapacityDef ()) == CMfailed) ||
 	    ((_MDInDischMeanID 		     = MDAux_MeanDiscargehDef ())          == CMfailed) ||
-	    ((_MDInAirTempID             = MFVarGetID (MDVarCommon_AirTemperature,              "degC",     MFInput,  MFState, MFBoundary)) == CMfailed) ||
+	    ((_MDInAirTempID             = MDCommon_AirTemperatureDef ())      == CMfailed) ||
 	    ((_MDInAirTempAcc_timeID     = MFVarGetID (MDVarSediment_AirTemperatureAcc_time,    "degC",     MFOutput, MFState, MFInitial))  == CMfailed) ||
 	    ((_MDInTimeStepsID           = MFVarGetID (MDVarSediment_TimeSteps,                 MFNoUnit,   MFOutput, MFState, MFInitial))  == CMfailed) ||
 	    ((_MDInReliefID              = MFVarGetID (MDVarSediment_Relief,                    "m",        MFInput,  MFState, MFBoundary)) == CMfailed) ||

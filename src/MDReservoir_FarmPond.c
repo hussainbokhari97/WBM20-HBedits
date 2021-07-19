@@ -15,19 +15,19 @@ dominik.wisser@unh.edu
 #include <MD.h>
 
 //Input
-static int _MDInIrrigation_AreaFracID         = MFUnset;
-static int _MDInRainSurfCore_RunoffID      = MFUnset;
-static int _MDInIrrigation_GrossDemandID      = MFUnset;
-static int _MDInSmallResCapacityID    = MFUnset;
-static int _MDInPotEvapotransID       = MFUnset;
+static int _MDInIrrigation_AreaFracID    = MFUnset;
+static int _MDInRainSurfCore_RunoffID    = MFUnset;
+static int _MDInIrrigation_GrossDemandID = MFUnset;
+static int _MDInSmallResCapacityID       = MFUnset;
+static int _MDInPotEvapotransID          = MFUnset;
 
 //Output
-static int _MDOutSmallResReleaseID    = MFUnset;
-static int _MDOutSmallResStorageID    = MFUnset;
-static int _MDOutSmallResStorageChgID = MFUnset;
-static int _MDOutSmallResUptakeID     = MFUnset;
-static int _MDInSmallResStorageFracID = MFUnset;
-static int _MDOutSmallResEvapoID      = MFUnset;
+static int _MDOutSmallResReleaseID       = MFUnset;
+static int _MDOutSmallResStorageID       = MFUnset;
+static int _MDOutSmallResStorageChgID    = MFUnset;
+static int _MDOutSmallResUptakeID        = MFUnset;
+static int _MDInSmallResStorageFracID    = MFUnset;
+static int _MDOutSmallResEvapoID         = MFUnset;
 
 static void _MDSmallReservoirRelease (int itemID) {
 // Input
@@ -104,7 +104,7 @@ static void _MDSmallReservoirRelease (int itemID) {
 			printf("rest %f WaterBalance S Reser =%f  IN %f surf %f rel %f Dstor %f itemID %i\n",remainingSurfaceRO,in-out,in, surfRunoff, smallResRelease, smallResStorageChg,itemID);
 		}
 
-	} //no irrigation
+	} // no irrigation
 	else {
 		MFVarSetFloat (_MDOutSmallResUptakeID,     itemID, 0.0);
 		MFVarSetFloat (_MDOutSmallResReleaseID,    itemID, 0.0);

@@ -46,27 +46,24 @@ static void _MDIrrigatedAreaIWMI (int itemID) {
 	MFVarSetFloat(_MDOutIrrigatedAreaFracID, itemID, irrAreaFrac);
 }
 
-enum { FAO, IWMI};
+enum { MDfao, MDiwmi, MDhelp};
 
 int MDIrrigation_IrrAreaDef () {
-	const char *mapOptions [] = { "FAO", "IWMI", (char *) NULL };
-	int optionID = FAO;
-	const char *optStr;
+	int optID = MDfao;
+	const char *optStr, *optName = MDOptIrrigation_AreaMap;
+	const char *options [] = { "FAO", "IWMI", MFhelpStr, (char *) NULL };
 
 	if (_MDOutIrrigatedAreaFracID != MFUnset) return (_MDOutIrrigatedAreaFracID);
 
-	if (((optStr = MFOptionGet (MDOptIrrigation_AreaMap)) != (char *) NULL) && ((optionID = CMoptLookup (mapOptions, optStr, true)) == CMfailed)) {
-		CMmsgPrint (CMmsgUsrError, "Type of Irr Area not specifed! Options = 'FAO' or 'IWMI'\n");
-		return CMfailed;
-	}
 	MFDefEntering ("Irrigated Area");
+	if ((optStr = MFOptionGet (optName)) != (char *) NULL) optID = CMoptLookup (options, optStr, true);
 
-	switch (optionID) {
-        default:
-        case FAO:
+	switch (optID) {
+		case MDhelp:  MFOptionMessage (optName, optStr, options);
+        case MDfao:
             if ((_MDOutIrrigatedAreaFracID = MFVarGetID (MDVarIrrigation_AreaFraction, MFNoUnit, MFInput, MFState, MFBoundary)) == CMfailed) return (CMfailed);
             break;
-		case IWMI:
+		case MDiwmi:
 		    if (((_MDInIrrAreaFracSeason1ID = MFVarGetID (MDVarIrrigation_AreaFractionSeason1, MFNoUnit, MFInput,  MFState, MFBoundary)) == CMfailed) ||
                 ((_MDInIrrAreaFracSeason2ID = MFVarGetID (MDVarIrrigation_AreaFractionSeason2, MFNoUnit, MFInput,  MFState, MFBoundary)) == CMfailed) ||
                 ((_MDInGrowingSeason1ID     = MFVarGetID (MDVarIrrigation_GrowingSeason1Start, "DoY",    MFInput,  MFState, MFBoundary)) == CMfailed) ||
@@ -74,6 +71,7 @@ int MDIrrigation_IrrAreaDef () {
 				((_MDOutIrrigatedAreaFracID = MFVarGetID (MDVarIrrigation_AreaFraction,        MFNoUnit, MFOutput, MFState, MFBoundary)) == CMfailed) ||
                 (MFModelAddFunction (_MDIrrigatedAreaIWMI) == CMfailed)) return (CMfailed);
 		    break;
+        default: MFOptionMessage (optName, optStr, options); return (CMfailed);
 	}
 	MFDefLeaving ("IrrigatedArea");
 	return (_MDOutIrrigatedAreaFracID);

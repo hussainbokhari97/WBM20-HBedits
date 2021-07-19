@@ -122,12 +122,12 @@ static void _MDWetBulbTemp(int itemID) {
     MFVarSetFloat(_MDOutWetBulbTempID, itemID, wetbulbtemp);
 }
 
-enum { MDinput, MDcalculate, MDnone };
+enum { MDinput, MDcalculate, MDnone, MDhelp };
 
 int MDCommon_WetBulbTempDef () {
     int optID = MDinput;
     const char *optStr, *optName = MDOptWeather_WetBulbTemp;
-    const char *options [] = { MDInputStr, MDCalculateStr, MDNoneStr, (char *) NULL};
+    const char *options [] = { MFinputStr, MFcalculateStr, MFnoneStr, MFhelpStr, (char *) NULL};
 
     if ((optStr = MFOptionGet (optName)) != (char *) NULL) optID = CMoptLookup (options, optStr, true);
     if ((optID == MDnone) || (_MDOutWetBulbTempID != MFUnset)) return (_MDOutWetBulbTempID);
@@ -135,9 +135,8 @@ int MDCommon_WetBulbTempDef () {
     MFDefEntering("WetBulbTemp");
 
     switch (optID) {
-        case MDinput:
-            if ((_MDOutWetBulbTempID = MFVarGetID (MDVarCommon_WetBulbTemp, "degC", MFInput, MFState, MFBoundary)) == CMfailed) return (CMfailed);
-            break;
+        case MDhelp:  MFOptionMessage (optName, optStr, options);
+        case MDinput: _MDOutWetBulbTempID = MFVarGetID (MDVarCommon_WetBulbTemp, "degC", MFInput, MFState, MFBoundary); break;
         case MDcalculate:
             if (((_MDInCommon_HumiditySpecificID = MDCommon_HumiditySpecificDef ()) == CMfailed) ||
                 ((_MDInCommon_HumidityRelativeID = MDCommon_HumidityRelativeDef ()) == CMfailed) ||

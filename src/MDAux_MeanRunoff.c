@@ -30,18 +30,19 @@ static void _MDAux_MeanRunoff (int itemID) {
 	MFVarSetFloat (_MDOutAux_MeanDischargeID, itemID, runoffMean);
 }
 
-enum { MDinput, MDcalculate };
+enum { MDinput, MDcalculate, MDhelp };
 
 int MDAux_MeanRunoffDef () {
 	int  optID = MDinput;
 	const char *optStr, *optName = MDVarCore_RunoffMean;
-	const char *options [] = { MDInputStr, MDCalculateStr, (char *) NULL };
+	const char *options [] = { MFinputStr, MFcalculateStr, MFhelpStr, (char *) NULL };
 
 	if (_MDOutAux_MeanDischargeID != MFUnset) return (_MDOutAux_MeanDischargeID);
 
 	MFDefEntering ("Runoff Mean");
 	if ((optStr = MFOptionGet (optName)) != (char *) NULL) optID = CMoptLookup (options, optStr, true);
 	switch (optID) {
+		case MDhelp:  MFOptionMessage (optName, optStr, options);
 		case MDinput: _MDOutAux_MeanDischargeID  = MFVarGetID (MDVarCore_RunoffMean, "mm/d", MFInput, MFState, MFBoundary); break;
 		case MDcalculate:
 			if (((_MDAux_InAvgNStepsID      = MDAux_AvgNStepsDef()) == CMfailed) ||

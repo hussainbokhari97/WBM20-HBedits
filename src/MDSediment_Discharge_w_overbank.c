@@ -66,18 +66,19 @@ static void _MDDischargeBF (int itemID) {
 	MFVarSetFloat (_MDOutDischargeID, itemID, discharge);
 }
 
-enum { MDinput, MDcalculate, MDcorrected };
+enum { MDinput, MDcalculate, MDcorrected, MDhelp };
 
 int MDSediment_DischargeBFDef () {
 	int optID = MDinput;
 	const char *optStr, *optName = MDOptConfig_Discharge;
-	const char *options [] = { MDInputStr, MDCalculateStr, "corrected", (char *) NULL };
+	const char *options [] = { MFinputStr, MFcalculateStr, "corrected", MFhelpStr, (char *) NULL };
 
 	if (_MDOutDischargeID != MFUnset) return (_MDOutDischargeID);
 
 	MFDefEntering ("DischargeBF");
 	if ((optStr = MFOptionGet (optName)) != (char *) NULL) optID = CMoptLookup (options,optStr,true);
 	switch (optID) {
+		case MDhelp:  MFOptionMessage (optName, optStr, options);
 		case MDinput: _MDOutDischargeID = MFVarGetID (MDVarRouting_Discharge,         "m3/s",   MFInput,  MFState, MFBoundary); break;
 		case MDcorrected:
 			if ((_MDInDischObservedID   = MFVarGetID (MDVarDataAssim_DischObserved,   "m3/s",   MFInput,  MFState, MFBoundary)) == CMfailed)

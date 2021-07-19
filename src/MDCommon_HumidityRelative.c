@@ -44,21 +44,20 @@ static void _MDRelativeHumidity (int itemID) {
     MFVarSetFloat(_MDOutCommon_HumidityRelativeID, itemID, relativehumidity);
 }
 
-enum { MDinput, MDcalculate };
+enum { MDinput, MDcalculate, MDhelp };
 
 int MDCommon_HumidityRelativeDef () {
     int optID = MDinput;
     const char *optStr, *optName = MDOptWeather_RelativeHumidity;
-    const char *options [] = { MDNoneStr, MDInputStr, MDCalculateStr, (char *) NULL};
+    const char *options [] = { MFnoneStr, MFinputStr, MFcalculateStr, MFhelpStr, (char *) NULL};
     
     if (_MDOutCommon_HumidityRelativeID != MFUnset) return (_MDOutCommon_HumidityRelativeID);    
 
     MFDefEntering ("RelativeHumidity");
     if ((optStr = MFOptionGet(optName)) != (char *) NULL) optID = CMoptLookup(options, optStr, true);
     switch (optID) {
-        case MDinput:
-            if ((_MDOutCommon_HumidityRelativeID = MFVarGetID (MDVarCommon_HumidityRelative, "degC", MFInput, MFState, MFBoundary)) == CMfailed) return (CMfailed);
-            break;
+        case MDhelp:  MFOptionMessage (optName, optStr, options);
+        case MDinput: _MDOutCommon_HumidityRelativeID = MFVarGetID (MDVarCommon_HumidityRelative, "degC", MFInput, MFState, MFBoundary); break;
         case MDcalculate:
             if (((_MDInCommon_AirTemperatureID    = MDCommon_AirTemperatureDef ()) == CMfailed) ||
                 ((_MDInCommon_AirPressureID       = MFVarGetID (MDVarCommon_AirPressure,      "kPa",  MFInput,  MFState, MFBoundary)) == CMfailed) ||
