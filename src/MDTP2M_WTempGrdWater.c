@@ -31,13 +31,8 @@ static void _MDWTP2M_TempGrdWater (int itemID) {
 	float airT;
 	float Gw_Temp;
 	airT               = MFVarGetFloat (_MDInCommon_AirTemperatureID,         itemID, 0.0);
-	Gw_Temp            = MFVarGetFloat (_MDInTP2M_GW_TempID,         itemID, 0.0);
-//   if (Gw_Temp == 0) { Gw_Temp = airT - 5.0; }
 
-//High‐Resolution Global Water Temperature Modeling 2019.
-Gw_Temp = MDMaximum(5.0, airT); 
-
-
+	Gw_Temp = MDMaximum(5.0, airT);
     MFVarSetFloat (_MDOutTP2M_WTempGrdWaterID,itemID,Gw_Temp);
 }
 
@@ -48,7 +43,6 @@ int MDTP2M_WTempGrdWaterDef () {
 	MFDefEntering ("Groundwater temperature");
 
 	if (((_MDInCommon_AirTemperatureID = MDCommon_AirTemperatureDef ()) == CMfailed) ||
-	    ((_MDInTP2M_GW_TempID          = MFVarGetID (MDVarTP2M_GW_Temp,          "degC", MFInput,  MFState, MFBoundary)) == CMfailed) ||
         ((_MDOutTP2M_WTempGrdWaterID   = MFVarGetID (MDVarTP2M_WTempGrdWater,    "degC", MFOutput, MFState, MFInitial))  == CMfailed) ||
 		(MFModelAddFunction(_MDWTP2M_TempGrdWater) == CMfailed)) return (CMfailed);
 

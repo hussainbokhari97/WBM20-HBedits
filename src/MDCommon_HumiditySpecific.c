@@ -47,12 +47,12 @@ static void _MDSpecificHumidity(int itemID) {
     MFVarSetFloat(_MDOutCommon_HumiditySpecificID, itemID, specifichumidity);
 }
 
-enum { MDinput, MDcalculate, MDhelp };
+enum { MDhelp, MDinput, MDcalculate };
 
 int MDCommon_HumiditySpecificDef () {
     int optID = MDinput;
     const char *optStr, *optName = MDOptWeather_SpecificHumidity;
-    const char *options [] = { MFnoneStr, MFinputStr, MFcalculateStr, MFhelpStr, (char *) NULL};
+    const char *options [] = { MFhelpStr, MFinputStr, MFcalculateStr, (char *) NULL};
     
     if (_MDOutCommon_HumiditySpecificID != MFUnset) return (_MDOutCommon_HumiditySpecificID);
     

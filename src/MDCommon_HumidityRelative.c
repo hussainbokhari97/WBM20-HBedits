@@ -49,7 +49,7 @@ enum { MDinput, MDcalculate, MDhelp };
 int MDCommon_HumidityRelativeDef () {
     int optID = MDinput;
     const char *optStr, *optName = MDOptWeather_RelativeHumidity;
-    const char *options [] = { MFnoneStr, MFinputStr, MFcalculateStr, MFhelpStr, (char *) NULL};
+    const char *options [] = { MFhelpStr, MFinputStr, MFcalculateStr, (char *) NULL};
     
     if (_MDOutCommon_HumidityRelativeID != MFUnset) return (_MDOutCommon_HumidityRelativeID);    
 
