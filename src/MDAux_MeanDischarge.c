@@ -30,12 +30,12 @@ static void _MDAux_MeanDischarge (int itemID) {
 	MFVarSetFloat (_MDOutAux_MeanDischargeID, itemID, dischMean);
 }
 
-enum { MDinput, MDcalculate, MDhelp };
+enum { MDhelp, MDinput, MDcalculate };
 
 int MDAux_MeanDiscargehDef () {
 	int  optID = MDinput;
 	const char *optStr, *optName = MDVarAux_DischMean;
-	const char *options [] = { MFinputStr, MFcalculateStr, MFhelpStr, (char *) NULL};
+	const char *options [] = { MFhelpStr, MFinputStr, MFcalculateStr, (char *) NULL};
 
 	if (_MDOutAux_MeanDischargeID != MFUnset) return (_MDOutAux_MeanDischargeID);
 

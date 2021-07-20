@@ -75,12 +75,12 @@ static void _MDDischRouteMuskingumCoeff (int itemID) {
 	MFVarSetFloat (_MDOutCourantID,     itemID, C);
 }
 
-enum { MDinput, MDstatic, MDhelp };
+enum { MDhelp, MDinput, MDstatic };
 
 int MDRouting_DischargeInChannelMuskingumCoeffDef () {
 	int  optID = MDinput;
 	const char *optStr, *optName = MDOptRouting_Muskingum;
-	const char *options [] = { MFinputStr, "static", MFhelpStr, (char *) NULL };
+	const char *options [] = { MFhelpStr, MFinputStr, "static", (char *) NULL };
 
 	if (_MDOutMuskingumC0ID != MFUnset) return (_MDOutMuskingumC0ID);
 

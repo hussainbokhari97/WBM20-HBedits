@@ -95,12 +95,12 @@ static void _MDPrecipWetDays (int itemID) {
 	MFVarSetFloat (_MDOutCommon_PrecipitationID, itemID, precipOut);
 }
 
-enum { MDinput, MDdownscale, MDfraction, MDwetdays, MDhelp };
+enum { MDhelp, MDinput, MDdownscale, MDfraction, MDwetdays };
 
 int MDCommon_PrecipitationDef () {
 	int optID = MDinput;
 	const char *optStr, *optName = MDVarCommon_Precipitation;
-	const char *options [] = { MFinputStr, "downscale", "fraction", "wetdays", MFhelpStr, (char *) NULL };
+	const char *options [] = { MFhelpStr, MFinputStr, "downscale", "fraction", "wetdays", (char *) NULL };
 
 	if (_MDOutCommon_PrecipitationID != MFUnset) return (_MDOutCommon_PrecipitationID);
 

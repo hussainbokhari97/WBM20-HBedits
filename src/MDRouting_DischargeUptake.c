@@ -69,7 +69,7 @@ int MDRouting_DischargeUptake () {
 
 	if (_MDOutRouting_DischargeUptakeID != MFUnset) return (_MDOutRouting_DischargeUptakeID);
 
-	MFDefEntering ("Discharge Level 2");
+	MFDefEntering ("Discharge - Uptatakes");
 	if (((_MDInRouting_DischargeInChannelID  = MDRouting_DischargeInChannelDef()) == CMfailed) ||
         ((_MDOutRouting_DischargeUptakeID = MFVarGetID ("__DischLevel2",  "m/3", MFOutput, MFState, false)) == CMfailed))
 	    return (CMfailed);
@@ -90,6 +90,6 @@ int MDRouting_DischargeUptake () {
 		}
 	}
 	if (MFModelAddFunction(_MDRouting_DischargeUptake) == CMfailed) return (CMfailed);
-	MFDefLeaving ("Discharge Level 2");
+	MFDefLeaving ("Discharge - Uptakes");
 	return (_MDOutRouting_DischargeUptakeID);
 }
