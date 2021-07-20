@@ -51,8 +51,8 @@ int MDCore_RunoffDef () {
 				return (CMfailed);
 			break;
 		case MDcalculate:		
-			if (((_MDInBaseFlowID        = MDCore_BaseFlowDef()) == CMfailed) ||
-                ((_MDInSurfCore_RunoffID = MDCore_SurfRunoffDef()) == CMfailed) ||
+			if (((_MDInBaseFlowID        = MDCore_BaseFlowDef ())   == CMfailed) ||
+                ((_MDInSurfCore_RunoffID = MDCore_SurfRunoffDef ()) == CMfailed) ||
                 ((_MDOutCore_RunoffID    = MFVarGetID (MDVarCore_Runoff, "mm", MFOutput, MFFlux, MFBoundary)) == CMfailed) ||
                 (MFModelAddFunction (_MDRunoff) == CMfailed)) return (CMfailed);
 			break;
