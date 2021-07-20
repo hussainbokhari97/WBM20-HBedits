@@ -345,7 +345,7 @@ static void _MDIrrGrossDemand (int itemID) {
 
 #define MDParIrrigationCropFileName "CropParameterFileName"
  
-enum { MDhelp, MDnone, MDinput, MDcalculate};
+enum { MDhelp, MDnone, MDinput, MDcalculate };
 
 int MDIrrigation_GrossDemandDef () {
 	int optID = MDnone;
@@ -365,12 +365,7 @@ int MDIrrigation_GrossDemandDef () {
 	switch (optID) {
 		case MDhelp: MFOptionMessage (optName, optStr, options);
 		case MDnone: break;
-		case MDinput:
-			if (((_MDOutIrrGrossDemandID = MFVarGetID (MDVarIrrigation_GrossDemand,        "mm", MFInput, MFFlux, MFBoundary)) == CMfailed) ||
-                ((_MDOutIrrReturnFlowID  = MFVarGetID (MDVarIrrigation_ReturnFlow,         "mm", MFInput, MFFlux, MFBoundary)) == CMfailed) ||
-                ((_MDOutIrrEvapotranspID = MFVarGetID (MDVarIrrigation_Evapotranspiration, "mm", MFInput, MFFlux, MFBoundary)) == CMfailed))
-				return (CMfailed);
-			break;
+		case MDinput: _MDOutIrrGrossDemandID = MFVarGetID (MDVarIrrigation_GrossDemand,        "mm", MFInput, MFFlux, MFBoundary); break;
 		case MDcalculate:
 			if (((_MDInCommon_PrecipID       = MDCommon_PrecipitationDef())   == CMfailed) ||
                 ((_MDInSPackChgID            = MDCore_SnowPackChgDef())       == CMfailed) ||
