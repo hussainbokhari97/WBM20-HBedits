@@ -46,20 +46,24 @@ static void _MDIrrigatedAreaIWMI (int itemID) {
 	MFVarSetFloat(_MDOutIrrigatedAreaFracID, itemID, irrAreaFrac);
 }
 
-enum { MDfao, MDiwmi, MDhelp};
+enum { MDhelp, MDfao, MDiwmi };
 
 int MDIrrigation_IrrAreaDef () {
-	int optID = MDfao;
-	const char *optStr, *optName = MDOptIrrigation_AreaMap;
-	const char *options [] = { "FAO", "IWMI", MFhelpStr, (char *) NULL };
+	int optID = MDfao, irrOptID = MFnone;
+	const char *optStr;
+	const char *options [] = { MFhelpStr, "FAO", "IWMI", (char *) NULL };
 
 	if (_MDOutIrrigatedAreaFracID != MFUnset) return (_MDOutIrrigatedAreaFracID);
 
+	if ((optStr = MFOptionGet (MDOptConfig_Irrigation)) != (char *) NULL) irrOptID = CMoptLookup (MFcalcOptions,optStr,true);
+	if (irrOptID != MFcalculate) return (_MDOutIrrigatedAreaFracID);
+
 	MFDefEntering ("Irrigated Area");
-	if ((optStr = MFOptionGet (optName)) != (char *) NULL) optID = CMoptLookup (options, optStr, true);
+	if ((optStr = MFOptionGet (MDOptIrrigation_AreaMap)) != (char *) NULL) optID = CMoptLookup (options, optStr, true);
 
 	switch (optID) {
-		case MDhelp:  MFOptionMessage (optName, optStr, options);
+        default:      MFOptionMessage (MDOptIrrigation_AreaMap, optStr, options); return (CMfailed);
+		case MDhelp:  MFOptionMessage (MDOptIrrigation_AreaMap, optStr, options);
         case MDfao:
             if ((_MDOutIrrigatedAreaFracID = MFVarGetID (MDVarIrrigation_AreaFraction, MFNoUnit, MFInput, MFState, MFBoundary)) == CMfailed) return (CMfailed);
             break;
@@ -71,7 +75,6 @@ int MDIrrigation_IrrAreaDef () {
 				((_MDOutIrrigatedAreaFracID = MFVarGetID (MDVarIrrigation_AreaFraction,        MFNoUnit, MFOutput, MFState, MFBoundary)) == CMfailed) ||
                 (MFModelAddFunction (_MDIrrigatedAreaIWMI) == CMfailed)) return (CMfailed);
 		    break;
-        default: MFOptionMessage (optName, optStr, options); return (CMfailed);
 	}
 	MFDefLeaving ("IrrigatedArea");
 	return (_MDOutIrrigatedAreaFracID);

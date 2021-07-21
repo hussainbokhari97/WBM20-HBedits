@@ -15,26 +15,23 @@ dominik.wisser@unh.edu
 
 static int _MDOutIrrSoilMoistureID = MFUnset;
 
-enum { MDhelp, MDnone, MDinput, MDcalculate };
-
 int MDIrrigation_SoilMoistDef() {
-	int optID = MDnone, ret;
-	const char *optStr, *optName = MDOptConfig_Irrigation;
-	const char *options [] = { MFhelpStr, MFnoneStr, MFinputStr, MFcalculateStr, (char *) NULL };
+	int optID = MFnone, ret;
+	const char *optStr;
 
 	if (_MDOutIrrSoilMoistureID != MFUnset) return (_MDOutIrrSoilMoistureID);
 
-	if ((optStr = MFOptionGet (optName)) != (char *) NULL) optID = CMoptLookup (options, optStr, true);
+	if ((optStr = MFOptionGet (MDOptConfig_Irrigation)) != (char *) NULL) optID = CMoptLookup (MFcalcOptions, optStr, true);
 
 	switch (optID) {
-		case MDhelp:
-		case MDnone:
-		case MDinput: break;
-		case MDcalculate:
-			if ((ret = MDIrrigation_GrossDemandDef()) == CMfailed) return (CMfailed);
+		default:      return CMfailed;
+		case MFhelp:
+		case MFnone:
+		case MFinput: break;
+		case MFcalculate:
+			if ((ret = MDIrrigation_GrossDemandDef ()) == CMfailed) return (CMfailed);
 			_MDOutIrrSoilMoistureID = ret != MFUnset ? MFVarGetID (MDVarIrrigation_SoilMoisture, "mm", MFInput, MFFlux, MFBoundary) : MFUnset;
 			break;
-		default: MFOptionMessage (optName, optStr, options); return CMfailed;
 	}
     return (_MDOutIrrSoilMoistureID);
 }

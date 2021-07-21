@@ -122,22 +122,19 @@ static void _MDWetBulbTemp(int itemID) {
     MFVarSetFloat(_MDOutWetBulbTempID, itemID, wetbulbtemp);
 }
 
-enum { MDinput, MDcalculate, MDnone, MDhelp };
-
 int MDCommon_WetBulbTempDef () {
-    int optID = MDinput;
-    const char *optStr, *optName = MDOptWeather_WetBulbTemp;
-    const char *options [] = { MFinputStr, MFcalculateStr, MFnoneStr, MFhelpStr, (char *) NULL};
+    int optID = MFinput;
+    const char *optStr;
 
-    if ((optStr = MFOptionGet (optName)) != (char *) NULL) optID = CMoptLookup (options, optStr, true);
-    if ((optID == MDnone) || (_MDOutWetBulbTempID != MFUnset)) return (_MDOutWetBulbTempID);
+    if (_MDOutWetBulbTempID != MFUnset) return (_MDOutWetBulbTempID);
 
     MFDefEntering("WetBulbTemp");
-
+    if ((optStr = MFOptionGet (MDOptWeather_WetBulbTemp)) != (char *) NULL) optID = CMoptLookup (MFsourceOptions, optStr, true);
     switch (optID) {
-        case MDhelp:  MFOptionMessage (optName, optStr, options);
-        case MDinput: _MDOutWetBulbTempID = MFVarGetID (MDVarCommon_WetBulbTemp, "degC", MFInput, MFState, MFBoundary); break;
-        case MDcalculate:
+        default:      MFOptionMessage (MDOptWeather_WetBulbTemp, optStr, MFsourceOptions); return (CMfailed);
+        case MFhelp:  MFOptionMessage (MDOptWeather_WetBulbTemp, optStr, MFsourceOptions);
+        case MFinput: _MDOutWetBulbTempID = MFVarGetID (MDVarCommon_WetBulbTemp, "degC", MFInput, MFState, MFBoundary); break;
+        case MFcalculate:
             if (((_MDInCommon_HumiditySpecificID = MDCommon_HumiditySpecificDef ()) == CMfailed) ||
                 ((_MDInCommon_HumidityRelativeID = MDCommon_HumidityRelativeDef ()) == CMfailed) ||
                 ((_MDInCommon_AirTemperatureID   = MDCommon_AirTemperatureDef ())   == CMfailed) ||
@@ -145,7 +142,6 @@ int MDCommon_WetBulbTempDef () {
                 ((_MDOutWetBulbTempID            = MFVarGetID (MDVarCommon_WetBulbTemp, "degC", MFOutput, MFState, MFBoundary)) == CMfailed) ||
                 ((MFModelAddFunction (_MDWetBulbTemp) == CMfailed))) return (CMfailed);
             break;
-        default: MFOptionMessage (optName, optStr, options); return (CMfailed);
     }
     MFDefLeaving ("WetBulbTemp");
     return (_MDOutWetBulbTempID);

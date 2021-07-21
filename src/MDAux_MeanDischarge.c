@@ -30,27 +30,24 @@ static void _MDAux_MeanDischarge (int itemID) {
 	MFVarSetFloat (_MDOutAux_MeanDischargeID, itemID, dischMean);
 }
 
-enum { MDhelp, MDinput, MDcalculate };
-
 int MDAux_MeanDiscargehDef () {
-	int  optID = MDinput;
-	const char *optStr, *optName = MDVarAux_DischMean;
-	const char *options [] = { MFhelpStr, MFinputStr, MFcalculateStr, (char *) NULL};
+	int  optID = MFinput;
+	const char *optStr;
 
 	if (_MDOutAux_MeanDischargeID != MFUnset) return (_MDOutAux_MeanDischargeID);
 
 	MFDefEntering ("Discharge Mean");
-	if ((optStr = MFOptionGet (optName)) != (char *) NULL) optID = CMoptLookup (options, optStr, true);
+	if ((optStr = MFOptionGet (MDVarAux_DischMean)) != (char *) NULL) optID = CMoptLookup (MFsourceOptions, optStr, true);
 	switch (optID) {
-		case MDhelp:  MFOptionMessage (optName, optStr, options);
-		case MDinput: _MDOutAux_MeanDischargeID  = MFVarGetID (MDVarAux_DischMean, "m3/s", MFInput, MFState, MFBoundary); break;
-		case MDcalculate:
+		default:      MFOptionMessage (MDVarAux_DischMean, optStr, MFsourceOptions); return (CMfailed);
+		case MFhelp:  MFOptionMessage (MDVarAux_DischMean, optStr, MFsourceOptions);
+		case MFinput: _MDOutAux_MeanDischargeID  = MFVarGetID (MDVarAux_DischMean, "m3/s", MFInput, MFState, MFBoundary); break;
+		case MFcalculate:
 			if (((_MDInAux_AccumRunoffID    = MDAux_AccumRunoffDef()) == CMfailed) ||
 			    ((_MDAux_InAvgNStepsID      = MDAux_AvgNStepsDef())   == CMfailed) ||
                 ((_MDOutAux_MeanDischargeID = MFVarGetID (MDVarAux_DischMean, "m3/s", MFOutput, MFState, MFInitial)) == CMfailed) ||
                 (MFModelAddFunction(_MDAux_MeanDischarge) == CMfailed)) return (CMfailed);
 			break;
-		default: MFOptionMessage (optName, optStr, options); return (CMfailed);
 	}
 	MFDefLeaving ("Discharge Mean");
 	return (_MDOutAux_MeanDischargeID);

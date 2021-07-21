@@ -32,30 +32,30 @@ static void _MDRouting_Discharge (int itemID) {
 	MFVarSetFloat (_MDOutRouting_DischargeID, itemID, discharge);
 }
 
-enum { MDinput, MDcalculate, MDcorrected, MDhelp };
+enum { MDhelp, MDinput, MDcalculate, MDcorrected };
 
 int MDRouting_DischargeDef() {
 	int optID = MDinput;
-	const char *optStr, *optName = MDOptConfig_Discharge;
-	const char *options [] = { MFinputStr, MFcalculateStr, "corrected", MFhelpStr, (char *) NULL };
+	const char *optStr;
+	const char *options [] = { MFhelpStr, MFinputStr, MFcalculateStr, "corrected", (char *) NULL };
 
 	if (_MDOutRouting_DischargeID != MFUnset) return (_MDOutRouting_DischargeID);
 
 	MFDefEntering ("Discharge");
-	if ((optStr = MFOptionGet (optName)) != (char *) NULL) optID = CMoptLookup (options,optStr,true);
+	if ((optStr = MFOptionGet (MDOptConfig_Discharge)) != (char *) NULL) optID = CMoptLookup (options,optStr,true);
 	switch (optID) {
-		case MDhelp:  MFOptionMessage (optName, optStr, options);
+		default:      MFOptionMessage (MDOptConfig_Discharge, optStr, options); return (CMfailed);
+		case MDhelp:  MFOptionMessage (MDOptConfig_Discharge, optStr, options);
 		case MDinput: _MDOutRouting_DischargeID = MFVarGetID (MDVarRouting_Discharge, "m3/s", MFInput, MFState, MFBoundary); break;
-		case MDcorrected:
-			if ((_MDInDataAssim_DischObservedID = MFVarGetID (MDVarDataAssim_DischObserved, "m3/s", MFInput, MFState, MFBoundary)) == CMfailed)
-				return (CMfailed);
 		case MDcalculate:
 			if (((_MDOutRouting_DischargeID     = MFVarGetID (MDVarRouting_Discharge, "m3/s", MFRoute, MFState, MFBoundary)) == CMfailed) ||
 				((_MDInRouting_DischargeID      = MDRouting_DischargeReleaseDef ()) == CMfailed) ||
 				((_MDInRouting_RiverWidthID     = MDRouting_RiverWidthDef ()) == CMfailed) ||
                 (MFModelAddFunction(_MDRouting_Discharge) == CMfailed)) return (CMfailed);
 			break;
-		default: MFOptionMessage (optName, optStr, options); return (CMfailed);
+		case MDcorrected:
+			if ((_MDInDataAssim_DischObservedID = MFVarGetID (MDVarDataAssim_DischObserved, "m3/s", MFInput, MFState, MFBoundary)) == CMfailed)
+				return (CMfailed);
 	}
 	MFDefLeaving  ("Discharge");
 	return (_MDOutRouting_DischargeID);

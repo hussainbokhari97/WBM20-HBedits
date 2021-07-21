@@ -15,24 +15,19 @@ dominik.wisser@unh.edu
 
 static int _MDOutCommon_IrrUptakeGrdWaterID = MFUnset;
 
-enum { MDcalculate, MDnone, MDhelp };
+enum { MDhelp, MDoff, MDon };
 
-int MDIrrigation_UptakeGrdWaterDef() {
-	int optID = MDcalculate;
-	const char *optStr, *optName = "IrrUptakeGrdWater";
-	const char *options [] = { MFcalculateStr, MFnoneStr, MFhelpStr, (char *) NULL };
+int MDIrrigation_UptakeGrdWaterDef () {
+	int optID = MFoff;
+	const char *optStr;
 
 	if (_MDOutCommon_IrrUptakeGrdWaterID != MFUnset) return (_MDOutCommon_IrrUptakeGrdWaterID);
-
-	if ((optStr = MFOptionGet (optName)) != (char *) NULL) optID = CMoptLookup (options, optStr, true);
-		
+	if ((optStr = MFOptionGet ("IrrUptakeGrdWater")) != (char *) NULL) optID = CMoptLookup (MFswitchOptions, optStr, true);
 	switch (optID) {
-		case MDhelp: MFOptionMessage (optName, optStr, options);
-		case MDcalculate:
-			_MDOutCommon_IrrUptakeGrdWaterID = MFVarGetID (MDVarIrrigation_UptakeGrdWater, "mm", MFOutput, MFFlux, MFBoundary);
-			break;
-		case MDnone: break;
-		default: MFOptionMessage (optName, optStr, options); return CMfailed;
+		default:     MFOptionMessage ("IrrUptakeGrdWater", optStr, MFswitchOptions); return CMfailed;
+		case MFhelp: MFOptionMessage ("IrrUptakeGrdWater", optStr, MFswitchOptions);
+		case MFoff: break;
+		case MFon: _MDOutCommon_IrrUptakeGrdWaterID = MFVarGetID (MDVarIrrigation_UptakeGrdWater, "mm", MFOutput, MFFlux, MFBoundary); break;
 	}
 	return (_MDOutCommon_IrrUptakeGrdWaterID);
 }

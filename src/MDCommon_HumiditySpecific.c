@@ -47,28 +47,25 @@ static void _MDSpecificHumidity(int itemID) {
     MFVarSetFloat(_MDOutCommon_HumiditySpecificID, itemID, specifichumidity);
 }
 
-enum { MDhelp, MDinput, MDcalculate };
-
 int MDCommon_HumiditySpecificDef () {
-    int optID = MDinput;
-    const char *optStr, *optName = MDOptWeather_SpecificHumidity;
-    const char *options [] = { MFhelpStr, MFinputStr, MFcalculateStr, (char *) NULL};
+    int optID = MFinput;
+    const char *optStr;
     
     if (_MDOutCommon_HumiditySpecificID != MFUnset) return (_MDOutCommon_HumiditySpecificID);
     
     MFDefEntering ("SpecificHumidity");
-    if ((optStr = MFOptionGet (optName)) != (char *) NULL) optID = CMoptLookup (options, optStr, true);
+    if ((optStr = MFOptionGet (MDOptWeather_SpecificHumidity)) != (char *) NULL) optID = CMoptLookup (MFsourceOptions, optStr, true);
         switch (optID) {
-            case MDhelp:  MFOptionMessage (optName, optStr, options);
-            case MDinput: _MDOutCommon_HumiditySpecificID = MFVarGetID (MDVarCommon_HumiditySpecific, "%",      MFInput, MFState, MFBoundary); break;
-            case MDcalculate:
+            default:      MFOptionMessage (MDOptWeather_SpecificHumidity, optStr, MFsourceOptions); return (CMfailed);
+            case MFhelp:  MFOptionMessage (MDOptWeather_SpecificHumidity, optStr, MFsourceOptions);
+            case MFinput: _MDOutCommon_HumiditySpecificID = MFVarGetID (MDVarCommon_HumiditySpecific, "%",      MFInput, MFState, MFBoundary); break;
+            case MFcalculate:
                 if (((_MDInCommon_HumidityRelativeID  = MDCommon_HumidityRelativeDef()) == CMfailed) ||
                     ((_MDInCommon_AirTemperatureID    = MDCommon_AirTemperatureDef ())  == CMfailed) ||
                     ((_MDInCommon_AirPressureID       = MFVarGetID (MDVarCommon_AirPressure,      "kPa",  MFInput, MFState, MFBoundary)) == CMfailed) ||
                     ((_MDOutCommon_HumiditySpecificID = MFVarGetID (MDVarCommon_HumiditySpecific, "%",    MFOutput, MFState, MFBoundary)) == CMfailed) ||
                     ((MFModelAddFunction (_MDSpecificHumidity) == CMfailed))) return (CMfailed);
                 break;
-            default: MFOptionMessage (optName, optStr, options); return (CMfailed);
         }
     MFDefLeaving ("SpecificHumidity");
     return (_MDOutCommon_HumiditySpecificID);

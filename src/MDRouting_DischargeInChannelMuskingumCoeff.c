@@ -79,15 +79,16 @@ enum { MDhelp, MDinput, MDstatic };
 
 int MDRouting_DischargeInChannelMuskingumCoeffDef () {
 	int  optID = MDinput;
-	const char *optStr, *optName = MDOptRouting_Muskingum;
+	const char *optStr;
 	const char *options [] = { MFhelpStr, MFinputStr, "static", (char *) NULL };
 
 	if (_MDOutMuskingumC0ID != MFUnset) return (_MDOutMuskingumC0ID);
 
 	MFDefEntering ("Muskingum Coefficients");
-	if ((optStr = MFOptionGet (optName)) != (char *) NULL) optID = CMoptLookup (options, optStr, true);
+	if ((optStr = MFOptionGet (MDOptRouting_Muskingum)) != (char *) NULL) optID = CMoptLookup (options, optStr, true);
 	switch (optID) {
-		case MDhelp:  MFOptionMessage (optName, optStr, options);
+		default:      MFOptionMessage (MDOptRouting_Muskingum, optStr, options); return (CMfailed);
+		case MDhelp:  MFOptionMessage (MDOptRouting_Muskingum, optStr, options);
 		case MDinput:
 			if (((_MDOutMuskingumC0ID = MFVarGetID (MDVarRouting_MuskingumC0, MFNoUnit, MFInput, MFState, MFBoundary)) == CMfailed) ||
                 ((_MDOutMuskingumC1ID = MFVarGetID (MDVarRouting_MuskingumC1, MFNoUnit, MFInput, MFState, MFBoundary)) == CMfailed) ||
@@ -106,7 +107,6 @@ int MDRouting_DischargeInChannelMuskingumCoeffDef () {
                 ((_MDOutCourantID            = MFVarGetID ("Courant",                      MFNoUnit, MFOutput, MFState, MFBoundary)) == CMfailed) ||
                 (MFModelAddFunction (_MDDischRouteMuskingumCoeff) == CMfailed)) return (CMfailed);
 			break;
-		default: MFOptionMessage (optName, optStr, options); return (CMfailed);
 	}
 	MFDefLeaving ("Muskingum Coefficients");
 	return (_MDOutMuskingumC0ID);

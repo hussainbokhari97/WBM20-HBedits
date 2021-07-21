@@ -66,24 +66,19 @@ static void _MDDischargeBF (int itemID) {
 	MFVarSetFloat (_MDOutDischargeID, itemID, discharge);
 }
 
-enum { MDinput, MDcalculate, MDcorrected, MDhelp };
-
 int MDSediment_DischargeBFDef () {
-	int optID = MDinput;
-	const char *optStr, *optName = MDOptConfig_Discharge;
-	const char *options [] = { MFinputStr, MFcalculateStr, "corrected", MFhelpStr, (char *) NULL };
+	int optID = MFinput;
+	const char *optStr;
 
 	if (_MDOutDischargeID != MFUnset) return (_MDOutDischargeID);
 
 	MFDefEntering ("DischargeBF");
-	if ((optStr = MFOptionGet (optName)) != (char *) NULL) optID = CMoptLookup (options,optStr,true);
+	if ((optStr = MFOptionGet (MDOptConfig_Discharge)) != (char *) NULL) optID = CMoptLookup (MFsourceOptions,optStr,true);
 	switch (optID) {
-		case MDhelp:  MFOptionMessage (optName, optStr, options);
-		case MDinput: _MDOutDischargeID = MFVarGetID (MDVarRouting_Discharge,         "m3/s",   MFInput,  MFState, MFBoundary); break;
-		case MDcorrected:
-			if ((_MDInDischObservedID   = MFVarGetID (MDVarDataAssim_DischObserved,   "m3/s",   MFInput,  MFState, MFBoundary)) == CMfailed)
-				return (CMfailed);
-		case MDcalculate:
+		default:      MFOptionMessage (MDOptConfig_Discharge, optStr, MFsourceOptions); return (CMfailed);
+		case MFhelp:  MFOptionMessage (MDOptConfig_Discharge, optStr, MFsourceOptions);
+		case MFinput: _MDOutDischargeID = MFVarGetID (MDVarRouting_Discharge,         "m3/s",   MFInput,  MFState, MFBoundary); break;
+		case MFcalculate:
 			if (((_MDOutDischargeID      = MFVarGetID (MDVarRouting_Discharge,        "m3/s",   MFRoute,  MFState, MFBoundary)) == CMfailed) ||
 				((_MDInDischLevel1ID     = MDRouting_DischargeReleaseDef ()) == CMfailed) ||
 				((_MDInBankfullQID       = MFVarGetID (MDVarRouting_BankfullQ,        "m3/s",   MFInput,  MFState, MFBoundary)) == CMfailed) ||
@@ -93,7 +88,6 @@ int MDSediment_DischargeBFDef () {
 				((_MDOutPCQdifferenceID  = MFVarGetID (MDVarSediment_PCQdifference,   MFNoUnit, MFOutput, MFState, MFInitial))  == CMfailed) ||
 				(MFModelAddFunction (_MDDischargeBF) == CMfailed)) return (CMfailed);
 			break;
-		default: MFOptionMessage (optName, optStr, options); return (CMfailed);
 	}
 	MFDefLeaving  ("DischargeBF");
 	return (_MDOutDischargeID);

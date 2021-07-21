@@ -17,19 +17,16 @@ typedef enum { MDpet,
                MDinfiltration,
                MDrunoff,
                MDdischarge,
-               MDwatertemp,
-               MDthermal,
                MDbalance,
                MDgeometry,
-               MDbankfullQcalc,
                MDRiverbedShape,
+               MDwatertemp,
+               MDthermal,
+               MDbankfullQcalc,
                MDsedimentflux,
-               MDsedimentflux_noBF,
                MDbedloadflux,
-               MDBQARTinputs,
                MDBQARTpreprocess,
                MDparticulatenutrients,
-               MDparticulatenutrients_noBF,
                MDwaterdensity} MDoption;
 
 int main (int argc,char *argv []) {
@@ -41,19 +38,16 @@ int main (int argc,char *argv []) {
                               "infiltration",
                               "runoff",
                               "discharge", 
-                              "watertemp",
-                              "thermal",
                               "balance",
                               "geometry",
-                              "bankfullQcalc",
                               "riverbedshape",
+                              "watertemp",
+                              "thermal",
+                              "bankfullQcalc",
                               "sedimentflux",
-                              "sedimentflux_nobf",
                               "bedloadflux",
-                              "BQARTinputs" ,
                               "BQARTpreprocess",
                               "particulatenutrients",
-                              "particulatenutrients_nobf",
                               "waterdensity", (char *) NULL};
 
     argNum = MFOptionParse(argc, argv);
@@ -68,13 +62,13 @@ int main (int argc,char *argv []) {
         case MDdischarge:                 return (MFModelRun(argc, argv, argNum, MDRouting_DischargeDef));
         case MDbalance:                   return (MFModelRun(argc, argv, argNum, MDCore_WaterBalanceDef));
         case MDgeometry:                  return (MFModelRun(argc, argv, argNum, MDRouting_RiverWidthDef));
-        case MDbankfullQcalc:             return (MFModelRun(argc, argv, argNum, MDRouting_BankfullQcalcDef));
         case MDRiverbedShape:             return (MFModelRun(argc, argv, argNum, MDRouting_RiverShapeExponentDef));
         case MDwatertemp:                 return (MFModelRun(argc, argv, argNum, MDTP2M_WTempRiverRouteDef));
         case MDthermal:                   return (MFModelRun(argc, argv, argNum, MDTP2M_ThermalInputsDef));
-        case MDBQARTpreprocess:           return (MFModelRun(argc, argv, argNum, MDSediment_BQARTpreprocessDef));
+        case MDbankfullQcalc:             return (MFModelRun(argc, argv, argNum, MDRouting_BankfullQcalcDef));
         case MDsedimentflux:              return (MFModelRun(argc, argv, argNum, MDSediment_FluxDef));
         case MDbedloadflux:               return (MFModelRun(argc, argv, argNum, MDSediment_BedloadFluxDef));
+        case MDBQARTpreprocess:           return (MFModelRun(argc, argv, argNum, MDSediment_BQARTpreprocessDef));
         case MDparticulatenutrients:      return (MFModelRun(argc,argv,argNum,   MDSediment_ParticulateNutrientsDef));
         case MDwaterdensity:              return (MFModelRun(argc,argv,argNum,   MDSediment_WaterDensityDef));
     }

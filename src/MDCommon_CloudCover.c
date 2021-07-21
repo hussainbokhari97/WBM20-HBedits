@@ -49,19 +49,19 @@ static void _MDCommon_CloudCover(int itemID) {             // should it be InClo
     MFVarSetFloat(_MDOutCommon_CloudCoverID, itemID, cloud_cover); // should this be InCloudCover?
 }
 
-enum { MDinput, MDcalculate, MDhelp };
+enum { MDhelp, MDinput, MDcalculate }; // This is different from the standard MFcalcOptions [help, none, input, caclulate] 
 
 int MDCommon_CloudCoverDef() {
     int optID = MDinput;
-    const char *optStr, *optName = MDOptWeather_CloudCover;
-    const char *options [] = { MFnoneStr, MFinputStr, MFcalculateStr, MFhelpStr, (char *) NULL};
+    const char *optStr;
 
     if (_MDOutCommon_CloudCoverID != MFUnset) return (_MDOutCommon_CloudCoverID);
  
     MFDefEntering("CloudCover");
-    if ((optStr = MFOptionGet(optName)) != (char *) NULL) optID = CMoptLookup(options, optStr, true);
+    if ((optStr = MFOptionGet (MDOptWeather_CloudCover)) != (char *) NULL) optID = CMoptLookup(MFsourceOptions, optStr, true);
     switch (optID) {
-        case MDhelp:  MFOptionMessage(optName, optStr, options);
+        default:      MFOptionMessage (MDOptWeather_CloudCover, optStr, MFsourceOptions); return (CMfailed);
+        case MDhelp:  MFOptionMessage (MDOptWeather_CloudCover, optStr, MFsourceOptions);
         case MDinput: _MDOutCommon_CloudCoverID = MFVarGetID(MDVarCommon_CloudCover, "fraction", MFInput, MFState, MFBoundary); break;
         case MDcalculate:
             if (((_MDInCommon_Common_GrossRadID    = MDCommon_GrossRadDef()) == CMfailed) ||
@@ -69,7 +69,6 @@ int MDCommon_CloudCoverDef() {
                 ((_MDOutCommon_CloudCoverID = MFVarGetID (MDVarCommon_CloudCover,   "%",     MFOutput, MFState, MFBoundary)) == CMfailed) ||
                 ((MFModelAddFunction (_MDCommon_CloudCover) == CMfailed))) return (CMfailed);
             break;
-        default: MFOptionMessage(optName, optStr, options); return (CMfailed);
     }
     MFDefLeaving("CloudCover");
     return (_MDOutCommon_CloudCoverID);

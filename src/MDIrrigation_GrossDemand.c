@@ -345,12 +345,9 @@ static void _MDIrrGrossDemand (int itemID) {
 
 #define MDParIrrigationCropFileName "CropParameterFileName"
  
-enum { MDhelp, MDnone, MDinput, MDcalculate };
-
 int MDIrrigation_GrossDemandDef () {
-	int optID = MDnone;
-	const char *optStr, *optName = MDOptConfig_Irrigation;
-	const char *options [] = { MFhelpStr, MFnoneStr, MFinputStr, MFcalculateStr, (char *) NULL };
+	int optID = MFnone;
+	const char *optStr;
 	const char *cropParameterFileName;
 	int cropID;
 	char cropFractionName  [128];
@@ -361,16 +358,17 @@ int MDIrrigation_GrossDemandDef () {
 	if (_MDOutIrrGrossDemandID != MFUnset) return (_MDOutIrrGrossDemandID);
 
 	MFDefEntering ("Irrigation Gross Demand");
-	if ((optStr = MFOptionGet (optName)) != (char *) NULL) optID = CMoptLookup (options,optStr,true);
+	if ((optStr = MFOptionGet (MDOptConfig_Irrigation)) != (char *) NULL) optID = CMoptLookup (MFcalcOptions,optStr,true);
 	switch (optID) {
-		case MDhelp: MFOptionMessage (optName, optStr, options);
-		case MDnone: break;
-		case MDinput: _MDOutIrrGrossDemandID = MFVarGetID (MDVarIrrigation_GrossDemand,        "mm", MFInput, MFFlux, MFBoundary); break;
-		case MDcalculate:
-			if (((_MDInCommon_PrecipID       = MDCommon_PrecipitationDef())   == CMfailed) ||
-                ((_MDInSPackChgID            = MDCore_SnowPackChgDef())       == CMfailed) ||
-                ((_MDInIrrRefEvapotransID    = MDIrrigation_ReferenceETDef()) == CMfailed) ||
-                ((_MDInIrrigation_AreaFracID = MDIrrigation_IrrAreaDef())     == CMfailed) ||
+		default:     MFOptionMessage (MDOptConfig_Irrigation, optStr, MFcalcOptions); return (CMfailed);
+		case MFhelp: MFOptionMessage (MDOptConfig_Irrigation, optStr, MFcalcOptions);
+		case MFnone: break;
+		case MFinput: _MDOutIrrGrossDemandID = MFVarGetID (MDVarIrrigation_GrossDemand, "mm", MFInput, MFFlux, MFBoundary); break;
+		case MFcalculate:
+			if (((_MDInCommon_PrecipID       = MDCommon_PrecipitationDef ())   == CMfailed) ||
+                ((_MDInSPackChgID            = MDCore_SnowPackChgDef ())       == CMfailed) ||
+                ((_MDInIrrRefEvapotransID    = MDIrrigation_ReferenceETDef ()) == CMfailed) ||
+                ((_MDInIrrigation_AreaFracID = MDIrrigation_IrrAreaDef ())     == CMfailed) ||
                 ((_MDInIrrIntensityID        = MFVarGetID (MDVarIrrigation_Intensity,               MFNoUnit, MFInput,  MFState, MFBoundary)) == CMfailed) ||
                 ((_MDInIrrEfficiencyID       = MFVarGetID (MDVarIrrigation_Efficiency,              MFNoUnit, MFInput,  MFState, MFBoundary)) == CMfailed) ||
                 ((_MDInGrowingSeason1ID      = MFVarGetID (MDVarIrrigation_GrowingSeason1Start,     "DoY",    MFInput,  MFState, MFBoundary)) == CMfailed) ||
@@ -408,28 +406,10 @@ int MDIrrigation_GrossDemandDef () {
                 ((_MDOutCropActSMoistIDs [cropID] = MFVarGetID (cropActSMoistName, "mm",     MFOutput, MFState, MFInitial))  == CMfailed)) return (CMfailed);
 			if (MFModelAddFunction (_MDIrrGrossDemand) == CMfailed) return (CMfailed);
 			break;
-		default: MFOptionMessage (optName, optStr, options); return (CMfailed);
 	}
 	MFDefLeaving("Irrigation Gross Demand");
 	return (_MDOutIrrGrossDemandID);
 }
 
-int MDIrrigation_ReturnFlowDef () {
-	switch (MDIrrigation_GrossDemandDef()) {
-        case CMfailed: return (CMfailed);
-	    case MFUnset:  return (MFUnset);
-        default:
-            if (MDIrrigation_IrrAreaDef() == CMfailed) return (CMfailed);
-            else return (MFVarGetID (MDVarIrrigation_ReturnFlow, "mm", MFInput, MFFlux, MFBoundary));
-    }
-}
-
-int MDIrrigation_RunoffDef () {
-    switch (MDIrrigation_GrossDemandDef()) {
-        case CMfailed: return (CMfailed);
-        case MFUnset:  return (MFUnset);
-        default:
-            if (MDIrrigation_IrrAreaDef() == CMfailed) return (CMfailed);
-            else return (MFVarGetID (MDVarIrrigation_Runoff, "mm", MFInput, MFFlux, MFBoundary));
-    }
-}
+int MDIrrigation_ReturnFlowDef () { MDIrrigation_GrossDemandDef (); return (_MDOutIrrReturnFlowID); }
+int MDIrrigation_RunoffDef ()     { MDIrrigation_GrossDemandDef (); return (_MDOutIrrRunoffID); }

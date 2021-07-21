@@ -30,27 +30,24 @@ static void _MDAux_MeanRunoff (int itemID) {
 	MFVarSetFloat (_MDOutAux_MeanDischargeID, itemID, runoffMean);
 }
 
-enum { MDinput, MDcalculate, MDhelp };
-
 int MDAux_MeanRunoffDef () {
-	int  optID = MDinput;
-	const char *optStr, *optName = MDVarCore_RunoffMean;
-	const char *options [] = { MFinputStr, MFcalculateStr, MFhelpStr, (char *) NULL };
+	int  optID = MFinput;
+	const char *optStr;
 
 	if (_MDOutAux_MeanDischargeID != MFUnset) return (_MDOutAux_MeanDischargeID);
 
 	MFDefEntering ("Runoff Mean");
-	if ((optStr = MFOptionGet (optName)) != (char *) NULL) optID = CMoptLookup (options, optStr, true);
+	if ((optStr = MFOptionGet (MDVarCore_RunoffMean)) != (char *) NULL) optID = CMoptLookup (MFsourceOptions, optStr, true);
 	switch (optID) {
-		case MDhelp:  MFOptionMessage (optName, optStr, options);
-		case MDinput: _MDOutAux_MeanDischargeID  = MFVarGetID (MDVarCore_RunoffMean, "mm/d", MFInput, MFState, MFBoundary); break;
-		case MDcalculate:
+		default:      MFOptionMessage (MDVarCore_RunoffMean, optStr, MFsourceOptions); return (CMfailed);
+		case MFhelp:  MFOptionMessage (MDVarCore_RunoffMean, optStr, MFsourceOptions);
+		case MFinput: _MDOutAux_MeanDischargeID  = MFVarGetID (MDVarCore_RunoffMean, "mm/d", MFInput, MFState, MFBoundary); break;
+		case MFcalculate:
 			if (((_MDAux_InAvgNStepsID      = MDAux_AvgNStepsDef()) == CMfailed) ||
                 ((_MDInCore_RunoffID        = MDCore_RunoffDef())   == CMfailed) ||
                 ((_MDOutAux_MeanDischargeID = MFVarGetID (MDVarCore_RunoffMean, "mm/d", MFOutput, MFState, MFInitial)) == CMfailed) ||
                 (MFModelAddFunction(_MDAux_MeanRunoff) == CMfailed)) return (CMfailed);
 			break;
-		default: MFOptionMessage (optName, optStr, options); return (CMfailed);
 	}
 	MFDefLeaving ("Runoff Mean");
 	return (_MDOutAux_MeanDischargeID);

@@ -99,15 +99,16 @@ enum { MDhelp, MDinput, MDdownscale, MDfraction, MDwetdays };
 
 int MDCommon_PrecipitationDef () {
 	int optID = MDinput;
-	const char *optStr, *optName = MDVarCommon_Precipitation;
+	const char *optStr;
 	const char *options [] = { MFhelpStr, MFinputStr, "downscale", "fraction", "wetdays", (char *) NULL };
 
 	if (_MDOutCommon_PrecipitationID != MFUnset) return (_MDOutCommon_PrecipitationID);
 
 	MFDefEntering ("Precipitation");
-	if ((optStr = MFOptionGet (optName)) != (char *) NULL) optID = CMoptLookup (options,optStr,true);
+	if ((optStr = MFOptionGet (MDVarCommon_Precipitation)) != (char *) NULL) optID = CMoptLookup (options,optStr,true);
 	switch (optID) {
-		case MDhelp:  MFOptionMessage (optName, optStr, options);
+		default:      MFOptionMessage (MDVarCommon_Precipitation, optStr, options); return (CMfailed);
+		case MDhelp:  MFOptionMessage (MDVarCommon_Precipitation, optStr, options);
 		case MDinput: _MDOutCommon_PrecipitationID = MFVarGetID (MDVarCommon_Precipitation, "mm", MFInput, MFFlux, MFBoundary); break;
 		case MDdownscale:
 			if (((_MDInCommon_PrecipitationMonthlyID   = MFVarGetID (MDVarCommon_PrecipitationMonthly,   "mm", MFInput,  MFFlux,  MFBoundary)) == CMfailed) ||
@@ -128,7 +129,6 @@ int MDCommon_PrecipitationDef () {
                 ((_MDOutCommon_PrecipitationID          = MFVarGetID (MDVarCommon_Precipitation,         "mm", MFOutput, MFFlux, MFBoundary)) == CMfailed) ||
                 (MFModelAddFunction (_MDPrecipWetDays) == CMfailed)) return (CMfailed);
 			break;
-		default: MFOptionMessage (optName, optStr, options); return (CMfailed);
 	}
 	MFDefLeaving ("Precipitation");
 	return (_MDOutCommon_PrecipitationID);

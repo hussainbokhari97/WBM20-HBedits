@@ -31,22 +31,19 @@ static void _MDEvapotransp (int itemID) {
 	MFVarSetFloat (_MDOutEvapotranspID,  itemID, et);
 }
 
-enum { MDhelp, MDnone, MDinput, MDcalculate, };
-
 int MDCore_EvapotranspirationDef () {
-	int optID = MDnone, ret;
-	const char *optStr, *optName = MDOptConfig_Irrigation;
-	const char *options [] = { MFhelpStr, MFnoneStr, MFinputStr, MFcalculateStr, (char *) NULL };
+	int optID = MFnone, ret;
+	const char *optStr;
 
 	if (_MDOutEvapotranspID != MFUnset) return (_MDOutEvapotranspID);
 
 	MFDefEntering ("Evapotranspiration");
-	if ((optStr = MFOptionGet (optName)) != (char *) NULL) optID = CMoptLookup (options, optStr, true);
+	if ((optStr = MFOptionGet (MDOptConfig_Irrigation)) != (char *) NULL) optID = CMoptLookup (MFcalcOptions, optStr, true);
 	switch (optID) {
-		case MDhelp:
-		case MDnone:  
-		case MDinput: break;
-		case MDcalculate: 
+		case MFhelp:
+		case MFnone:  
+		case MFinput: break;
+		case MFcalculate: 
 			if ((_MDInIrrEvapotranspID = MFVarGetID (MDVarIrrigation_Evapotranspiration, "mm", MFInput, MFFlux, MFBoundary)) == CMfailed) return (CMfailed);
 			if ((ret = MDReservoir_FarmPondReleaseDef ()) != MFUnset) {
 				if ((ret == CMfailed) ||

@@ -38,28 +38,25 @@ static void _MDParam_LeafAreaIndex (int itemID) {
 	MFVarSetFloat (_MDOutParam_LeafAreaIndexID,itemID,0.001 > lai ? 0.001 : lai);
 }
 
-enum { MDinput, MDstandard, MDhelp };
-
 int MDParam_LeafAreaIndexDef () {
-	int optID = MDinput;
-	const char *optStr, *optName = MDVarCore_LeafAreaIndex;
-	const char *options [] = { MFinputStr, "standard", MFhelpStr, (char *) NULL };
+	int optID = MFinput;
+	const char *optStr;
 
 	if (_MDOutParam_LeafAreaIndexID != MFUnset) return (_MDOutParam_LeafAreaIndexID);
 
 	MFDefEntering ("Leaf Area");
-	if ((optStr = MFOptionGet (optName)) != (char *) NULL) optID = CMoptLookup (options,optStr,true);
+	if ((optStr = MFOptionGet (MDVarCore_LeafAreaIndex)) != (char *) NULL) optID = CMoptLookup (MFsourceOptions,optStr,true);
 	switch (optID) {
-		case MDhelp:   MFOptionMessage (optName, optStr, options);
-		case MDinput:  _MDOutParam_LeafAreaIndexID = MFVarGetID (MDVarCore_LeafAreaIndex, MFNoUnit, MFInput, MFState, MFBoundary); break;
-		case MDstandard:
+		default:       MFOptionMessage (MDVarCore_LeafAreaIndex, optStr, MFsourceOptions); return (CMfailed);
+		case MFhelp:   MFOptionMessage (MDVarCore_LeafAreaIndex, optStr, MFsourceOptions);
+		case MFinput:  _MDOutParam_LeafAreaIndexID = MFVarGetID (MDVarCore_LeafAreaIndex, MFNoUnit, MFInput, MFState, MFBoundary); break;
+		case MFcalculate:
 			if (((_MDInParam_LPMaxID          = MDParam_LCLPMaxDef ())          == CMfailed) ||
                 ((_MDInCommon_CoverID         = MDParam_LandCoverMappingDef ()) == CMfailed) ||
                 ((_MDInCommon_AtMeanID        = MDCommon_AirTemperatureDef ())  == CMfailed) ||
                 ((_MDOutParam_LeafAreaIndexID = MFVarGetID (MDVarCore_LeafAreaIndex,    MFNoUnit, MFOutput, MFState, MFBoundary)) == CMfailed) ||
                 (MFModelAddFunction(_MDParam_LeafAreaIndex) == CMfailed)) return (CMfailed);
 			break;
-		default: MFOptionMessage (optName, optStr, options); return (CMfailed);
 	}
 	MFDefLeaving ("Leaf Area");
 	return (_MDOutParam_LeafAreaIndexID);
@@ -87,24 +84,23 @@ static void _MDStemAreaIndex (int itemID) {
 }
 
 int MDParam_LCStemAreaIndexDef () {
-	int optID = MFUnset;
-	const char *optStr, *optName = MDVarCore_StemAreaIndex;
-	const char *options [] = { MFinputStr, "standard", MFhelpStr, (char *) NULL };
+	int optID = MFinput;
+	const char *optStr;
 
 	if (_MDOutStemAreaIndexID != MFUnset) return (_MDOutStemAreaIndexID);
 
 	MFDefEntering ("Stem Area Index");
-	if ((optStr = MFOptionGet (optName)) != (char *) NULL) optID = CMoptLookup (options,optStr,true);
+	if ((optStr = MFOptionGet (MDVarCore_StemAreaIndex)) != (char *) NULL) optID = CMoptLookup (MFsourceOptions,optStr,true);
 	switch (optID) {
-		case MDhelp:   MFOptionMessage (optName, optStr, options);
-		case MDinput:  _MDOutStemAreaIndexID = MFVarGetID (MDVarCore_StemAreaIndex, MFNoUnit, MFInput, MFState, MFBoundary); break;
-		case MDstandard:
+		default:       MFOptionMessage (MDVarCore_StemAreaIndex, optStr, MFsourceOptions); return (CMfailed);
+		case MFhelp:   MFOptionMessage (MDVarCore_StemAreaIndex, optStr, MFsourceOptions);
+		case MFinput:  _MDOutStemAreaIndexID = MFVarGetID (MDVarCore_StemAreaIndex, MFNoUnit, MFInput, MFState, MFBoundary); break;
+		case MFcalculate:
 			if (((_MDInParam_LPMaxID    = MDParam_LCLPMaxDef ())  == CMfailed) ||
                 ((_MDInCParamCHeightID  = MDParam_LCHeightDef ()) == CMfailed) ||
                 ((_MDOutStemAreaIndexID = MFVarGetID (MDVarCore_StemAreaIndex, MFNoUnit, MFOutput, MFState, MFBoundary)) == CMfailed) ||
                 (MFModelAddFunction (_MDStemAreaIndex) == CMfailed)) return (CMfailed);
 			break;
-		default: MFOptionMessage (optName, optStr, options); return (CMfailed);
 	}
 	MFDefLeaving ("Stem Area Index");
 	return (_MDOutStemAreaIndexID);

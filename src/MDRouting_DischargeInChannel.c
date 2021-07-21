@@ -19,19 +19,19 @@ static int _MDDischLevel3ID = MFUnset;
 
 int MDRouting_DischargeInChannelDef() {
 	int optID = MDmuskingum;
-	const char *optStr, *optName = MDOptConfig_Routing;
+	const char *optStr;
 	const char *options []    = { MFhelpStr, "muskingum", "accumulate", "cascade", (char *) NULL };
 
 	if (_MDDischLevel3ID != MFUnset) return (_MDDischLevel3ID);
 
 	MFDefEntering ("Discharge - In channel");
-	if ((optStr = MFOptionGet (optName)) != (char *) NULL) optID = CMoptLookup (options,optStr,true);
+	if ((optStr = MFOptionGet (MDOptConfig_Routing)) != (char *) NULL) optID = CMoptLookup (options,optStr,true);
 	switch (optID) {
-		case MDhelp:       MFOptionMessage (optName, optStr, options);
+		default: MFOptionMessage (MDOptConfig_Routing, optStr, options); return (CMfailed);
+		case MDhelp:       MFOptionMessage (MDOptConfig_Routing, optStr, options);
 		case MDmuskingum:  _MDDischLevel3ID = MDRouting_DischargeInChannelMuskingumDef();  break;
 		case MDaccumulate: _MDDischLevel3ID = MDRouting_DischargeInChannelAccumulateDef(); break;
 		case MDcascade:    _MDDischLevel3ID = MDRouting_DischargeInChannelCascadeDef();    break;
-		default: MFOptionMessage (optName, optStr, options); return (CMfailed);
 	}
 	if (_MDDischLevel3ID == CMfailed) return (CMfailed);
 	MFDefLeaving ("Discharge - In channel");

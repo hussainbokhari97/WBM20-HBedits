@@ -48,20 +48,21 @@ static void _MDWetDays (int itemID)
 	MFVarSetInt (_MDOutCommon_WetDaysID,itemID,wetDays);
 	}
 
-enum { MDinput, MDlbg, MDhelp };
+enum { MDhelp, MDinput, MDlbg };
 
 int MDCommon_WetDaysDef ()
 	{
 	int optID = MDinput;
-	const char *optStr, *optName = MDVarCommon_WetDays;
-	const char *options [] = { MFinputStr, "LBG", MFhelpStr, (char *) NULL };
+	const char *optStr;
+	const char *options [] = { MFhelpStr, MFinputStr, "LBG", (char *) NULL };
 
 	if (_MDOutCommon_WetDaysID != MFUnset) return (_MDOutCommon_WetDaysID);
 
 	MFDefEntering ("Wet Days");
-	if ((optStr = MFOptionGet (optName)) != (char *) NULL) optID = CMoptLookup (options,optStr,true);
+	if ((optStr = MFOptionGet (MDVarCommon_WetDays)) != (char *) NULL) optID = CMoptLookup (options,optStr,true);
 	switch (optID) {
-		case MDhelp:  MFOptionMessage (optName, optStr, options);
+		default:      MFOptionMessage (MDVarCommon_WetDays, optStr, options); return (CMfailed);
+		case MDhelp:  MFOptionMessage (MDVarCommon_WetDays, optStr, options);
 		case MDinput: _MDOutCommon_WetDaysID = MFVarGetID (MDVarCommon_WetDays, MFNoUnit, MFInput, MFState, MFBoundary); break;
 		case MDlbg:
 			if (((_MDInCommon_PrecipID      = MFVarGetID (MDVarCommon_PrecipMonthly, "mm",     MFInput,  MFFlux,  MFBoundary)) == CMfailed) ||
@@ -70,7 +71,6 @@ int MDCommon_WetDaysDef ()
                 ((_MDOutCommon_WetDaysID    = MFVarGetID (MDVarCommon_WetDays,       MFNoUnit, MFOutput, MFFlux,  MFBoundary)) == CMfailed) ||
 				(MFModelAddFunction (_MDWetDays) == CMfailed)) return (CMfailed);
 			break;
-		default: MFOptionMessage (optName, optStr, options); return (CMfailed);
 	}
 	MFDefLeaving ("Wet Days");
 	return (_MDOutCommon_WetDaysID);
