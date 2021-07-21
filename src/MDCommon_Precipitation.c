@@ -55,7 +55,7 @@ static void _MDPrecipFraction (int itemID) {
 	precipIn   = MFVarGetFloat (_MDInCommon_PrecipitationMonthlyID,  itemID, 0.0);
 	precipFrac = MFVarGetFloat (_MDInCommon_PrecipitationFractionID, itemID, 1.0 / nDays);
 
-	precipOut = precipIn *  precipFrac * nDays;
+	precipOut = precipFrac * precipIn *  nDays;
 	if (precipOut < 0.0){ CMmsgPrint (CMmsgUsrError, "Precip negative! itemID=%d precipIn=%f precipFrac =%fprecipFrac", itemID, precipIn, precipFrac);}
 	MFVarSetFloat (_MDOutCommon_PrecipitationID, itemID, precipOut);
 }
@@ -113,7 +113,7 @@ int MDCommon_PrecipitationDef () {
 		case MDdownscale:
 			if (((_MDInCommon_PrecipitationMonthlyID   = MFVarGetID (MDVarCommon_PrecipitationMonthly,   "mm", MFInput,  MFFlux,  MFBoundary)) == CMfailed) ||
 				((_MDInCommon_PrecipitationDailyID     = MFVarGetID (MDVarCommon_PrecipitationDaily,     "mm", MFInput,  MFFlux,  MFBoundary)) == CMfailed) ||
-                ((_MDInCommon_PrecipitationReferenceID = MFVarGetID (MDVarCommon_PrecipitationReference, "mm", MFInput,  MFState, MFBoundary)) == CMfailed) ||
+                ((_MDInCommon_PrecipitationReferenceID = MFVarGetID (MDVarCommon_PrecipitationReference, "mm", MFInput,  MFFlux,  MFBoundary)) == CMfailed) ||
                 ((_MDOutCommon_PrecipitationID         = MFVarGetID (MDVarCommon_Precipitation,          "mm", MFOutput, MFFlux,  MFBoundary)) == CMfailed) ||
                 (MFModelAddFunction (_MDPrecipDownscale) == CMfailed)) return (CMfailed);
 			break;
@@ -125,8 +125,8 @@ int MDCommon_PrecipitationDef () {
 			break;
 		case MDwetdays:
 			if (((_MDInCommon_PrecipitationWetDaysID    = MDCommon_WetDaysDef ()) == CMfailed) ||
-                ((_MDInCommon_PrecipitationMonthlyID    = MFVarGetID (MDVarCommon_PrecipMonthly,         "mm", MFInput,  MFFlux, MFBoundary)) == CMfailed) ||
-                ((_MDOutCommon_PrecipitationID          = MFVarGetID (MDVarCommon_Precipitation,         "mm", MFOutput, MFFlux, MFBoundary)) == CMfailed) ||
+                ((_MDInCommon_PrecipitationMonthlyID    = MFVarGetID (MDVarCommon_PrecipMonthly,         "mm", MFInput,  MFFlux,  MFBoundary)) == CMfailed) ||
+                ((_MDOutCommon_PrecipitationID          = MFVarGetID (MDVarCommon_Precipitation,         "mm", MFOutput, MFFlux,  MFBoundary)) == CMfailed) ||
                 (MFModelAddFunction (_MDPrecipWetDays) == CMfailed)) return (CMfailed);
 			break;
 	}
