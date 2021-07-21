@@ -74,7 +74,7 @@ extern "C" {
 #define	MDVarCommon_Elevation                   "Elevation"
 #define	MDVarCommon_ElevationMin                "ElevationMin"
 #define	MDVarCommon_ElevationMax                "ElevationMax"
-#define	MDVarCommon_ElevationReference          "ReferenceElevation"
+#define	MDVarCommon_ElevationReference          "ElevationReference"
 #define	MDVarCommon_LapseRate                   "LapseRate"
 #define MDVarCommon_Precipitation               "Precipitation"
 #define MDVarCommon_PrecipitationDaily          "PrecipitationDaily"
