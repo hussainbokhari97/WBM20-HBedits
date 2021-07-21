@@ -33,7 +33,7 @@ static void _MDPrecipDownscale (int itemID) {
 	precipMonthly = MFVarGetFloat (_MDInCommon_PrecipitationMonthlyID,   itemID, 0.0);
 	precipRef     = MFVarGetFloat (_MDInCommon_PrecipitationReferenceID, itemID, 0.0);
 
-	precip = precipMonthly > 0.0 ? precipRef * precipDaily / (precipMonthly * nDays) : 0.0;
+	precip = precipMonthly > 0.0 ? precipDaily * precipRef / (precipMonthly) : 0.0;
 	MFVarSetFloat (_MDOutCommon_PrecipitationID, itemID, precip);
 }
 
