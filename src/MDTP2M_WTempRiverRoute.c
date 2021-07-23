@@ -54,7 +54,6 @@ static int _MDEquil_Temp	              = MFUnset;
 
 static int _MDInCommon_HumidityRelativeID = MFUnset; // FOR NEW TEMP MODULE
 
-
 static void _MDWTempRiverRoute (int itemID) {
     float Q;
 	float Q_incoming;
@@ -73,6 +72,7 @@ static void _MDWTempRiverRoute (int itemID) {
 
     //processing variables
     float channelWidth;
+    float channelLength;
     float waterStorageChange;
     float waterStorage;
     float ResWaterStorageChange = 0;
@@ -121,17 +121,17 @@ static void _MDWTempRiverRoute (int itemID) {
      if (_MDInResStorageID != MFUnset) {
          ResWaterStorageChange = MFVarGetFloat ( _MDInResStorageChangeID, itemID, 0.0) * pow(1000,3); // convert to m3/
          ResWaterStorage       = MFVarGetFloat ( _MDInResStorageID,       itemID, 0.0) * pow(1000,3); // convert to m3 
-         resCapacity           = MFVarGetFloat (_MDInResCapacityID,       itemID, 0.0);	//RJS 071511
+         resCapacity           = MFVarGetFloat ( _MDInResCapacityID,      itemID, 0.0);	//RJS 071511
      } else {
          ResWaterStorageChange =
          ResWaterStorage       = 
-         resCapacity           = 0.0;	//RJS 071511
+         resCapacity           = 0.0; //RJS 071511
     }
      
-    if(Q < 0.0)  Q = 0.0;							//RJS 120409
-    if(Q_incoming < 0.0) Q_incoming = 0.0;			//RJS 120409
+    if(Q          < 0.0) Q = 0.0;          //RJS 120409
+    if(Q_incoming < 0.0) Q_incoming = 0.0; //RJS 120409
 
-    if(resCapacity < 0.0){
+    if(resCapacity > 0.0) {
     	waterStorage = waterStorage + ResWaterStorage;
     	waterStorageChange = waterStorageChange + ResWaterStorageChange;
     	ReservoirArea = pow(((ResWaterStorage / pow(10,6)) / 9.208),(1 / 1.114)) * 1000 * 1000;  // m2, from Takeuchi 1997 - original equation has V in 10^6 m3 and A in km2
@@ -151,7 +151,7 @@ static void _MDWTempRiverRoute (int itemID) {
     			Q_WTemp	 = StorexT / waterStorage;		// RJS 071511	//degC
     			Q_WTemp_mix = StorexT_mix / waterStorage;	// RJS 071511	//degC
     		} else {
-				Q_WTemp 	 = 0.0;			//RJS 071511
+				Q_WTemp 	= 0.0;			//RJS 071511
 				Q_WTemp_mix = 0.0;			//RJS 071511
 			}
     	}
@@ -177,9 +177,9 @@ static void _MDWTempRiverRoute (int itemID) {
     	MFVarSetFloat(_MDDeltaStorageMixing_QxTID, itemID, DeltaStorexT_mix);
     	MFVarSetFloat(_MDWTempMixing_QxTID, itemID, Q_WTemp_mix);
     } else {
-    	ReservoirArea = 0.0;
+    	ReservoirArea     = 0.0;
     	ReservoirVelocity = 0.0;
-    	ReservoirDepth = 0.0;
+    	ReservoirDepth    = 0.0;
 
         //TODO: RO_Vol has been set to never be less than 0 in MDWRunoff
         QxT_input = RO_Vol * RO_WTemp * 86400.0; //m3*degC/d
@@ -190,27 +190,27 @@ static void _MDWTempRiverRoute (int itemID) {
         // TODO:  Make all these changes for other bgc flux models
         // Q_incoming includes local runoff!!!
         if((Q_incoming) > 0.000001) {			 //do not include water storage in this check - will screw up mixing estimates
-            QxTnew = QxT + QxT_input + StorexT; //m3*degC/d
+            QxTnew     = QxT     + QxT_input + StorexT; //m3*degC/d
    	        QxTnew_mix = QxT_mix + QxT_input + StorexT_mix;
 
-            Q_WTemp = QxTnew / ((Q_incoming) * 86400 + (waterStorage - waterStorageChange)); //degC
+            Q_WTemp     = QxTnew     / ((Q_incoming) * 86400 + (waterStorage - waterStorageChange)); //degC
             Q_WTemp_mix = QxTnew_mix / ((Q_incoming) * 86400 + (waterStorage - waterStorageChange)); //degC
 
             /// Temperature Processing using Dingman 1972 
             if (cloudCover < 95){  // clear skies, assume cloud cover < 95% convertcalories / cm2 /d to kJ/m2/d
-                HeatLoss_int = (105 + 23 *  windSpeed) * 4.1868 / 1000 * 100 * 100; // kJ/m2/d
-                HeatLoss_slope = (35 + 4.2 * windSpeed) * 4.1868 / 1000 * 100 * 100;// kJ/m2/d/degC
+                HeatLoss_int   = (105 + 23  * windSpeed) * 4.1868 / 1000 * 100 * 100; // kJ/m2/d
+                HeatLoss_slope = ( 35 + 4.2 * windSpeed) * 4.1868 / 1000 * 100 * 100; // kJ/m2/d/degC
             } else { // cloudy skies, assume cloud cover > 95%
-        	    HeatLoss_int = (-73 + 9.1 *  windSpeed) * 4.1868 / 1000 * 100 * 100;
-        	    HeatLoss_slope = (37 + 4.6 * windSpeed) * 4.1868 / 1000 * 100 * 100;
+        	    HeatLoss_int   = (-73 + 9.1 * windSpeed) * 4.1868 / 1000 * 100 * 100;
+        	    HeatLoss_slope = ( 37 + 4.6 * windSpeed) * 4.1868 / 1000 * 100 * 100;
             }
             Tequil = Tair + (((solarRad * 1000) - HeatLoss_int) / HeatLoss_slope); //solar rad converted from MJ to kJ/m2/d
             // use exponential form
             //TODO channelWidth can equal 0 when waterStorage > 0.0, so need to check here
             // Apply model only to large enough discharges, otherwise assume temperature equils equilibrium
             // if (channelWidth > 0 && Q > 0.001){
-            if (channelWidth > 0){
-                Q_WTemp_new = MDMaximum(0, (((Q_WTemp - Tequil) * exp((-HeatLoss_slope * MFModelGetLength(itemID)) / (999.73 * 4.1922 * (Q * 86400.0 / channelWidth)))) + Tequil));
+            if (channelWidth > 0.0){
+                Q_WTemp_new = channelLength > 0.0 ? MDMaximum(0, (((Q_WTemp - Tequil) * exp((-HeatLoss_slope * channelLength) / (999.73 * 4.1922 * (Q * 86400.0 / channelWidth)))) + Tequil)) : Q_WTemp; // FBM channel length can be zero
             } else {
         	    Q_WTemp_new = MDMaximum(0, Tequil);
             }
@@ -249,9 +249,8 @@ static void _MDWTempRiverRoute (int itemID) {
 	            initial_riverT = equil2;
             }
 
-            RivTemp = equil2 + (Q_WTemp - equil2) * exp(-kay * MFModelGetLength(itemID)/(4181.3*(Q * 86400.0 / channelWidth)));
-
-            if (channelWidth == 0) RivTemp = initial_riverT;
+            channelLength =  MFModelGetLength(itemID);
+            RivTemp = (channelLength > 0.0) && (channelWidth > 0.0) ? equil2 + (Q_WTemp - equil2) * exp(-kay * channelLength / (4181.3*(Q * 86400.0 / channelWidth))) : initial_riverT; // FBM channel length can be zere
 
             /// Resetting outgoing temperature:
             Q_WTemp_new = MDMaximum(0, RivTemp);
@@ -264,7 +263,7 @@ static void _MDWTempRiverRoute (int itemID) {
             if (isnan(Q_WTemp_new)){
                 //if( (equil2 > 20) && (Q > 0.0) && (MFModelGetLength(itemID) > 0)){
 	            printf(" NEW NEW NEW NEW NEW NEW \n");
-	            printf("Q_WTemp = %f, Tequil = %f, HeatLoss_slope = %f, length = %f, width = %f, cloudCover = %f, Q_WTemp_new = %f \n", Q_WTemp, Tequil, HeatLoss_slope, MFModelGetLength(itemID), channelWidth, cloudCover, Q_WTemp_new);
+	            printf("Q_WTemp = %f, Tequil = %f, HeatLoss_slope = %f, length = %f, width = %f, cloudCover = %f, Q_WTemp_new = %f \n", Q_WTemp, Tequil, HeatLoss_slope, channelLength, channelWidth, cloudCover, Q_WTemp_new);
 	            printf("Tair = %f, HeatLoss_int = %f, windSpeed = %f, solarRad = %f, Q = %f \n", Tair, HeatLoss_int, windSpeed, solarRad, Q);
 	            printf("QxT_input = %f, RO_Vol =% f, RO_WTemp = %f, QxT_mix = %f, StorexT_mix = %f, QxT = %f, StorexT = %f \n", QxT_input, RO_Vol, RO_WTemp, QxT_mix, StorexT_mix, QxT, StorexT);
 	            printf("Tair = %f, e2 = %f, es2 = %f, dew_point = %f, relative_h = %f \n", Tair, e2, es2, dew_point, relative_h);
