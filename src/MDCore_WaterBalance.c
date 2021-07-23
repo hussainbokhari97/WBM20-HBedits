@@ -74,7 +74,7 @@ static void _MDWaterBalance(int itemID) {
 		irrSoilMoistChg   = _MDInIrrSoilMoistChgID            != MFUnset ? MFVarGetFloat (_MDInIrrSoilMoistChgID,           itemID, 0.0) : 0.0;
 		irrUptakeGrdWater = _MDInIrrigation_UptakeGrdWaterID  != MFUnset ? MFVarGetFloat (_MDInIrrigation_UptakeGrdWaterID, itemID, 0.0) : 0.0;
 		irrUptakeRiver    = _MDInIrrigation_UptakeRiverID     != MFUnset ? MFVarGetFloat (_MDInIrrigation_UptakeRiverID,    itemID, 0.0) : 0.0;
-		irrUptakeExcess   = _MDInIrrigation_UptakeExcessID    != MFUnset ? MFVarGetFloat (_MDInIrrigation_UptakeExcessID,   itemID, 0.0);
+		irrUptakeExcess   = _MDInIrrigation_UptakeExcessID    != MFUnset ? MFVarGetFloat (_MDInIrrigation_UptakeExcessID,   itemID, 0.0) : 0.0;
 
 		if (_MDInReservoir_FarmPondReleaseID != MFUnset) {
 			smallResRelease    = MFVarGetFloat (_MDInReservoir_FarmPondReleaseID,    itemID, 0.0);
