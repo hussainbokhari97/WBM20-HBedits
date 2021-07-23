@@ -68,7 +68,7 @@ int MDRouting_DischargeUptake () {
 
 	MFDefEntering ("Discharge - Uptatakes");
 	if (((_MDInRouting_DischargeInChannelID  = MDRouting_DischargeInChannelDef()) == CMfailed) ||
-        ((_MDOutRouting_DischargeUptakeID = MFVarGetID ("__DischLevel2",  "m/3", MFOutput, MFState, false)) == CMfailed))
+        ((_MDOutRouting_DischargeUptakeID    = MFVarGetID ("__DischLevel2",  "m/3", MFOutput, MFState, false)) == CMfailed))
 	    return (CMfailed);
 	
 	if ((ret = MDIrrigation_GrossDemandDef()) != MFUnset) {
