@@ -166,16 +166,16 @@ static void _MDWTempRiverRoute (int itemID) {
     	DeltaStorexT_mix = StorexT_new_mix - StorexT_mix;							//RJS 071511
     	QxTout_mix       = Q * 86400.0 * Q_WTemp_mix; 								//RJS 071511	//m3*degC/s
 
-    	MFVarSetFloat(_MDLocalIn_QxTID, itemID, QxT_input);
-    	MFVarSetFloat(_MDFlux_QxTID, itemID, QxTout);
-    	MFVarSetFloat(_MDStorage_QxTID, itemID, StorexT_new);
-    	MFVarSetFloat(_MDDeltaStorage_QxTID, itemID, DeltaStorexT);
-    	MFVarSetFloat(_MDWTemp_QxTID, itemID, Q_WTemp_new);
-    	MFVarSetFloat(_MDWTempDeltaT_QxTID, itemID, deltaT);
-    	MFVarSetFloat(_MDFluxMixing_QxTID, itemID, QxTout_mix);
-    	MFVarSetFloat(_MDStorageMixing_QxTID, itemID, StorexT_new_mix);
+    	MFVarSetFloat(_MDLocalIn_QxTID,            itemID, QxT_input);
+    	MFVarSetFloat(_MDFlux_QxTID,               itemID, QxTout);
+    	MFVarSetFloat(_MDStorage_QxTID,            itemID, StorexT_new);
+    	MFVarSetFloat(_MDDeltaStorage_QxTID,       itemID, DeltaStorexT);
+    	MFVarSetFloat(_MDWTemp_QxTID,              itemID, Q_WTemp_new);
+    	MFVarSetFloat(_MDWTempDeltaT_QxTID,        itemID, deltaT);
+    	MFVarSetFloat(_MDFluxMixing_QxTID,         itemID, QxTout_mix);
+    	MFVarSetFloat(_MDStorageMixing_QxTID,      itemID, StorexT_new_mix);
     	MFVarSetFloat(_MDDeltaStorageMixing_QxTID, itemID, DeltaStorexT_mix);
-    	MFVarSetFloat(_MDWTempMixing_QxTID, itemID, Q_WTemp_mix);
+    	MFVarSetFloat(_MDWTempMixing_QxTID,        itemID, Q_WTemp_mix);
     } else {
     	ReservoirArea     = 0.0;
     	ReservoirVelocity = 0.0;
@@ -193,11 +193,14 @@ static void _MDWTempRiverRoute (int itemID) {
             QxTnew     = QxT     + QxT_input + StorexT; //m3*degC/d
    	        QxTnew_mix = QxT_mix + QxT_input + StorexT_mix;
 
-            Q_WTemp     = QxTnew     / ((Q_incoming) * 86400 + (waterStorage - waterStorageChange)); //degC
-            Q_WTemp_mix = QxTnew_mix / ((Q_incoming) * 86400 + (waterStorage - waterStorageChange)); //degC
+            Q_WTemp     = ((Q_incoming) * 86400 + (waterStorage - waterStorageChange)) > 0.0 ? QxTnew     / ((Q_incoming) * 86400 + (waterStorage - waterStorageChange)) : RO_WTemp; //degC
+            Q_WTemp_mix = ((Q_incoming) * 86400 + (waterStorage - waterStorageChange)) > 0.0 ? QxTnew_mix / ((Q_incoming) * 86400 + (waterStorage - waterStorageChange)) : RO_WTemp; //degC
 
             /// Temperature Processing using Dingman 1972 
-            if (cloudCover < 95){  // clear skies, assume cloud cover < 95% convertcalories / cm2 /d to kJ/m2/d
+ 
+            /* ********************************** This is garbage from Rob that Arial does not use. ************************************************************
+
+            if (cloudCover < 95) {  // clear skies, assume cloud cover < 95% convertcalories / cm2 /d to kJ/m2/d
                 HeatLoss_int   = (105 + 23  * windSpeed) * 4.1868 / 1000 * 100 * 100; // kJ/m2/d
                 HeatLoss_slope = ( 35 + 4.2 * windSpeed) * 4.1868 / 1000 * 100 * 100; // kJ/m2/d/degC
             } else { // cloudy skies, assume cloud cover > 95%
@@ -214,6 +217,7 @@ static void _MDWTempRiverRoute (int itemID) {
             } else {
         	    Q_WTemp_new = MDMaximum(0, Tequil);
             }
+            ************************************************** End of garbage ***************************************************************************************/
 
             ////////// NEW EQUILIBRIUM TEMP MODEL ///// Edinger et al. 1974: Heat Exchange and Transport in the Environment /////
 
@@ -273,11 +277,11 @@ static void _MDWTempRiverRoute (int itemID) {
 	            printf("ResCap = %f", resCapacity);
             }
 
-            deltaT = Q_WTemp_new - Q_WTemp;
-            StorexT_new  = waterStorage * Q_WTemp_new; //m3*degC
-            DeltaStorexT = StorexT_new - StorexT; //
-            QxTout       = Q * 86400.0 * Q_WTemp_new ; //m3*degC/d
-            QxTRemoval   = QxTnew - (StorexT_new + QxTout); //m3*degC/d
+            deltaT           = Q_WTemp_new - Q_WTemp;
+            StorexT_new      = waterStorage * Q_WTemp_new; //m3*degC
+            DeltaStorexT     = StorexT_new - StorexT; //
+            QxTout           = Q * 86400.0 * Q_WTemp_new ; //m3*degC/d
+            QxTRemoval       = QxTnew - (StorexT_new + QxTout); //m3*degC/d
             StorexT_new_mix  = waterStorage * Q_WTemp_mix; //m3*degC
             DeltaStorexT_mix = StorexT_new_mix - StorexT_mix;
             QxTout_mix       = Q * 86400.0 * Q_WTemp_mix; //m3*degC/s
