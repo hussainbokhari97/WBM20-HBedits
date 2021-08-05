@@ -4,7 +4,7 @@ GHAAS Water Balance/Transport Model
 Global Hydrological Archive and Analysis System
 Copyright 1994-2021, UNH - ASRC/CUNY
 
-MDDischMean.c
+MDAux_MeanDischarge.c
 
 bfekete@gc.cuny.edu
 
@@ -23,9 +23,9 @@ static void _MDAux_MeanDischarge (int itemID) {
 	float accumDisch;
 	float dischMean;
 
-	accumDisch = MFVarGetFloat (_MDInAux_AccumRunoffID,  itemID, 0.0);
-	nSteps     = MFVarGetInt   (_MDAux_InAvgNStepsID,       itemID,   0);
-	dischMean  = MFVarGetFloat (_MDOutAux_MeanDischargeID,      itemID, 0.0);
+	accumDisch = MFVarGetFloat (_MDInAux_AccumRunoffID,    itemID, 0.0);
+	nSteps     = MFVarGetInt   (_MDAux_InAvgNStepsID,      itemID,   0);
+	dischMean  = MFVarGetFloat (_MDOutAux_MeanDischargeID, itemID, 0.0);
 	dischMean  = (float) (((double) dischMean * (double) nSteps + accumDisch) / ((double) (nSteps + 1)));
 	MFVarSetFloat (_MDOutAux_MeanDischargeID, itemID, dischMean);
 }
@@ -41,7 +41,7 @@ int MDAux_MeanDiscargehDef () {
 	switch (optID) {
 		default:      MFOptionMessage (MDVarAux_DischMean, optStr, MFsourceOptions); return (CMfailed);
 		case MFhelp:  MFOptionMessage (MDVarAux_DischMean, optStr, MFsourceOptions);
-		case MFinput: _MDOutAux_MeanDischargeID  = MFVarGetID (MDVarAux_DischMean, "m3/s", MFInput, MFState, MFBoundary); break;
+		case MFinput: _MDOutAux_MeanDischargeID = MFVarGetID (MDVarAux_DischMean, "m3/s", MFInput, MFState, MFBoundary); break;
 		case MFcalculate:
 			if (((_MDInAux_AccumRunoffID    = MDAux_AccumRunoffDef()) == CMfailed) ||
 			    ((_MDAux_InAvgNStepsID      = MDAux_AvgNStepsDef())   == CMfailed) ||

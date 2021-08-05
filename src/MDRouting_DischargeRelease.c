@@ -43,7 +43,7 @@ int MDRouting_DischargeReleaseDef () {
 		default:     MFOptionMessage (MDOptConfig_Reservoirs, optStr, MFsourceOptions); return (CMfailed);
 		case MFhelp: MFOptionMessage (MDOptConfig_Reservoirs, optStr, MFsourceOptions);
 		case MFoff:  break;
-		case MFon:   if ((_MDInRouting_DischReleasedID = MDReservoir_OperationDef()) == CMfailed) return (CMfailed);
+		case MFon:   if ((_MDInRouting_DischReleasedID = MDReservoir_ReleaseDef()) == CMfailed) return (CMfailed);
 	}
 	if (((_MDOutRouting_DischargeID     = MFVarGetID ("__DischLevel1", "m3/s",  MFOutput,  MFState, MFBoundary)) == CMfailed) ||
 	    (MFModelAddFunction(_MDRouting_DischRelease) == CMfailed)) return (CMfailed);

@@ -350,7 +350,7 @@ int MDTP2M_WTempRiverRouteDef () {
         ((_MDInAux_RunoffVolumeID        = MDCore_RunoffVolumeDef ())       == CMfailed) ||
         ((_MDInCloudCoverID              = MDCommon_CloudCoverDef ())       == CMfailed) ||
         ((_MDInCommon_AirTemperatureID   = MDCommon_AirTemperatureDef ())   == CMfailed) ||
-        (((_MDInResReleaseID             = MDReservoir_OperationDef ()) != MFUnset) && 
+        (((_MDInResReleaseID             = MDReservoir_ReleaseDef ()) != MFUnset) && 
          ((_MDInResReleaseID == CMfailed) ||
           ((_MDInResStorageChangeID      = MFVarGetID (MDVarReservoir_StorageChange,     "km3",       MFInput,  MFState, MFBoundary)) == CMfailed) ||
           ((_MDInResStorageID            = MFVarGetID (MDVarReservoir_Storage,           "km3",       MFInput,  MFState, MFInitial))  == CMfailed) ||

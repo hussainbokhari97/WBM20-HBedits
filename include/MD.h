@@ -172,6 +172,7 @@ extern "C" {
 #define MDVarReservoir_FarmPondEvaporation      "SmallReservoirEvaporation"
 #define MDVarReservoir_Capacity                 "ReservoirCapacity"
 #define MDVarReservoir_Release                  "ReservoirRelease"
+#define MDVarReservoir_Uptake                   "ReservoirUptake"
 #define MDVarReservoir_Storage                  "ReservoirStorage"
 #define MDVarReservoir_StorageChange            "ReservoirStorageChange"
 
@@ -418,6 +419,8 @@ int MDAux_AccumRunoffDef ();
 int MDAux_AccumSMoistChgDef ();
 int MDAux_AvgNStepsDef ();
 int MDAux_MeanDiscargehDef ();
+int MDAux_MinimumDiscargehDef ();
+int MDAux_MaximumDiscargehDef ();
 int MDAux_MeanRunoffDef ();
 
 int MDCommon_AirTemperatureDef ();
@@ -497,7 +500,9 @@ int MDRouting_RiverShapeExponentDef ();
 int MDRouting_RiverWidthDef ();
 
 int MDReservoir_OperationDef ();
-int MDReservoir_FarmPondReleaseDef ();
+int MDReservoir_ReleaseDef   ();
+int MDReservoir_UptakeDef    ();
+int MDReservoir_FarmPondReleaseDef  ();
 int MDReservoir_FarmPondCapacityDef ();
 
 int MDSediment_BQARTpreprocessDef ();
