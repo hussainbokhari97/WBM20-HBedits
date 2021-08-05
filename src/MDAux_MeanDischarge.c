@@ -30,7 +30,7 @@ static void _MDAux_MeanDischarge (int itemID) {
 	MFVarSetFloat (_MDOutAux_MeanDischargeID, itemID, dischMean);
 }
 
-int MDAux_MeanDiscargehDef () {
+int MDAux_MeanDischargeDef () {
 	int  optID = MFinput;
 	const char *optStr;
 

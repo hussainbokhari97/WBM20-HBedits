@@ -101,7 +101,7 @@ int MDReservoir_OperationDef () {
 		default:     MFOptionMessage (MDOptConfig_Reservoirs, optStr, options); return (CMfailed);
 		case MDhelp: MFOptionMessage (MDOptConfig_Reservoirs, optStr, options);
 		case MDwisser:
-			if (((_MDInAux_MeanDischargeID = MDAux_MeanDiscargehDef    ()) == CMfailed) ||
+			if (((_MDInAux_MeanDischargeID = MDAux_MeanDischargeDef    ()) == CMfailed) ||
 				((_MDInResUptakeID         = MDReservoir_UptakeDef     ()) == CMfailed) ||
                 ((_MDInRouting_DischargeID = MDRouting_DischargeUptake ()) == CMfailed) ||
             	((_MDInResCapacityID       = MFVarGetID (MDVarReservoir_Capacity,      "km3",  MFInput,  MFState, MFBoundary)) == CMfailed) ||

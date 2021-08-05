@@ -27,7 +27,7 @@ static void _MDAux_MaximumDischarge (int itemID) {
 	MFVarSetFloat (_MDOutAux_MaximumDischargeID, itemID, discharge);
 }
 
-int MDAux_MaximumDiscargehDef () {
+int MDAux_MaximumDischargeDef () {
 	int  optID = MFinput;
 	const char *optStr;
 

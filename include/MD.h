@@ -418,9 +418,9 @@ int MDAux_AccumPrecipDef ();
 int MDAux_AccumRunoffDef ();
 int MDAux_AccumSMoistChgDef ();
 int MDAux_AvgNStepsDef ();
-int MDAux_MeanDiscargehDef ();
-int MDAux_MinimumDiscargehDef ();
-int MDAux_MaximumDiscargehDef ();
+int MDAux_MeanDischargeDef ();
+int MDAux_MinimumDischargeDef ();
+int MDAux_MaximumDischargeDef ();
 int MDAux_MeanRunoffDef ();
 
 int MDCommon_AirTemperatureDef ();

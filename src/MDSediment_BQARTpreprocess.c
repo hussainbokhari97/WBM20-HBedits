@@ -142,7 +142,7 @@ int MDSediment_BQARTpreprocessDef () {
 	MFDefEntering ("QBARTpreprocess");
 	
 	if (((_MDInDischargeID  = MDSediment_DischargeBFDef ())  == CMfailed) || 
-	    ((_MDInDischMeanID  = MDAux_MeanDiscargehDef ())     == CMfailed) ||
+	    ((_MDInDischMeanID  = MDAux_MeanDischargeDef ())     == CMfailed) ||
 	    ((_MDInBankfullQ5ID = MDRouting_BankfullQcalcDef ()) == CMfailed) ||
         ((_MDInAirTempID    = MDCommon_AirTemperatureDef ()) == CMfailed) ||
 	    ((_MDInContributingAreaAccID = MFVarGetID (MDVarSediment_ContributingAreaAcc,    "km2",     MFRoute,  MFState, MFBoundary)) == CMfailed) ||
