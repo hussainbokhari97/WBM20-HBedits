@@ -33,7 +33,7 @@ int MDAux_MaximumDischargeDef () {
 
 	if (_MDOutAux_MaximumDischargeID != MFUnset) return (_MDOutAux_MaximumDischargeID);
 
-	MFDefEntering ("Discharge Mean");
+	MFDefEntering ("Discharge Maximum");
 	if ((optStr = MFOptionGet (MDVarAux_DischMean)) != (char *) NULL) optID = CMoptLookup (MFsourceOptions, optStr, true);
 	switch (optID) {
 		default:      MFOptionMessage (MDVarAux_DischMean, optStr, MFsourceOptions); return (CMfailed);
@@ -45,6 +45,6 @@ int MDAux_MaximumDischargeDef () {
                 (MFModelAddFunction(_MDAux_MaximumDischarge) == CMfailed)) return (CMfailed);
 			break;
 	}
-	MFDefLeaving ("Discharge Mean");
+	MFDefLeaving ("Discharge Maximum");
 	return (_MDOutAux_MaximumDischargeID);
 }

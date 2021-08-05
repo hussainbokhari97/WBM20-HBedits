@@ -36,7 +36,7 @@ int MDAux_MinimumDischargeDef () {
 
 	if (_MDOutAux_MinimumDischargeID != MFUnset) return (_MDOutAux_MinimumDischargeID);
 
-	MFDefEntering ("Discharge Mean");
+	MFDefEntering ("Discharge Minimum");
 	if ((optStr = MFOptionGet (MDVarAux_DischMean)) != (char *) NULL) optID = CMoptLookup (MFsourceOptions, optStr, true);
 	switch (optID) {
 		default:      MFOptionMessage (MDVarAux_DischMean, optStr, MFsourceOptions); return (CMfailed);
@@ -49,6 +49,6 @@ int MDAux_MinimumDischargeDef () {
                 (MFModelAddFunction(_MDAux_MinimumDischarge) == CMfailed)) return (CMfailed);
 			break;
 	}
-	MFDefLeaving ("Discharge Mean");
+	MFDefLeaving ("Discharge Minimum");
 	return (_MDOutAux_MinimumDischargeID);
 }
