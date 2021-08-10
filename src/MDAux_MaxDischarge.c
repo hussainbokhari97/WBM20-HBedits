@@ -38,7 +38,7 @@ int MDAux_MaximumDischargeDef () {
 	switch (optID) {
 		default:      MFOptionMessage (MDVarAux_DischMean, optStr, MFsourceOptions); return (CMfailed);
 		case MFhelp:  MFOptionMessage (MDVarAux_DischMean, optStr, MFsourceOptions);
-		case MFinput: _MDOutAux_MaximumDischargeID = MFVarGetID (MDVarAux_DischMean, "m3/s", MFInput, MFState, MFBoundary); break;
+		case MFinput: _MDOutAux_MaximumDischargeID = MFVarGetID (MDVarAux_DischMean, "m3/s", MFInput, MFState, MFInitial); break;
 		case MFcalculate:
 			if (((_MDInAux_AccumRunoffID        = MDAux_AccumRunoffDef()) == CMfailed) ||
                 ((_MDOutAux_MaximumDischargeID  = MFVarGetID (MDVarAux_DischMax,  "m3/s", MFOutput, MFState, MFInitial)) == CMfailed) ||

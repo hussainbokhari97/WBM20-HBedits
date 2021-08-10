@@ -50,7 +50,7 @@ static void _MDRouting_DischargeUptake (int itemID) {
 					if (irrAccumUptakeExt > irrConsumableRelase) { // consumable reservoir release is exhauted, unmet water uptake is reported as unsustaibale withdrawal
 						irrUptakeRiver      = irrConsumableRelase;
 						irrAccumUptakeExt  -= irrUptakeRiver;
-						irrUptakeExcess     = (irrAccumUptakeExt  - irrUptakeRiver) * MFModelGet_dt () * 1000.0 / MFModelGetArea (itemID); // converted to mm/dt
+						irrUptakeExcess     = irrAccumUptakeExt * MFModelGet_dt () * 1000.0 / MFModelGetArea (itemID); // converted to mm/dt
 						irrConsumableRelase = 0.0;
 					}
 					else { // consumable water release satisfies accumulated irrigational water demand
@@ -74,7 +74,7 @@ static void _MDRouting_DischargeUptake (int itemID) {
 					irrUptakeExcess = 0.0;
 				}
 				MFVarSetFloat (_MDInIrrigation_AccumUptakeExternalID, itemID, irrAccumUptakeExt);
-				MFVarSetFloat (_MDOutIrrigation_UptakeRiverID,        itemID, irrUptakeRiver);
+				MFVarSetFloat (_MDOutIrrigation_UptakeRiverID,        itemID, irrUptakeRiver * MFModelGet_dt () * 1000.0 / MFModelGetArea (itemID));
 			}
 			else { // River uptake is turned off all irrigational demand is from unsustainable sources
 				irrUptakeExcess = irrUptakeExt;
