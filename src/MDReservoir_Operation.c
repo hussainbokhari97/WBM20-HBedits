@@ -91,16 +91,39 @@ static void _MDReservoirWisser (int itemID) {
 }
 
 static void _MDReservoirDeficit (int itemID) {
-	float discharge;
-	float meanDischarge, minDischarge;
-	float deficit, accumDeficit, maxAccumDeficit;
+// Input
+	float discharge;       // Current discharge [m3/s]
+	float meanDischarge;   // Long-term mean annual discharge [m3/s]
+	float minDischarge;    // Long-term minimum discharge [m3/s]
+	float resCapacity;     // Reservoir capacity [km3]
+	float resUptake;       // Water uptake from reservoir [m3/s]
+// Output
+	float resStorage;      // Reservoir storage [km3]
+	float resStorageChg;   // Reservoir storage change [km3/dt]
+	float resRelease;      // Reservoir release [m3/s] 
+	float resExtRelease;   // Reservoir extractable release [m3/s]
+	float deficit;         // Inflow deficit (bellow mean annual discharge [m3/s]
+	float accumDeficit;    // Accumulated deficit during the season [m3/s]
+	float maxAccumDeficit; // Maximum accumulated deficit [m3/s]
 
-	 discharge      = MFVarGetFloat (_MDInRouting_DischargeID,    itemID, 0.0);
-	 meanDischarge  = MFVarGetFloat (_MDInAux_MeanDischargeID,    itemID, discharge);
-	  minDischarge  = MFVarGetFloat (_MDInAux_MeanDischargeID,    itemID, discharge);
+	if ((resCapacity = MFVarGetFloat (_MDInResCapacityID, itemID, 0.0)) <= 0.0) { 
+		MFVarSetFloat (_MDOutResStorageID,            itemID, 0.0); 
+		MFVarSetFloat (_MDOutResStorageChgID,         itemID, 0.0); 
+		MFVarSetFloat (_MDOutResReleaseID,            itemID, discharge);
+		MFVarSetFloat (_MDOutResExtractableReleaseID, itemID, 0.0);
+		MFVarSetFloat (_MDOutResDeficitID,            itemID, 0.0);
+		MFVarSetFloat (_MDOutResAccumDeficitID,       itemID, 0.0);
+		MFVarSetFloat (_MDOutResMaxAccumDeficitID,    itemID, 0.0);
+		return;
+	}
+	 discharge      = MFVarGetFloat (_MDInRouting_DischargeID,   itemID, 0.0);
+	 meanDischarge  = MFVarGetFloat (_MDInAux_MeanDischargeID,   itemID, discharge);
+	  minDischarge  = MFVarGetFloat (_MDInAux_MinDischargeID,    itemID, discharge);
+	maxAccumDeficit = MFVarGetFloat (_MDOutResMaxAccumDeficitID, itemID, discharge);
 	       deficit  = discharge < minDischarge ? discharge - minDischarge : 0.0;
 	  accumDeficit += MFDateGetDayOfYear () > 0 ? deficit : 0.0;
 	maxAccumDeficit = accumDeficit > maxAccumDeficit ? accumDeficit : maxAccumDeficit;
+
 }
 
 static void _MDReservoirGMLC (int itemID) {
@@ -139,11 +162,11 @@ int MDReservoir_OperationDef () {
             	((_MDInResCapacityID            = MFVarGetID (MDVarReservoir_Capacity,           "km3",  MFInput,  MFState, MFBoundary)) == CMfailed) ||
                 ((_MDOutResStorageID            = MFVarGetID (MDVarReservoir_Storage,            "km3",  MFOutput, MFState, MFInitial))  == CMfailed) ||
                 ((_MDOutResStorageChgID         = MFVarGetID (MDVarReservoir_StorageChange,      "km3",  MFOutput, MFState, MFBoundary)) == CMfailed) ||
+			    ((_MDOutResReleaseID            = MFVarGetID (MDVarReservoir_Release,            "m3/s", MFOutput, MFFlux,  MFBoundary)) == CMfailed) ||
+ 			    ((_MDOutResExtractableReleaseID = MFVarGetID (MDVarReservoir_ExtractableRelease, "m3/s", MFRoute,  MFState, MFBoundary)) == CMfailed) ||
                 ((_MDOutResDeficitID            = MFVarGetID (MDVarReservoir_Deficit,            "km3",  MFOutput, MFState, MFBoundary)) == CMfailed) ||
                 ((_MDOutResAccumDeficitID       = MFVarGetID (MDVarReservoir_AccumDeficit,       "m3/s", MFOutput, MFState, MFInitial))  == CMfailed) ||
                 ((_MDOutResMaxAccumDeficitID    = MFVarGetID (MDVarReservoir_MaxAccumDeficit,    "m3/s", MFOutput, MFState, MFInitial))  == CMfailed) ||
-			    ((_MDOutResReleaseID            = MFVarGetID (MDVarReservoir_Release,            "m3/s", MFOutput, MFFlux,  MFBoundary)) == CMfailed) ||
- 			    ((_MDOutResExtractableReleaseID = MFVarGetID (MDVarReservoir_ExtractableRelease, "m3/s", MFRoute,  MFState, MFBoundary)) == CMfailed) ||
                 (MFModelAddFunction (_MDReservoirWisser) == CMfailed)) return (CMfailed);
 		case MDgmlc:       break;
 	}
