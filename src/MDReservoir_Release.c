@@ -15,7 +15,7 @@ bfekete@gc.cuny.edu
  
 // Output
 static int _MDOutResReleaseID           = MFUnset;
-static int _MDOutResConsumableReleaseID = MFUnset;
+static int _MDOutResExtractableReleaseID = MFUnset;
 
 int MDReservoir_ReleaseDef () {
 	int optID = MFoff;
@@ -41,7 +41,7 @@ int MDReservoir_ConsumableReleaseDef () {
 	int optID = MFoff;
 	const char *optStr;
 
-	if (_MDOutResConsumableReleaseID != MFUnset) return (_MDOutResConsumableReleaseID);
+	if (_MDOutResExtractableReleaseID != MFUnset) return (_MDOutResExtractableReleaseID);
 
 	MFDefEntering ("Reservoirs");
 	if ((optStr = MFOptionGet (MDOptConfig_Reservoirs)) != (char *) NULL) optID = CMoptLookup (MFswitchOptions, optStr, true);
@@ -54,6 +54,6 @@ int MDReservoir_ConsumableReleaseDef () {
 			break;
 	}
 	MFDefLeaving ("Reservoirs");
-	_MDOutResConsumableReleaseID = _MDOutResReleaseID != MFUnset ? MFVarGetID (MDVarReservoir_ConsumableRelease, "m3/s", MFInput, MFFlux,  MFBoundary) : MFUnset;
-	return (_MDOutResConsumableReleaseID);
+	_MDOutResExtractableReleaseID = _MDOutResReleaseID != MFUnset ? MFVarGetID (MDVarReservoir_ExtractableRelease, "m3/s", MFInput, MFFlux,  MFBoundary) : MFUnset;
+	return (_MDOutResExtractableReleaseID);
 }

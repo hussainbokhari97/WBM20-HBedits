@@ -174,10 +174,13 @@ extern "C" {
 #define MDVarReservoir_FarmPondEvaporation      "SmallReservoirEvaporation"
 #define MDVarReservoir_Capacity                 "ReservoirCapacity"
 #define MDVarReservoir_Release                  "ReservoirRelease"
-#define MDVarReservoir_ConsumableRelease        "ReservoirConsumableRelease"
+#define MDVarReservoir_ExtractableRelease       "ReservoirExtractableRelease"
 #define MDVarReservoir_Uptake                   "ReservoirUptake"
 #define MDVarReservoir_Storage                  "ReservoirStorage"
 #define MDVarReservoir_StorageChange            "ReservoirStorageChange"
+#define MDVarReservoir_Deficit                  "ReservoirDeficit"
+#define MDVarReservoir_AccumDeficit             "ReservoirAccumDeficit"
+#define MDVarReservoir_MaxAccumDeficit          "ReservoirMaxAccumDeficit"
 
 // Routing variables
 #define MDVarRouting_BankfullQ                  "BankfullQ"
