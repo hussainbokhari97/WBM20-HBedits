@@ -45,6 +45,7 @@ extern "C" {
 #define MDParSoilMoistALPHA                     "SoilMoistureALPHA"
 #define	MDParSnowFallThreshold				    "SnowFallThreshold"
 #define MDParSnowMeltThreshold                  "SnowMeltThreshold"
+#define MDParRiverUptakeFraction                "RiverUptakeFraction"
 
 // Auxiliary variables
 #define MDVarAux_AccBalance                     "AccumBalance"
@@ -155,6 +156,7 @@ extern "C" {
 #define MDVarIrrigation_SoilMoistChange         "IrrSoilMoistureChange"
 #define MDVarIrrigation_UptakeBalance           "IrrUptakeBalance"
 #define MDVarIrrigation_UptakeExternal          "IrrUptakeExternal"
+#define MDVarIrrigation_AccumUptakeExternal     "IrrAccumUptakeExternal"
 #define MDVarIrrigation_UptakeExcess            "IrrUptakeExcess"
 #define MDVarIrrigation_UptakeGrdWater          "IrrUptakeGroundWater"
 #define MDVarIrrigation_UptakeRiver             "IrrUptakeRiver"
@@ -172,6 +174,7 @@ extern "C" {
 #define MDVarReservoir_FarmPondEvaporation      "SmallReservoirEvaporation"
 #define MDVarReservoir_Capacity                 "ReservoirCapacity"
 #define MDVarReservoir_Release                  "ReservoirRelease"
+#define MDVarReservoir_ConsumableRelease        "ReservoirConsumableRelease"
 #define MDVarReservoir_Uptake                   "ReservoirUptake"
 #define MDVarReservoir_Storage                  "ReservoirStorage"
 #define MDVarReservoir_StorageChange            "ReservoirStorageChange"
@@ -501,6 +504,7 @@ int MDRouting_RiverWidthDef ();
 
 int MDReservoir_OperationDef ();
 int MDReservoir_ReleaseDef   ();
+int MDReservoir_ConsumableReleaseDef ();
 int MDReservoir_UptakeDef    ();
 int MDReservoir_FarmPondReleaseDef  ();
 int MDReservoir_FarmPondCapacityDef ();

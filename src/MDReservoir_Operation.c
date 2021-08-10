@@ -15,15 +15,16 @@ bfekete@gc.cuny.edu
  
 
 // Input
-static int _MDInRouting_DischargeID  = MFUnset;
-static int _MDInAux_MeanDischargeID  = MFUnset;
-static int _MDInResCapacityID        = MFUnset;
-static int _MDInResUptakeID          = MFUnset;
+static int _MDInRouting_DischargeID     = MFUnset;
+static int _MDInAux_MeanDischargeID     = MFUnset;
+static int _MDInResCapacityID           = MFUnset;
+static int _MDInResUptakeID             = MFUnset;
 
 // Output
-static int _MDOutResStorageID        = MFUnset;
-static int _MDOutResStorageChgID     = MFUnset;
-static int _MDOutResReleaseID        = MFUnset;
+static int _MDOutResStorageID           = MFUnset;
+static int _MDOutResStorageChgID        = MFUnset;
+static int _MDOutResReleaseID           = MFUnset;
+static int _MDOutResConsumableReleaseID = MFUnset;
 
 
 static void _MDReservoirWisser (int itemID) {
@@ -78,9 +79,10 @@ static void _MDReservoirWisser (int itemID) {
 			
 	resStorageChg = resStorage - prevResStorage;
 
-	MFVarSetFloat (_MDOutResStorageID,    itemID, resStorage);
-	MFVarSetFloat (_MDOutResStorageChgID, itemID, resStorageChg);
-	MFVarSetFloat (_MDOutResReleaseID,    itemID, resRelease);
+	MFVarSetFloat (_MDOutResStorageID,           itemID, resStorage);
+	MFVarSetFloat (_MDOutResStorageChgID,        itemID, resStorageChg);
+	MFVarSetFloat (_MDOutResReleaseID,           itemID, resRelease);
+	MFVarSetFloat (_MDOutResConsumableReleaseID, itemID, resRelease > discharge ? resRelease - discharge : 0.0);
 }
 
 static void _MDReservoirGMLC (int itemID) {
@@ -101,13 +103,14 @@ int MDReservoir_OperationDef () {
 		default:     MFOptionMessage (MDOptConfig_Reservoirs, optStr, options); return (CMfailed);
 		case MDhelp: MFOptionMessage (MDOptConfig_Reservoirs, optStr, options);
 		case MDwisser:
-			if (((_MDInAux_MeanDischargeID = MDAux_MeanDischargeDef    ()) == CMfailed) ||
-				((_MDInResUptakeID         = MDReservoir_UptakeDef     ()) == CMfailed) ||
-                ((_MDInRouting_DischargeID = MDRouting_DischargeUptake ()) == CMfailed) ||
-            	((_MDInResCapacityID       = MFVarGetID (MDVarReservoir_Capacity,      "km3",  MFInput,  MFState, MFBoundary)) == CMfailed) ||
-                ((_MDOutResStorageID       = MFVarGetID (MDVarReservoir_Storage,       "km3",  MFOutput, MFState, MFInitial))  == CMfailed) ||
-                ((_MDOutResStorageChgID    = MFVarGetID (MDVarReservoir_StorageChange, "km3",  MFOutput, MFState, MFBoundary)) == CMfailed) ||
-			    ((_MDOutResReleaseID       = MFVarGetID (MDVarReservoir_Release,       "m3/s", MFOutput, MFFlux,  MFBoundary)) == CMfailed) ||
+			if (((_MDInAux_MeanDischargeID     = MDAux_MeanDischargeDef    ()) == CMfailed) ||
+				((_MDInResUptakeID             = MDReservoir_UptakeDef     ()) == CMfailed) ||
+                ((_MDInRouting_DischargeID     = MDRouting_DischargeUptake ()) == CMfailed) ||
+            	((_MDInResCapacityID           = MFVarGetID (MDVarReservoir_Capacity,          "km3",  MFInput,  MFState, MFBoundary)) == CMfailed) ||
+                ((_MDOutResStorageID           = MFVarGetID (MDVarReservoir_Storage,           "km3",  MFOutput, MFState, MFInitial))  == CMfailed) ||
+                ((_MDOutResStorageChgID        = MFVarGetID (MDVarReservoir_StorageChange,     "km3",  MFOutput, MFState, MFBoundary)) == CMfailed) ||
+			    ((_MDOutResReleaseID           = MFVarGetID (MDVarReservoir_Release,           "m3/s", MFOutput, MFFlux,  MFBoundary)) == CMfailed) ||
+ 			    ((_MDOutResConsumableReleaseID = MFVarGetID (MDVarReservoir_ConsumableRelease, "m3/s", MFOutput, MFFlux,  MFBoundary)) == CMfailed) ||
                 (MFModelAddFunction (_MDReservoirWisser) == CMfailed)) return (CMfailed);
 			break;
 		case MDgmlc: break;
