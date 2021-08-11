@@ -179,8 +179,13 @@ extern "C" {
 #define MDVarReservoir_Storage                  "ReservoirStorage"
 #define MDVarReservoir_StorageChange            "ReservoirStorageChange"
 #define MDVarReservoir_Deficit                  "ReservoirDeficit"
+#define MDVarReservoir_Surplus                  "ReservoirSurplus"
 #define MDVarReservoir_AccumDeficit             "ReservoirAccumDeficit"
+#define MDVarReservoir_AccumSurplus             "ReservoirAccumSurplus"
 #define MDVarReservoir_MaxAccumDeficit          "ReservoirMaxAccumDeficit"
+#define MDVarReservoir_MaxAccumSurplus          "ReservoirMaxAccumSurplus"
+#define MDVarReservoir_TargetLowFlow            "ReservoirTargetLowFlow"
+#define MDVarReservoir_TargetHighFlow           "ReservoirTargetHighFlow"
 
 // Routing variables
 #define MDVarRouting_BankfullQ                  "BankfullQ"
@@ -506,7 +511,9 @@ int MDRouting_RiverShapeExponentDef ();
 int MDRouting_RiverWidthDef ();
 
 int MDReservoir_OperationDef ();
-int MDReservoir_ReleaseDef   ();
+int MDReservoir_ReleaseDef ();
+int MDReservoir_TargetLowFlowDef ();
+int MDReservoir_TargetHighFlowDef ();
 int MDReservoir_ConsumableReleaseDef ();
 int MDReservoir_UptakeDef    ();
 int MDReservoir_FarmPondReleaseDef  ();
