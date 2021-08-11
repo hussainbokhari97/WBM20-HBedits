@@ -12,7 +12,6 @@ bfekete@gc.cuny.edu
 
 #include <MF.h>
 #include <MD.h>
- 
 
 // Input
 static int _MDInRouting_DischargeID     = MFUnset;
@@ -90,7 +89,7 @@ static void _MDReservoirWisser (int itemID) {
 	MFVarSetFloat (_MDOutResExtractableReleaseID, itemID, resExtRelease);
 }
 
-static void _MDReservoirDeficit (int itemID) {
+static void _MDReservoirMinDeficit (int itemID) {
 // Input
 	float discharge;       // Current discharge [m3/s]
 	float meanDischarge;   // Long-term mean annual discharge [m3/s]
@@ -105,6 +104,12 @@ static void _MDReservoirDeficit (int itemID) {
 	float deficit;         // Inflow deficit (bellow mean annual discharge [m3/s]
 	float accumDeficit;    // Accumulated deficit during the season [m3/s]
 	float maxAccumDeficit; // Maximum accumulated deficit [m3/s]
+// Local
+	float targetRelease;   // Targeted minimum flow [m3/s]
+	float optResCapacity;  // Reservoir capacity required for fully eliminating low flows;
+	float prevResStorage;  // Reservoir storage from the previous time step [km3]
+	float surplus;         // Reservoir recharge [m3/s]
+	float dt;              // Time step length [s]
 
 	if ((resCapacity = MFVarGetFloat (_MDInResCapacityID, itemID, 0.0)) <= 0.0) { 
 		MFVarSetFloat (_MDOutResStorageID,            itemID, 0.0); 
@@ -116,14 +121,37 @@ static void _MDReservoirDeficit (int itemID) {
 		MFVarSetFloat (_MDOutResMaxAccumDeficitID,    itemID, 0.0);
 		return;
 	}
+	             dt = MFModelGet_dt ();
 	 discharge      = MFVarGetFloat (_MDInRouting_DischargeID,   itemID, 0.0);
+	 prevResStorage = MFVarGetFloat(_MDOutResStorageID, itemID, 0.0);
 	 meanDischarge  = MFVarGetFloat (_MDInAux_MeanDischargeID,   itemID, discharge);
 	  minDischarge  = MFVarGetFloat (_MDInAux_MinDischargeID,    itemID, discharge);
 	maxAccumDeficit = MFVarGetFloat (_MDOutResMaxAccumDeficitID, itemID, discharge);
-	       deficit  = discharge < minDischarge ? discharge - minDischarge : 0.0;
+
+	 optResCapacity = maxAccumDeficit * dt / 1e9;
+	  targetRelease = meanDischarge > 0.0 ? meanDischarge * (1 - minDischarge / meanDischarge) * resCapacity / (optResCapacity > resCapacity ? optResCapacity : resCapacity): 0.0;
+
+	if (discharge < targetRelease) {
+		       deficit  = discharge - minDischarge;
+		   	 resRelease = targetRelease * dt / 1e9 < prevResStorage ? targetRelease : prevResStorage * 1e9 / dt;
+		     resStorage = prevResStorage - resRelease * dt / 1e9;
+	}
+	else {
+			deficit = 0.0;
+		    surplus = (discharge - targetRelease) * dt / 1e9;
+		resStorage += resCapacity - prevResStorage < surplus ? resCapacity - prevResStorage : surplus;
+	}
+	  resStorageChg = resStorage - prevResStorage;
+	  resRelease    = discharge  - resStorageChg * 1e9 / dt;
 	  accumDeficit += MFDateGetDayOfYear () > 0 ? deficit : 0.0;
 	maxAccumDeficit = accumDeficit > maxAccumDeficit ? accumDeficit : maxAccumDeficit;
-
+	MFVarSetFloat (_MDOutResStorageID,            itemID, resStorage); 
+	MFVarSetFloat (_MDOutResStorageChgID,         itemID, resStorageChg); 
+	MFVarSetFloat (_MDOutResReleaseID,            itemID, resRelease);
+	MFVarSetFloat (_MDOutResExtractableReleaseID, itemID, resRelease > discharge ? resRelease - discharge : 0.0);
+	MFVarSetFloat (_MDOutResDeficitID,            itemID, deficit);
+	MFVarSetFloat (_MDOutResAccumDeficitID,       itemID, accumDeficit);
+	MFVarSetFloat (_MDOutResMaxAccumDeficitID,    itemID, maxAccumDeficit);
 }
 
 static void _MDReservoirGMLC (int itemID) {
@@ -167,7 +195,7 @@ int MDReservoir_OperationDef () {
                 ((_MDOutResDeficitID            = MFVarGetID (MDVarReservoir_Deficit,            "km3",  MFOutput, MFState, MFBoundary)) == CMfailed) ||
                 ((_MDOutResAccumDeficitID       = MFVarGetID (MDVarReservoir_AccumDeficit,       "m3/s", MFOutput, MFState, MFInitial))  == CMfailed) ||
                 ((_MDOutResMaxAccumDeficitID    = MFVarGetID (MDVarReservoir_MaxAccumDeficit,    "m3/s", MFOutput, MFState, MFInitial))  == CMfailed) ||
-                (MFModelAddFunction (_MDReservoirWisser) == CMfailed)) return (CMfailed);
+                (MFModelAddFunction (_MDReservoirMinDeficit) == CMfailed)) return (CMfailed);
 		case MDgmlc:       break;
 	}
 	MFDefLeaving ("Reservoirs");
