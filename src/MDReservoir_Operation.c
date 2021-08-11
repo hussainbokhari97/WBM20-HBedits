@@ -50,7 +50,6 @@ static void _MDReservoirWisser (int itemID) {
 		MFVarSetFloat (_MDOutResStorageID,            itemID, 0.0); 
 		MFVarSetFloat (_MDOutResStorageChgID,         itemID, 0.0); 
 		MFVarSetFloat (_MDOutResReleaseID,            itemID, discharge);
-		MFVarSetFloat (_MDOutResExtractableReleaseID, itemID, 0.0);
 		return;
 	}
 
@@ -77,13 +76,12 @@ static void _MDReservoirWisser (int itemID) {
 		resRelease = resRelease * 1e9 / dt;
 		resStorage = 0.0;
 	}
-			
+
 	resStorageChg  = resStorage - prevResStorage;
-	resExtRelease += resRelease > discharge ? resRelease - discharge : 0.0;
 	MFVarSetFloat (_MDOutResStorageID,            itemID, resStorage);
 	MFVarSetFloat (_MDOutResStorageChgID,         itemID, resStorageChg);
 	MFVarSetFloat (_MDOutResReleaseID,            itemID, resRelease);
-	MFVarSetFloat (_MDOutResExtractableReleaseID, itemID, resExtRelease);
+	MFVarSetFloat (_MDOutResExtractableReleaseID, itemID, resExtRelease + (resRelease > discharge ? resRelease - discharge : 0.0));
 }
 
 static void _MDReservoirOptimized (int itemID) {
@@ -106,27 +104,28 @@ static void _MDReservoirOptimized (int itemID) {
 		MFVarSetFloat (_MDOutResStorageID,            itemID, 0.0); 
 		MFVarSetFloat (_MDOutResStorageChgID,         itemID, 0.0); 
 		MFVarSetFloat (_MDOutResReleaseID,            itemID, discharge);
-		MFVarSetFloat (_MDOutResExtractableReleaseID, itemID, 0.0);
 		return;
 	}
 	             dt = MFModelGet_dt ();
-	 discharge      = MFVarGetFloat (_MDInRouting_DischargeID,   itemID, 0.0);
-	 prevResStorage = MFVarGetFloat (_MDOutResStorageID,         itemID, 0.0);
+	 discharge      = MFVarGetFloat (_MDInRouting_DischargeID,      itemID, 0.0);
+	resExtRelease   = MFVarGetFloat (_MDOutResExtractableReleaseID, itemID, 0.0);
+	 prevResStorage = MFVarGetFloat (_MDOutResStorageID,            itemID, 0.0);
 	 targetLowFlow  = _MDInResTargetLowFlowID  != MFUnset ? MFVarGetFloat (_MDInResTargetLowFlowID,  itemID, discharge) : discharge;
 	 targetHighFlow = _MDInResTargetHighFlowID != MFUnset ? MFVarGetFloat (_MDInResTargetHighFlowID, itemID, discharge) : discharge;
 
-	if (targetLowFlow > discharge) {
+	if (targetLowFlow > discharge)
 	   	resRelease = (targetLowFlow - discharge) * dt / 1e9 < prevResStorage ? targetLowFlow : discharge + prevResStorage * 1e9 / dt;
-	}
-	if (discharge - targetHighFlow) {
+	else if (discharge - targetHighFlow)
 		resRelease = (discharge - targetHighFlow) * dt / 1e9 < (resCapacity - prevResStorage) ? targetLowFlow : discharge - (resCapacity - prevResStorage) * 1e9 / dt;
-	}
+	else
+		resRelease = discharge;
+
 	resStorage = prevResStorage + (discharge - resRelease) * dt / 1e9;
 
 	MFVarSetFloat (_MDOutResStorageID,            itemID, resStorage); 
 	MFVarSetFloat (_MDOutResStorageChgID,         itemID, resStorageChg); 
 	MFVarSetFloat (_MDOutResReleaseID,            itemID, resRelease);
-	MFVarSetFloat (_MDOutResExtractableReleaseID, itemID, resRelease > discharge ? resRelease - discharge : 0.0);
+	MFVarSetFloat (_MDOutResExtractableReleaseID, itemID, resExtRelease + (resRelease > discharge ? resRelease - discharge : 0.0));
 }
 
 static void _MDReservoirGMLC (int itemID) {
