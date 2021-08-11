@@ -14,19 +14,19 @@ bfekete@gc.cuny.edu
 #include <MD.h>
 
 // Input
-static int _MDInRouting_DischargeID     = MFUnset;
-static int _MDInAux_MeanDischargeID     = MFUnset;
-static int _MDInAux_MinDischargeID      = MFUnset;
-static int _MDInResCapacityID           = MFUnset;
-static int _MDInResUptakeID             = MFUnset;
+static int _MDInRouting_DischargeID      = MFUnset;
+static int _MDInAux_MeanDischargeID      = MFUnset;
+static int _MDInAux_MinDischargeID       = MFUnset;
+static int _MDInResCapacityID            = MFUnset;
+static int _MDInResUptakeID              = MFUnset;
 
 // Output
-static int _MDOutResStorageID           = MFUnset;
-static int _MDOutResStorageChgID        = MFUnset;
-static int _MDOutResDeficitID           = MFUnset;
-static int _MDOutResAccumDeficitID      = MFUnset;
-static int _MDOutResMaxAccumDeficitID   = MFUnset;
-static int _MDOutResReleaseID           = MFUnset;
+static int _MDOutResStorageID            = MFUnset;
+static int _MDOutResStorageChgID         = MFUnset;
+static int _MDOutResDeficitID            = MFUnset;
+static int _MDOutResAccumDeficitID       = MFUnset;
+static int _MDOutResMaxAccumDeficitID    = MFUnset;
+static int _MDOutResReleaseID            = MFUnset;
 static int _MDOutResExtractableReleaseID = MFUnset;
 
 
