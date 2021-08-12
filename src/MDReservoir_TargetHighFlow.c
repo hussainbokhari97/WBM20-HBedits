@@ -51,15 +51,14 @@ static void _MDReservoirTargetHighFlow (int itemID) {
 	 discharge      = MFVarGetFloat (_MDInRouting_DischargeID,   itemID, 0.0);
 	 meanDischarge  = MFVarGetFloat (_MDInAux_MeanDischargeID,   itemID, discharge);
 	  maxDischarge  = MFVarGetFloat (_MDInAux_MaxDischargeID,    itemID, discharge);
+	   accumSurplus = MFVarGetFloat (_MDOutResAccumSurplusID,    itemID, 0.0);
 	maxAccumSurplus = MFVarGetFloat (_MDOutResMaxAccumSurplusID, itemID, discharge);
 
-	surplus  = maxDischarge - discharge;
-	if (surplus > 0.0) {
-		  accumSurplus += MFDateGetDayOfYear () > 0 ? surplus : 0.0;
-		maxAccumSurplus = accumSurplus > maxAccumSurplus ? accumSurplus : maxAccumSurplus;
-	}
-	 optResCapacity  = maxAccumSurplus * dt / 1e9;
-	  targetHighFlow = meanDischarge + (maxDischarge - meanDischarge) * resCapacity / (optResCapacity > resCapacity ? optResCapacity : resCapacity);
+	       surplus  = discharge - meanDischarge;
+	   accumSurplus = accumSurplus + surplus > 0.0 ? accumSurplus + surplus : accumSurplus;
+	maxAccumSurplus = accumSurplus > maxAccumSurplus ? accumSurplus : maxAccumSurplus;
+	optResCapacity  = maxAccumSurplus * dt / 1e9;
+	 targetHighFlow = maxDischarge - (maxDischarge - meanDischarge) * resCapacity / (optResCapacity > resCapacity ? optResCapacity : resCapacity);
 
 	MFVarSetFloat (_MDOutResSurplusID,            itemID, surplus);
 	MFVarSetFloat (_MDOutResAccumSurplusID,       itemID, accumSurplus);

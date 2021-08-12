@@ -51,15 +51,14 @@ static void _MDReservoirTargetLowFlow (int itemID) {
 	 discharge      = MFVarGetFloat (_MDInRouting_DischargeID,   itemID, 0.0);
 	 meanDischarge  = MFVarGetFloat (_MDInAux_MeanDischargeID,   itemID, discharge);
 	  minDischarge  = MFVarGetFloat (_MDInAux_MinDischargeID,    itemID, discharge);
+	  accumDeficit  = MFVarGetFloat (_MDOutResAccumDeficitID,    itemID, discharge);
 	maxAccumDeficit = MFVarGetFloat (_MDOutResMaxAccumDeficitID, itemID, discharge);
 
-	deficit  = discharge - minDischarge;
-	if (deficit > 0.0) {
-		  accumDeficit += MFDateGetDayOfYear () > 0 ? deficit : 0.0;
-		maxAccumDeficit = accumDeficit > maxAccumDeficit ? accumDeficit : maxAccumDeficit;
-	}
+	        deficit = meanDischarge - discharge;
+	  accumDeficit  = accumDeficit + deficit > 0.0 ? accumDeficit + deficit : accumDeficit;
+	maxAccumDeficit = accumDeficit > maxAccumDeficit ? accumDeficit : maxAccumDeficit;
 	 optResCapacity = maxAccumDeficit * dt / 1e9;
-	  targetLowFlow = meanDischarge > 0.0 ? meanDischarge * (1 - minDischarge / meanDischarge) * resCapacity / (optResCapacity > resCapacity ? optResCapacity : resCapacity): 0.0;
+	  targetLowFlow = minDischarge + (meanDischarge - minDischarge) * resCapacity / (optResCapacity > resCapacity ? optResCapacity : resCapacity);
 
 	MFVarSetFloat (_MDOutResDeficitID,            itemID, deficit);
 	MFVarSetFloat (_MDOutResAccumDeficitID,       itemID, accumDeficit);
