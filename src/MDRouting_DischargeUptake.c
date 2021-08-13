@@ -34,8 +34,8 @@ static void _MDRouting_DischargeUptake (int itemID) {
 	float irrAccumUptakeExt;    // Accumulated external irrigational uptake upstream [m3/s]
 	float irrExtractableRelase; // Consumable release from reservoirs [m3/s]
 // Outputs
-	float irrUptakeRiver;      // Irrigational water uptake from river [mm/dt]
-	float irrUptakeExcess;     // Irrigational water uptake from unsustainable source [mm/dt]
+	float irrUptakeRiver = 0.0; // Irrigational water uptake from river [mm/dt]
+	float irrUptakeExcess;      // Irrigational water uptake from unsustainable source [mm/dt]
 	
 	discharge = MFVarGetFloat (_MDInRouting_DischargeInChannelID, itemID, 0.0);
 
@@ -72,20 +72,21 @@ static void _MDRouting_DischargeUptake (int itemID) {
 					}
 					irrUptakeExcess = 0.0;
 				}
-				discharge -= irrUptakeRiver;
 				MFVarSetFloat (_MDInIrrigation_AccumUptakeExternalID, itemID, irrAccumUptakeExt);
 				MFVarSetFloat (_MDOutIrrigation_UptakeRiverID,        itemID, irrUptakeRiver * MFModelGet_dt () * 1000.0 / MFModelGetArea (itemID));
 			}
 			else { // River uptake is turned off all irrigational demand is from unsustainable sources
+				irrUptakeRiver  = 0.0;
 				irrUptakeExcess = irrUptakeExt;
 			}
 		}
 		else { // External irrigation uptake is zero;
+			irrUptakeRiver  = 0.0;
 		    irrUptakeExcess = 0.0;
 		}
 		MFVarSetFloat (_MDOutIrrigation_UptakeExcessID, itemID, irrUptakeExcess);
 	}
-    MFVarSetFloat (_MDOutRouting_DischargeUptakeID,  itemID, discharge);
+    MFVarSetFloat (_MDOutRouting_DischargeUptakeID,  itemID, discharge - irrUptakeRiver);
 }
 
 int MDRouting_DischargeUptakeDef () {
