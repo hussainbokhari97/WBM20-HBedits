@@ -37,7 +37,7 @@ int MDRouting_DischargeReleaseDef () {
 	if (_MDOutRouting_DischargeID != MFUnset) return (_MDOutRouting_DischargeID);
 
 	MFDefEntering ("Discharge - Reservoir Release");
-	if ((_MDInRouting_DischargeUptakeID = MDRouting_DischargeUptake ()) == CMfailed) return (CMfailed);
+	if ((_MDInRouting_DischargeUptakeID = MDRouting_DischargeUptakeDef ()) == CMfailed) return (CMfailed);
 	if ((optStr = MFOptionGet (MDOptConfig_Reservoirs)) != (char *) NULL) optID = CMoptLookup (MFswitchOptions, optStr, true);
 	switch (optID) {
 		default:     MFOptionMessage (MDOptConfig_Reservoirs, optStr, MFsourceOptions); return (CMfailed);

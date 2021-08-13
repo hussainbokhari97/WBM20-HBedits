@@ -55,7 +55,7 @@ static void _MDReservoirTargetLowFlow (int itemID) {
 	maxAccumDeficit = MFVarGetFloat (_MDOutResMaxAccumDeficitID, itemID, discharge);
 
 	        deficit = meanDischarge - discharge;
-	  accumDeficit  = accumDeficit + deficit > 0.0 ? accumDeficit + deficit : accumDeficit;
+	  accumDeficit  = accumDeficit + deficit > 0.0 ? accumDeficit + deficit : 0.0;
 	maxAccumDeficit = accumDeficit > maxAccumDeficit ? accumDeficit : maxAccumDeficit;
 	 optResCapacity = maxAccumDeficit * dt / 1e9;
 	  targetLowFlow = minDischarge + (meanDischarge - minDischarge) * resCapacity / (optResCapacity > resCapacity ? optResCapacity : resCapacity);
@@ -83,9 +83,9 @@ int MDReservoir_TargetLowFlowDef () {
 				return (CMfailed);
 			break;
 		case MFcalculate: break;
-			if (((_MDInAux_MeanDischargeID      = MDAux_MeanDischargeDef    ()) == CMfailed) ||
-			    ((_MDInAux_MinDischargeID       = MDAux_MinimumDischargeDef ()) == CMfailed) ||
-                ((_MDInRouting_DischargeID      = MDRouting_DischargeUptake ()) == CMfailed) ||
+			if (((_MDInAux_MeanDischargeID      = MDAux_MeanDischargeDef       ()) == CMfailed) ||
+			    ((_MDInAux_MinDischargeID       = MDAux_MinimumDischargeDef    ()) == CMfailed) ||
+                ((_MDInRouting_DischargeID      = MDRouting_DischargeUptakeDef ()) == CMfailed) ||
             	((_MDInResCapacityID            = MFVarGetID (MDVarReservoir_Capacity,           "km3",  MFInput,  MFState, MFBoundary)) == CMfailed) ||
                 ((_MDOutResDeficitID            = MFVarGetID (MDVarReservoir_Deficit,            "km3",  MFOutput, MFState, MFBoundary)) == CMfailed) ||
                 ((_MDOutResAccumDeficitID       = MFVarGetID (MDVarReservoir_AccumDeficit,       "m3/s", MFOutput, MFState, MFInitial))  == CMfailed) ||

@@ -23,7 +23,7 @@ int MDReservoir_ReleaseDef () {
 
 	if (_MDOutResReleaseID != MFUnset) return (_MDOutResReleaseID);
 
-	MFDefEntering ("Reservoirs");
+	MFDefEntering ("Reservoir release");
 	if ((optStr = MFOptionGet (MDOptConfig_Reservoirs)) != (char *) NULL) optID = CMoptLookup (MFswitchOptions, optStr, true);
  	switch (optID) {
 		default:     MFOptionMessage (MDOptConfig_Reservoirs, optStr, MFswitchOptions); return (CMfailed);
@@ -33,17 +33,17 @@ int MDReservoir_ReleaseDef () {
 			if ((_MDOutResReleaseID = MDReservoir_OperationDef ()) == CMfailed) return (CMfailed);
 			break;
 	}
-	MFDefLeaving ("Reservoirs");
+	MFDefLeaving ("Reservoir release");
 	return (_MDOutResReleaseID); 
 }
 
-int MDReservoir_ConsumableReleaseDef () {
+int MDReservoir_ExtractableReleaseDef () {
 	int optID = MFoff;
 	const char *optStr;
 
 	if (_MDOutResExtractableReleaseID != MFUnset) return (_MDOutResExtractableReleaseID);
 
-	MFDefEntering ("Reservoirs");
+	MFDefEntering ("Extractable release");
 	if ((optStr = MFOptionGet (MDOptConfig_Reservoirs)) != (char *) NULL) optID = CMoptLookup (MFswitchOptions, optStr, true);
  	switch (optID) {
 		default:     MFOptionMessage (MDOptConfig_Reservoirs, optStr, MFswitchOptions); return (CMfailed);
@@ -53,7 +53,7 @@ int MDReservoir_ConsumableReleaseDef () {
 			if ((_MDOutResReleaseID = MDReservoir_OperationDef ()) == CMfailed) return (CMfailed);
 			break;
 	}
-	MFDefLeaving ("Reservoirs");
+	MFDefLeaving ("Extractable release");
 	_MDOutResExtractableReleaseID = _MDOutResReleaseID != MFUnset ? MFVarGetID (MDVarReservoir_ExtractableRelease, "m3/s", MFInput, MFFlux,  MFBoundary) : MFUnset;
 	return (_MDOutResExtractableReleaseID);
 }

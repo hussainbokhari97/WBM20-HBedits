@@ -48,9 +48,9 @@ int MDRouting_DischargeDef() {
 		case MDhelp:  MFOptionMessage (MDOptConfig_Discharge, optStr, options);
 		case MDinput: _MDOutRouting_DischargeID = MFVarGetID (MDVarRouting_Discharge, "m3/s", MFInput, MFState, MFBoundary); break;
 		case MDcalculate:
-			if (((_MDOutRouting_DischargeID     = MFVarGetID (MDVarRouting_Discharge, "m3/s", MFRoute, MFState, MFBoundary)) == CMfailed) ||
-				((_MDInRouting_DischargeID      = MDRouting_DischargeReleaseDef ()) == CMfailed) ||
-				((_MDInRouting_RiverWidthID     = MDRouting_RiverWidthDef ()) == CMfailed) ||
+			if (((_MDOutRouting_DischargeID = MFVarGetID (MDVarRouting_Discharge, "m3/s", MFRoute, MFState, MFBoundary)) == CMfailed) ||
+				((_MDInRouting_DischargeID  = MDRouting_DischargeReleaseDef ()) == CMfailed) ||
+				((_MDInRouting_RiverWidthID = MDRouting_RiverWidthDef ())       == CMfailed) ||
                 (MFModelAddFunction(_MDRouting_Discharge) == CMfailed)) return (CMfailed);
 			break;
 		case MDcorrected:

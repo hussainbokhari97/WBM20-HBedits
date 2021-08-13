@@ -506,7 +506,7 @@ int MDRouting_DischargeInChannelCascadeDef ();
 int MDRouting_DischargeInChannelMuskingumDef ();
 int MDRouting_DischargeInChannelMuskingumCoeffDef ();
 int MDRouting_DischargeReleaseDef ();
-int MDRouting_DischargeUptake ();
+int MDRouting_DischargeUptakeDef ();
 int MDRouting_RiverShapeExponentDef ();
 int MDRouting_RiverWidthDef ();
 
@@ -514,7 +514,7 @@ int MDReservoir_OperationDef ();
 int MDReservoir_ReleaseDef ();
 int MDReservoir_TargetLowFlowDef ();
 int MDReservoir_TargetHighFlowDef ();
-int MDReservoir_ConsumableReleaseDef ();
+int MDReservoir_ExtractableReleaseDef ();
 int MDReservoir_UptakeDef    ();
 int MDReservoir_FarmPondReleaseDef  ();
 int MDReservoir_FarmPondCapacityDef ();

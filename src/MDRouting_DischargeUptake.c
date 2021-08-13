@@ -41,12 +41,12 @@ static void _MDRouting_DischargeUptake (int itemID) {
 
 	if (_MDInIrrigation_UptakeExternalID != MFUnset) { // Irrigation is turned on.
 		irrUptakeExt = MFVarGetFloat (_MDInIrrigation_UptakeExternalID, itemID, 0.0);
-		if (irrUptakeExt > 0.) {
+		if (irrUptakeExt > 0.0) {
 			if (_MDOutIrrigation_UptakeRiverID != MFUnset) { // River uptake is turned on
 				irrAccumUptakeExt = MFVarGetFloat (_MDInIrrigation_AccumUptakeExternalID, itemID, 0.0)
 			    	              + irrUptakeExt * MFModelGetArea (itemID) / (MFModelGet_dt () * 1000.0); // converted to m3/s
 				irrExtractableRelase = _MDInIrrigation_ExtractableReleaseID != MFUnset ? MFVarGetFloat (_MDInIrrigation_ExtractableReleaseID, itemID, 0.0) : 0.0;
-				if (irrExtractableRelase  > 0.0)  { // Satisfying irrigation from reservoir release
+				if (irrExtractableRelase  > 0.0)  { // Satisfying irrigation from extractable reservoir release
 					if (irrAccumUptakeExt > irrExtractableRelase) { // consumable reservoir release is exhauted, unmet water uptake is reported as unsustaibale withdrawal
 						irrUptakeRiver       = irrExtractableRelase;
 						irrUptakeExcess      = (irrAccumUptakeExt - irrUptakeRiver) * MFModelGet_dt () * 1000.0 / MFModelGetArea (itemID); // converted to mm/dt
@@ -61,7 +61,7 @@ static void _MDRouting_DischargeUptake (int itemID) {
 					}
 					MFVarSetFloat (_MDInIrrigation_ExtractableReleaseID, itemID, irrExtractableRelase);
 				}
-				else { // accumulated irrigational water demand is sastisfied from river flow without consumbale reservoir release.
+				else { // accumulated irrigational water demand is sastisfied from river flow without extractable reservoir release.
 					if (discharge * _MDRiverUptakeFraction > irrAccumUptakeExt) { 
 						irrUptakeRiver    = irrAccumUptakeExt;
 						irrAccumUptakeExt = 0.0;
@@ -70,9 +70,9 @@ static void _MDRouting_DischargeUptake (int itemID) {
 						irrUptakeRiver     = discharge * _MDRiverUptakeFraction;
 						irrAccumUptakeExt -= irrUptakeRiver;
 					}
-					discharge      -= irrUptakeRiver;
 					irrUptakeExcess = 0.0;
 				}
+				discharge -= irrUptakeRiver;
 				MFVarSetFloat (_MDInIrrigation_AccumUptakeExternalID, itemID, irrAccumUptakeExt);
 				MFVarSetFloat (_MDOutIrrigation_UptakeRiverID,        itemID, irrUptakeRiver * MFModelGet_dt () * 1000.0 / MFModelGetArea (itemID));
 			}
@@ -88,7 +88,7 @@ static void _MDRouting_DischargeUptake (int itemID) {
     MFVarSetFloat (_MDOutRouting_DischargeUptakeID,  itemID, discharge);
 }
 
-int MDRouting_DischargeUptake () {
+int MDRouting_DischargeUptakeDef () {
 	int optID = MFoff, ret;
 	const char *optStr;
 	float par;
@@ -118,7 +118,7 @@ int MDRouting_DischargeUptake () {
 				}
 
 				if (((_MDOutIrrigation_UptakeRiverID        = MDIrrigation_UptakeRiverDef ())      == CMfailed) ||
-					((_MDInIrrigation_ExtractableReleaseID  = MDReservoir_ConsumableReleaseDef ()) == CMfailed) ||
+					((_MDInIrrigation_ExtractableReleaseID  = MDReservoir_ExtractableReleaseDef ()) == CMfailed) ||
 					((_MDInIrrigation_UptakeExternalID      = MFVarGetID (MDVarIrrigation_UptakeExternal,      "mm",   MFInput,  MFFlux,   MFBoundary)) == CMfailed) ||
                     ((_MDOutIrrigation_UptakeExcessID       = MFVarGetID (MDVarIrrigation_UptakeExcess,        "mm",   MFOutput, MFFlux,   MFBoundary)) == CMfailed))
 					return (CMfailed);
