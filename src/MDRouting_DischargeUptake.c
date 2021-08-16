@@ -75,7 +75,7 @@ static void _MDRouting_DischargeUptake (int itemID) {
 					}
 					irrUptakeExcess = 0.0;
 				}
-				MFVarSetFloat (_MDInIrrigation_AccumUptakeExternalID, itemID, discharge * accumUptakeRatio < irrAccumUptakeExt ? discharge * accumUptakeRatio : irrAccumUptakeExt);
+				MFVarSetFloat (_MDInIrrigation_AccumUptakeExternalID, itemID, irrAccumUptakeExt);
 				MFVarSetFloat (_MDOutIrrigation_UptakeRiverID,        itemID, irrUptakeRiver * MFModelGet_dt () * 1000.0 / MFModelGetArea (itemID));
 			}
 			else { // River uptake is turned off all irrigational demand is from unsustainable sources
