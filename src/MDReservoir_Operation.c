@@ -79,7 +79,7 @@ static void _MDReservoirWisser (int itemID) {
 		resExtRelease = resRelease > discharge ? resRelease - discharge : 0.0;
 	}
 	
-	resExtRelease = resRelease > discharge ? resRelease - discharge + (resExtRelease < discharge ? resExtRelease : 0.0) : 0.0;
+	resExtRelease = resRelease > discharge ? resRelease - discharge + (resExtRelease < discharge ? resExtRelease : discharge) : 0.0;
 	MFVarSetFloat (_MDOutResStorageID,            itemID, resStorage);
 	MFVarSetFloat (_MDOutResStorageChgID,         itemID, resStorageChg);
 	MFVarSetFloat (_MDOutResReleaseID,            itemID, resRelease);
@@ -121,7 +121,7 @@ static void _MDReservoirOptimized (int itemID) {
 
 		resStorage = prevResStorage + (discharge - resRelease) * dt / 1e9;
 	}
-	resExtRelease = resRelease > discharge ? resRelease - discharge + (resExtRelease < discharge ? resExtRelease : 0.0) : 0.0;
+	resExtRelease = resRelease > discharge ? resRelease - discharge + (resExtRelease < discharge ? resExtRelease : discharge) : 0.0;
 	MFVarSetFloat (_MDOutResStorageID,            itemID, resStorage); 
 	MFVarSetFloat (_MDOutResStorageChgID,         itemID, resStorageChg); 
 	MFVarSetFloat (_MDOutResReleaseID,            itemID, resRelease);
