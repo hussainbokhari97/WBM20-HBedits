@@ -36,8 +36,6 @@ static void _MDRouting_DischargeUptake (int itemID) {
 // Outputs
 	float irrUptakeRiver = 0.0; // Irrigational water uptake from river [mm/dt]
 	float irrUptakeExcess;      // Irrigational water uptake from unsustainable source [mm/dt]
-// Local
-	float accumUptakeRatio;     // Ratio of incoming flow and extractable flow
 	
 	discharge = MFVarGetFloat (_MDInRouting_DischargeInChannelID, itemID, 0.0);
 
@@ -47,7 +45,6 @@ static void _MDRouting_DischargeUptake (int itemID) {
 			if (_MDOutIrrigation_UptakeRiverID != MFUnset) { // River uptake is turned on
 				irrAccumUptakeExt = MFVarGetFloat (_MDInIrrigation_AccumUptakeExternalID, itemID, 0.0)
 			    	              + irrUptakeExt * MFModelGetArea (itemID) / (MFModelGet_dt () * 1000.0); // converted to m3/s
-				accumUptakeRatio  = discharge > 0.0 ? irrAccumUptakeExt / discharge : 0.0;
 				irrExtractableRelase = _MDInIrrigation_ExtractableReleaseID != MFUnset ? MFVarGetFloat (_MDInIrrigation_ExtractableReleaseID, itemID, 0.0) : 0.0;
 				if (irrExtractableRelase  > 0.0)  { // Satisfying irrigation from extractable reservoir release
 					if (irrAccumUptakeExt > irrExtractableRelase) { // consumable reservoir release is exhauted, unmet water uptake is reported as unsustaibale withdrawal
@@ -89,7 +86,7 @@ static void _MDRouting_DischargeUptake (int itemID) {
 		}
 		MFVarSetFloat (_MDOutIrrigation_UptakeExcessID, itemID, irrUptakeExcess);
 	}
-    MFVarSetFloat (_MDOutRouting_DischargeUptakeID,  itemID, discharge - irrUptakeRiver);
+    MFVarSetFloat (_MDOutRouting_DischargeUptakeID,  itemID, discharge - irrUptakeRiver * MFModelGetArea (itemID) / (MFModelGet_dt () * 1000.0));
 }
 
 int MDRouting_DischargeUptakeDef () {
@@ -121,7 +118,7 @@ int MDRouting_DischargeUptakeDef () {
 					_MDRiverUptakeFraction = sscanf (optStr,"%f",&par) == 1 ? par : _MDRiverUptakeFraction;
 				}
 
-				if (((_MDOutIrrigation_UptakeRiverID        = MDIrrigation_UptakeRiverDef ())      == CMfailed) ||
+				if (((_MDOutIrrigation_UptakeRiverID        = MDIrrigation_UptakeRiverDef ())       == CMfailed) ||
 					((_MDInIrrigation_ExtractableReleaseID  = MDReservoir_ExtractableReleaseDef ()) == CMfailed) ||
 					((_MDInIrrigation_UptakeExternalID      = MFVarGetID (MDVarIrrigation_UptakeExternal,      "mm",   MFInput,  MFFlux,   MFBoundary)) == CMfailed) ||
                     ((_MDOutIrrigation_UptakeExcessID       = MFVarGetID (MDVarIrrigation_UptakeExcess,        "mm",   MFOutput, MFFlux,   MFBoundary)) == CMfailed))
