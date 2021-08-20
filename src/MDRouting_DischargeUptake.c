@@ -46,6 +46,7 @@ static void _MDRouting_DischargeUptake (int itemID) {
 			if (_MDOutIrrigation_UptakeRiverID != MFUnset) { // River uptake is turned on
 				irrAccumUptakeExt    = MFVarGetFloat (_MDInIrrigation_AccumUptakeExternalID, itemID, 0.0) + irrUptakeExt;
 				irrExtractableRelase = _MDInIrrigation_ExtractableReleaseID != MFUnset ? MFVarGetFloat (_MDInIrrigation_ExtractableReleaseID, itemID, 0.0) : 0.0;
+				irrExtractableRelase = 0.0;
 				if (irrExtractableRelase  > 0.0)  { // Satisfying irrigation from extractable reservoir release
 					if (irrAccumUptakeExt > irrExtractableRelase) { // consumable reservoir release is exhauted, unmet water uptake is reported as unsustaibale withdrawal
 						irrUptakeRiver        = irrExtractableRelase;               // m3/s
