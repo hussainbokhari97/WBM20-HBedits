@@ -61,17 +61,16 @@ static void _MDRouting_DischargeUptake (int itemID) {
 					}
 					MFVarSetFloat (_MDInIrrigation_ExtractableReleaseID, itemID, irrExtractableRelase);
 				}
-				else { // accumulated irrigational water demand is sastisfied from river flow without extractable reservoir release.
+/*				else { // accumulated irrigational water demand is sastisfied from river flow without extractable reservoir release.
 					if (discharge * _MDRiverUptakeFraction > irrAccumUptakeExt) { 
 						irrUptakeRiver    = irrAccumUptakeExt * MFModelGet_dt () * 1000.0 / MFModelGetArea (itemID); // in mm/dt
 						irrAccumUptakeExt = 0.0;
-						irrUptakeExcess   = 0.0;
 					}
-/*					else {
+					else {
 						irrUptakeRiver     = discharge * _MDRiverUptakeFraction * MFModelGet_dt () * 1000.0 / MFModelGetArea (itemID);
 						irrAccumUptakeExt -= discharge * _MDRiverUptakeFraction;
-						irrUptakeExcess = 0.0;
 					}
+					irrUptakeExcess = 0.0;
 */				}
 				MFVarSetFloat (_MDOutIrrigation_UptakeRiverID,        itemID, irrUptakeRiver);
 				MFVarSetFloat (_MDInIrrigation_AccumUptakeExternalID, itemID, irrAccumUptakeExt);
