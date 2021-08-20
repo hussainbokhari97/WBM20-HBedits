@@ -57,25 +57,23 @@ static void _MDReservoirWisser (int itemID) {
 
 	if ((resCapacity = MFVarGetFloat (_MDInResCapacityID, itemID, 0.0)) > 0.0) { 
 		            dt = MFModelGet_dt ();
-		 meanDischarge = MFVarGetFloat (_MDInAux_MeanDischargeID,      itemID, discharge);
-		     resUptake = _MDInResUptakeID != MFUnset ? MFVarGetFloat (_MDInResUptakeID,itemID, 0.0) : 0.0; 
-		prevResStorage = MFVarGetFloat(_MDOutResStorageID, itemID, 0.0);
+		 meanDischarge = MFVarGetFloat (_MDInAux_MeanDischargeID,      itemID, discharge); // m3/s
+		     resUptake = _MDInResUptakeID != MFUnset ? MFVarGetFloat (_MDInResUptakeID,itemID, 0.0) : 0.0; // m3/s
+		prevResStorage = MFVarGetFloat(_MDOutResStorageID, itemID, 0.0); // km3
 
-		resRelease = discharge > meanDischarge ? wetSeasonPct * discharge : drySeasonPct * discharge  + (meanDischarge - discharge);
- 		resStorage = prevResStorage + (discharge - resRelease - resUptake) * dt / 1e9;
+		resRelease = discharge > meanDischarge ? wetSeasonPct * discharge : drySeasonPct * discharge  + (meanDischarge - discharge); // m3/s
+ 		resStorage = prevResStorage + (discharge - resRelease) * dt / 1e9; // km3
 
-		if (resStorage > resCapacity) {
-			resRelease = (discharge - resUptake) * dt / 1e9 + prevResStorage - resCapacity;
-			resRelease = resRelease * 1e9 / dt;
-			resStorage = resCapacity;
+		if (resStorage > resCapacity) { // km3
+			resRelease = discharge + (prevResStorage - resCapacity) * 1e9 / dt; // m3/s
+			resStorage = resCapacity;   // km3
 		}
 		else if (resStorage < 0.0) {
-			resRelease = prevResStorage + (discharge + resUptake) * dt / 1e9;
-			resRelease = resRelease * 1e9 / dt;
+			resRelease = discharge - prevResStorage * 1e9 / dt  > 0.0 ? discharge - prevResStorage * 1e9 / dt : 0.0; // m3/s
 			resStorage = 0.0;
 		}
-		resStorageChg  = resStorage - prevResStorage;	
-		resExtRelease  = resRelease > discharge ? resRelease - discharge : 0.0;
+		resStorageChg  = resStorage - prevResStorage; // km3
+		resExtRelease  = resRelease > discharge ? resRelease - discharge : 0.0; // m3/s
 		resExtRelease  = resRelease;
 	}
 	MFVarSetFloat (_MDOutResStorageID,            itemID, resStorage);
