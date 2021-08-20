@@ -75,7 +75,8 @@ static void _MDReservoirWisser (int itemID) {
 			resStorage = 0.0;
 		}
 		resStorageChg  = resStorage - prevResStorage;	
-		resExtRelease  = resRelease > discharge ? resRelease - discharge: 0.0;
+		resExtRelease  = resRelease > discharge ? resRelease - discharge : 0.0;
+		resExtRelease  = 0.0;
 	}
 	MFVarSetFloat (_MDOutResStorageID,            itemID, resStorage);
 	MFVarSetFloat (_MDOutResStorageChgID,         itemID, resStorageChg);
