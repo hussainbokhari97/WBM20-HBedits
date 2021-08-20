@@ -63,8 +63,8 @@ static void _MDRouting_DischargeUptake (int itemID) {
 				}
 				else { // accumulated irrigational water demand is sastisfied from river flow without extractable reservoir release.
 					if (discharge * _MDRiverUptakeFraction > irrAccumUptakeExt) { 
-						irrUptakeRiver    = irrAccumUptakeExt;     // m3/s
-						irrAccumUptakeExt = 0.0;
+						irrUptakeRiver     = irrAccumUptakeExt;     // m3/s
+						irrAccumUptakeExt  = 0.0;
 					}
 					else {
 						irrUptakeRiver     = discharge * _MDRiverUptakeFraction; // m3/s
