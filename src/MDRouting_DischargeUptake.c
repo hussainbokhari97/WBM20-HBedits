@@ -51,7 +51,7 @@ static void _MDRouting_DischargeUptake (int itemID) {
 						irrUptakeRiver        = irrAccumUptakeExt; // m3/s
 						irrAccumUptakeExt     = 0.0;
 						irrUptakeExcess       = 0.0;
-						irrExtractableRelase -= irrAccumUptakeExt
+						irrExtractableRelase -= irrAccumUptakeExt;
 					}
 					else { // extractable reservoir release is exhauted, unmet water uptake is reported as unsustaibale withdrawal
 						irrUptakeRiver        = irrExtractableRelase;               // m3/s
