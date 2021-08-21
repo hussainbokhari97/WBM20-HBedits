@@ -75,8 +75,8 @@ int MDReservoir_TargetHighFlowDef () {
 	MFDefEntering ("Target high flow");
 	if ((optStr = MFOptionGet (MDVarReservoir_TargetHighFlow)) != (char *) NULL) optID = CMoptLookup (MFcalcOptions, optStr, true);
  	switch (optID) {
-		default:     MFOptionMessage (MDOptConfig_Reservoirs, optStr, MFcalcOptions); return (CMfailed);
-		case MFhelp: MFOptionMessage (MDOptConfig_Reservoirs, optStr, MFcalcOptions);
+		default:     MFOptionMessage (MDVarReservoir_TargetHighFlow, optStr, MFcalcOptions); return (CMfailed);
+		case MFhelp: MFOptionMessage (MDVarReservoir_TargetHighFlow, optStr, MFcalcOptions);
 		case MFnone: break;
 		case MFinput:
 			if ((_MDOutResTargetHighFlowID      = MFVarGetID (MDVarReservoir_TargetHighFlow,     "m3/s", MFInput,  MFState, MFBoundary)) == CMfailed)

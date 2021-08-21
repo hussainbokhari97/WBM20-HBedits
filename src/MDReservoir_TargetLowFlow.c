@@ -75,8 +75,8 @@ int MDReservoir_TargetLowFlowDef () {
 	MFDefEntering ("Target low flow");
 	if ((optStr = MFOptionGet (MDVarReservoir_TargetLowFlow)) != (char *) NULL) optID = CMoptLookup (MFcalcOptions, optStr, true);
  	switch (optID) {
-		default:     MFOptionMessage (MDOptConfig_Reservoirs, optStr, MFsourceOptions); return (CMfailed);
-		case MFhelp: MFOptionMessage (MDOptConfig_Reservoirs, optStr, MFsourceOptions);
+		default:     MFOptionMessage (MDVarReservoir_TargetLowFlow, optStr, MFsourceOptions); return (CMfailed);
+		case MFhelp: MFOptionMessage (MDVarReservoir_TargetLowFlow, optStr, MFsourceOptions);
 		case MFnone: break;
 		case MFinput:
 			if ((_MDOutResTargetLowFlowID       = MFVarGetID (MDVarReservoir_TargetLowFlow,      "m3/s", MFInput,  MFState, MFBoundary)) == CMfailed)

@@ -46,7 +46,7 @@ static void _MDRouting_DischargeUptake (int itemID) {
 			if (_MDOutIrrigation_UptakeRiverID != MFUnset) { // River uptake is turned on
 				irrAccumUptakeExt    = MFVarGetFloat (_MDInIrrigation_AccumUptakeExternalID, itemID, 0.0) + irrUptakeExt;
 				irrExtractableRelase = _MDInIrrigation_ExtractableReleaseID != MFUnset ? MFVarGetFloat (_MDInIrrigation_ExtractableReleaseID, itemID, 0.0) : 0.0;
-				if (irrExtractableRelase  > 0.0)  { // Satisfying irrigation from extractable reservoir release
+				if ((irrExtractableRelase  > 0.0) && (discharge > irrExtractableRelase))  { // Satisfying irrigation from extractable reservoir release
 					if (irrExtractableRelase > irrAccumUptakeExt) { // extractable water release satisfies accumulated irrigational water demand
 						irrUptakeRiver        = irrAccumUptakeExt; // m3/s
 						irrAccumUptakeExt     = 0.0;
@@ -63,7 +63,7 @@ static void _MDRouting_DischargeUptake (int itemID) {
 				}
 				else { // accumulated irrigational water demand is sastisfied from river flow without extractable reservoir release.
 					if (discharge * _MDRiverUptakeFraction > irrAccumUptakeExt) { 
-						irrUptakeRiver     = irrAccumUptakeExt;     // m3/s
+						irrUptakeRiver     = irrAccumUptakeExt; // m3/s
 						irrAccumUptakeExt  = 0.0;
 					}
 					else {
@@ -100,7 +100,7 @@ int MDRouting_DischargeUptakeDef () {
 
 	MFDefEntering ("Discharge - Uptatakes");
 	if (((_MDInRouting_DischargeInChannelID  = MDRouting_DischargeInChannelDef()) == CMfailed) ||
-        ((_MDOutRouting_DischargeUptakeID    = MFVarGetID ("__DischLevel2",  "m/3", MFOutput, MFState, false)) == CMfailed))
+        ((_MDOutRouting_DischargeUptakeID    = MFVarGetID ("__DischLevel2",  "m3/s", MFOutput, MFState, MFBoundary)) == CMfailed))
 	    return (CMfailed);
 	
 	if ((ret = MDIrrigation_GrossDemandDef()) != MFUnset) {
@@ -110,7 +110,7 @@ int MDRouting_DischargeUptakeDef () {
 			default:      MFOptionMessage ("IrrUptakeRiver", optStr, MFswitchOptions); return (CMfailed);
 			case MFhelp:  MFOptionMessage ("IrrUptakeRiver", optStr, MFswitchOptions);
 			case MFoff:
-				if (((_MDInIrrigation_UptakeExternalID      = MFVarGetID (MDVarIrrigation_UptakeExternal, "mm", MFInput, MFFlux, MFBoundary))  == CMfailed) ||
+				if (((_MDInIrrigation_UptakeExternalID      = MFVarGetID (MDVarIrrigation_UptakeExternal, "mm", MFInput,  MFFlux, MFBoundary))  == CMfailed) ||
                     ((_MDOutIrrigation_UptakeExcessID       = MFVarGetID (MDVarIrrigation_UptakeExcess,   "mm", MFOutput, MFFlux, MFBoundary)) == CMfailed))
 					return (CMfailed);
 				break;

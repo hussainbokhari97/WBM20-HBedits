@@ -40,8 +40,8 @@ int MDRouting_DischargeReleaseDef () {
 	if ((_MDInRouting_DischargeUptakeID = MDRouting_DischargeUptakeDef ()) == CMfailed) return (CMfailed);
 	if ((optStr = MFOptionGet (MDOptConfig_Reservoirs)) != (char *) NULL) optID = CMoptLookup (MFswitchOptions, optStr, true);
 	switch (optID) {
-		default:     MFOptionMessage (MDOptConfig_Reservoirs, optStr, MFsourceOptions); return (CMfailed);
-		case MFhelp: MFOptionMessage (MDOptConfig_Reservoirs, optStr, MFsourceOptions);
+		default:     MFOptionMessage (MDOptConfig_Reservoirs, optStr, MFswitchOptions); return (CMfailed);
+		case MFhelp: MFOptionMessage (MDOptConfig_Reservoirs, optStr, MFswitchOptions);
 		case MFoff:  break;
 		case MFon:   if ((_MDInRouting_DischReleasedID = MDReservoir_ReleaseDef()) == CMfailed) return (CMfailed);
 	}

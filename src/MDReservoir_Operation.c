@@ -19,6 +19,7 @@ static int _MDInAux_MeanDischargeID      = MFUnset;
 static int _MDInResTargetHighFlowID      = MFUnset;
 static int _MDInResTargetLowFlowID       = MFUnset;
 static int _MDInResCapacityID            = MFUnset;
+static int _MDInResUptakeID              = MFUnset;
 
 static int _MDInGarbageNonIrrUptake      = MFUnset;
 static int _MDInGarbageNonIrrMeanUptake  = MFUnset;
@@ -37,6 +38,7 @@ static void _MDReservoirWisser (int itemID) {
 	float discharge;           // Current discharge [m3/s]
 	float meanDischarge;       // Long-term mean annual discharge [m3/s]
 	float resCapacity;         // Reservoir capacity [km3]
+	float resUptake;           // Water uptake from reservoir [m3/s]
 // Output
 	float resStorage    = 0.0; // Reservoir storage [km3]
 	float resStorageChg = 0.0; // Reservoir storage change [km3/dt]
@@ -55,23 +57,25 @@ static void _MDReservoirWisser (int itemID) {
 
 	if ((resCapacity = MFVarGetFloat (_MDInResCapacityID, itemID, 0.0)) > 0.0) { 
 		            dt = MFModelGet_dt ();
-		 meanDischarge = MFVarGetFloat (_MDInAux_MeanDischargeID,      itemID, discharge); // m3/s
-		prevResStorage = MFVarGetFloat(_MDOutResStorageID, itemID, 0.0); // km3
+		 meanDischarge = MFVarGetFloat (_MDInAux_MeanDischargeID,      itemID, discharge);
+		     resUptake = _MDInResUptakeID != MFUnset ? MFVarGetFloat (_MDInResUptakeID,itemID, 0.0) : 0.0; 
+		prevResStorage = MFVarGetFloat(_MDOutResStorageID, itemID, 0.0);
 
-		resRelease = discharge > meanDischarge ? wetSeasonPct * discharge : drySeasonPct * discharge  + (meanDischarge - discharge); // m3/s
- 		resStorage = prevResStorage + (discharge - resRelease) * dt / 1e9; // km3
+		resRelease = discharge > meanDischarge ? wetSeasonPct * discharge : drySeasonPct * discharge  + (meanDischarge - discharge);
+ 		resStorage = prevResStorage + (discharge - resRelease - resUptake) * dt / 1e9;
 
-		if (resStorage > resCapacity) { // km3
-			resRelease = discharge + (prevResStorage - resCapacity) * 1e9 / dt; // m3/s
-			resStorage = resCapacity;   // km3
+		if (resStorage > resCapacity) {
+			resRelease = (discharge - resUptake) * dt / 1e9 + prevResStorage - resCapacity;
+			resRelease = resRelease * 1e9 / dt;
+			resStorage = resCapacity;
 		}
 		else if (resStorage < 0.0) {
-			resRelease = discharge - prevResStorage * 1e9 / dt  > 0.0 ? discharge - prevResStorage * 1e9 / dt : 0.0; // m3/s
+			resRelease = prevResStorage + (discharge + resUptake) * dt / 1e9;
+			resRelease = resRelease * 1e9 / dt;
 			resStorage = 0.0;
 		}
-		resStorageChg  = resStorage - prevResStorage; // km3
-		resExtRelease  = resRelease > discharge ? resRelease - discharge : 0.0; // m3/s
-		resExtRelease  = discharge;
+		resStorageChg  = resStorage - prevResStorage;	
+		resExtRelease = resRelease > discharge ? resRelease - discharge + (resExtRelease < discharge ? resExtRelease : discharge) : 0.0;
 	}
 	MFVarSetFloat (_MDOutResStorageID,            itemID, resStorage);
 	MFVarSetFloat (_MDOutResStorageChgID,         itemID, resStorageChg);
@@ -112,8 +116,8 @@ static void _MDReservoirOptimized (int itemID) {
 		else
 			resRelease = discharge;
 
-		resStorage    = prevResStorage + (discharge - resRelease) * dt / 1e9;
-		resExtRelease = resRelease > discharge ? resRelease - discharge : 0.0;
+		resStorage = prevResStorage + (discharge - resRelease) * dt / 1e9;
+		resExtRelease = resRelease > discharge ? resRelease - discharge + (resExtRelease < discharge ? resExtRelease : discharge) : 0.0;
 	}
 	MFVarSetFloat (_MDOutResStorageID,            itemID, resStorage); 
 	MFVarSetFloat (_MDOutResStorageChgID,         itemID, resStorageChg); 
@@ -136,10 +140,11 @@ int MDReservoir_OperationDef () {
 	MFDefEntering ("Reservoirs");
 	if ((optStr = MFOptionGet (MDVarReservoir_Release)) != (char *) NULL) optID = CMoptLookup (options, optStr, true);
  	switch (optID) {
-		default:     MFOptionMessage (MDOptConfig_Reservoirs, optStr, options); return (CMfailed);
-		case MDhelp: MFOptionMessage (MDOptConfig_Reservoirs, optStr, options);
+		default:     MFOptionMessage (MDVarReservoir_Release, optStr, options); return (CMfailed);
+		case MDhelp: MFOptionMessage (MDVarReservoir_Release, optStr, options);
 		case MDwisser:
 			if (((_MDInRouting_DischargeID      = MDRouting_DischargeUptakeDef  ()) == CMfailed) ||
+				((_MDInResUptakeID              = MDReservoir_UptakeDef         ()) == CMfailed) ||
 				((_MDInAux_MeanDischargeID      = MDAux_MeanDischargeDef        ()) == CMfailed) ||
             	((_MDInResCapacityID            = MFVarGetID (MDVarReservoir_Capacity,           "km3",  MFInput,  MFState, MFBoundary)) == CMfailed) ||
                 ((_MDOutResStorageID            = MFVarGetID (MDVarReservoir_Storage,            "km3",  MFOutput, MFState, MFInitial))  == CMfailed) ||
@@ -150,6 +155,7 @@ int MDReservoir_OperationDef () {
 			break;
 		case MDoptimized: break;
 			if (((_MDInRouting_DischargeID      = MDRouting_DischargeUptakeDef  ()) == CMfailed) ||
+				((_MDInResUptakeID              = MDReservoir_UptakeDef         ()) == CMfailed) ||
 				((_MDInResTargetLowFlowID       = MDReservoir_TargetLowFlowDef  ()) == CMfailed) ||
 				((_MDInResTargetHighFlowID      = MDReservoir_TargetHighFlowDef ()) == CMfailed) ||                
             	((_MDInResCapacityID            = MFVarGetID (MDVarReservoir_Capacity,           "km3",  MFInput,  MFState, MFBoundary)) == CMfailed) ||
