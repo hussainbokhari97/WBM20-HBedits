@@ -77,9 +77,9 @@ int MDSediment_DischargeBFDef () {
 	switch (optID) {
 		default:      MFOptionMessage (MDOptConfig_Discharge, optStr, MFsourceOptions); return (CMfailed);
 		case MFhelp:  MFOptionMessage (MDOptConfig_Discharge, optStr, MFsourceOptions);
-		case MFinput: _MDOutDischargeID = MFVarGetID (MDVarRouting_Discharge,         "m3/s",   MFInput,  MFState, MFBoundary); break;
+		case MFinput: _MDOutDischargeID = MFVarGetID (MDVarRouting_Discharge,         "m3/s",   MFInput,  MFState, MFInitial); break;
 		case MFcalculate:
-			if (((_MDOutDischargeID      = MFVarGetID (MDVarRouting_Discharge,        "m3/s",   MFRoute,  MFState, MFBoundary)) == CMfailed) ||
+			if (((_MDOutDischargeID      = MFVarGetID (MDVarRouting_Discharge,        "m3/s",   MFRoute,  MFState, MFInitial))  == CMfailed) ||
 				((_MDInDischLevel1ID     = MDRouting_DischargeReleaseDef ()) == CMfailed) ||
 				((_MDInBankfullQID       = MFVarGetID (MDVarRouting_BankfullQ,        "m3/s",   MFInput,  MFState, MFBoundary)) == CMfailed) ||
 				((_MDInBankfull_QnID  	 = MFVarGetID (MDVarRouting_Bankfull_Qn,      "m3/s",   MFInput,  MFState, MFBoundary)) == CMfailed) ||

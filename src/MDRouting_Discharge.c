@@ -46,9 +46,9 @@ int MDRouting_DischargeDef() {
 	switch (optID) {
 		default:      MFOptionMessage (MDOptConfig_Discharge, optStr, options); return (CMfailed);
 		case MDhelp:  MFOptionMessage (MDOptConfig_Discharge, optStr, options);
-		case MDinput: _MDOutRouting_DischargeID = MFVarGetID (MDVarRouting_Discharge, "m3/s", MFInput, MFState, MFBoundary); break;
+		case MDinput: _MDOutRouting_DischargeID = MFVarGetID (MDVarRouting_Discharge, "m3/s", MFInput, MFState, MFInitial); break;
 		case MDcalculate:
-			if (((_MDOutRouting_DischargeID = MFVarGetID (MDVarRouting_Discharge, "m3/s", MFRoute, MFState, MFBoundary)) == CMfailed) ||
+			if (((_MDOutRouting_DischargeID = MFVarGetID (MDVarRouting_Discharge, "m3/s", MFRoute, MFState, MFInitial)) == CMfailed) ||
 				((_MDInRouting_DischargeID  = MDRouting_DischargeReleaseDef ()) == CMfailed) ||
 				((_MDInRouting_RiverWidthID = MDRouting_RiverWidthDef ())       == CMfailed) ||
                 (MFModelAddFunction(_MDRouting_Discharge) == CMfailed)) return (CMfailed);

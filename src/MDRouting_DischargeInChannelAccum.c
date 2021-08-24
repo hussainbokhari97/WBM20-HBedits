@@ -40,7 +40,7 @@ int MDRouting_DischargeInChannelAccumulateDef () {
 
 	MFDefEntering ("Discharge Routing - Accumulate");
 	if (((_MDInAux_RunoffVolumeID  = MDCore_RunoffVolumeDef()) == CMfailed) ||
-        ((_MDInRouting_DischargeID     = MFVarGetID (MDVarRouting_Discharge,       "m3/s", MFInput,  MFState, MFBoundary)) == CMfailed) ||
+        ((_MDInRouting_DischargeID     = MFVarGetID (MDVarRouting_Discharge,       "m3/s", MFInput,  MFState, MFInitial))  == CMfailed) ||
         ((_MDOutRouting_DischLevel3ID  = MFVarGetID ("__DischLevel3",              "m3/s", MFOutput, MFState, MFBoundary)) == CMfailed) ||
         ((_MDOutRouting_RiverStorChgID = MFVarGetID (MDVarRouting_RiverStorageChg, "m3",   MFOutput, MFFlux,  MFBoundary)) == CMfailed) ||
         ((_MDOutAux_RiverStorageID     = MFVarGetID (MDVarRouting_RiverStorage,    "m3",   MFOutput, MFState, MFInitial))  == CMfailed) ||

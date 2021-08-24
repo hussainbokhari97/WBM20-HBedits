@@ -72,7 +72,7 @@ int MDRouting_DischargeInChannelMuskingumDef () {
         ((_MDInMuskingumC0ID           = MDRouting_DischargeInChannelMuskingumCoeffDef()) == CMfailed) ||
         ((_MDInMuskingumC1ID           = MFVarGetID (MDVarRouting_MuskingumC1,     MFNoUnit, MFInput,  MFState, MFBoundary)) == CMfailed) ||
         ((_MDInMuskingumC2ID           = MFVarGetID (MDVarRouting_MuskingumC2,     MFNoUnit, MFInput,  MFState, MFBoundary)) == CMfailed) ||
-        ((_MDInRouting_DischargeID     = MFVarGetID (MDVarRouting_Discharge,       "m3/s",   MFInput,  MFState, MFBoundary)) == CMfailed) ||
+        ((_MDInRouting_DischargeID     = MFVarGetID (MDVarRouting_Discharge,       "m3/s",   MFInput,  MFState, MFInitial))  == CMfailed) ||
         ((_MDOutDischAux0ID            = MFVarGetID (MDVarRouting_Discharge0,      "m3/s",   MFOutput, MFState, MFInitial))  == CMfailed) ||
         ((_MDOutDischAux1ID            = MFVarGetID (MDVarRouting_Discharge1,      "m3/s",   MFOutput, MFState, MFInitial))  == CMfailed) ||
         ((_MDOutRouting_RiverStorChgID = MFVarGetID (MDVarRouting_RiverStorageChg, "m3",     MFOutput, MFFlux,  MFBoundary)) == CMfailed) ||
