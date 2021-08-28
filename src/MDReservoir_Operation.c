@@ -65,23 +65,25 @@ static void _MDReservoirWisser (int itemID) {
 	if ((resCapacity = MFVarGetFloat (_MDInResCapacityID, itemID, 0.0)) > 0.0) { 
 		            dt = MFModelGet_dt ();
 		 meanDischarge = MFVarGetFloat (_MDInAux_MeanDischargeID,      itemID, discharge);
-		     resUptake = _MDInResUptakeID != MFUnset ? MFVarGetFloat (_MDInResUptakeID,itemID, 0.0) : 0.0; 
 		prevResStorage = MFVarGetFloat(_MDOutResStorageID, itemID, 0.0);
+		     resUptake = _MDInResUptakeID != MFUnset ? MFVarGetFloat (_MDInResUptakeID,itemID, 0.0) : 0.0; 
 
+		if (prevResStorage * 1e9 / dt < resUptake) {
+			resUptake = prevResStorage * 1e9 / dt;
+			prevResStorage = 0.0;
+		}
 		resRelease = discharge > meanDischarge ? wetSeasonPct * discharge : drySeasonPct * discharge  + (meanDischarge - discharge);
- 		resStorage = prevResStorage + (discharge - resRelease - resUptake) * dt / 1e9;
 
+ 		resStorage = prevResStorage + (discharge - resUptake - resRelease) * dt / 1e9;
 		if (resStorage > resCapacity) {
-			resRelease = (discharge - resUptake) * dt / 1e9 + prevResStorage - resCapacity;
-			resRelease = resRelease * 1e9 / dt;
-			resStorage = resCapacity;
+			resRelease += (resStorage - resCapacity) * 1e9 / dt;
+			resStorage  = resCapacity;
 		}
 		else if (resStorage < 0.0) {
-			resRelease = prevResStorage + (discharge + resUptake) * dt / 1e9;
-			resRelease = resRelease * 1e9 / dt;
-			resStorage = 0.0;
+			resRelease += resStorage * 1e9 / dt;
+			resStorage  = 0.0;
 		}
-		resStorageChg  = resStorage - prevResStorage;	
+		resStorageChg  = resStorage - prevResStorage;
 		resExtRelease = resRelease > discharge ? resRelease - discharge + (resExtRelease < discharge ? resExtRelease : discharge) : 0.0;
 	}
 	MFVarSetFloat (_MDOutResStorageID,            itemID, resStorage);
@@ -189,11 +191,11 @@ static void _MDReservoirSNL (int itemID) {
 		resStorage = prevResStorage + (resInflow - resRelease) * dt / 1e9;
 		if (resStorage > resCapacity) {
 			   resRelease += (resStorage - resCapacity) * 1e9 / dt;
-			   resStorage = resCapacity; 
+			   resStorage  = resCapacity; 
 		}
 		else if (resStorage < 0.1 * resCapacity) {
-			   resRelease = (prevResStorage - 0.1 * resCapacity) * 1e9 / dt;
-			   resStorage = 0.1 * resCapacity; 
+			   resRelease += (resStorage - 0.1 * resCapacity) * 1e9 / dt;
+			   resStorage  = 0.1 * resCapacity; 
 		}
 		resStorageChg = resStorage - prevResStorage;
 		resExtRelease = resRelease - nonIrrMeanDemand < irrDemand ? irrDemand - (resRelease - nonIrrMeanDemand) : irrDemand;
