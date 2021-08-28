@@ -205,7 +205,7 @@ static void _MDReservoirSNL (int itemID) {
 	MFVarSetFloat (_MDOutResExtractableReleaseID, itemID, resExtRelease);
 }
 
-enum { MDhelp, MDwisser, MDoptimized, MDsnl };
+enum { MDhelp, MDwisser, MDoptimized, MFsnl };
 
 int MDReservoir_OperationDef () {
 	int optID = MDwisser;
@@ -242,7 +242,7 @@ int MDReservoir_OperationDef () {
 			    ((_MDOutResReleaseID            = MFVarGetID (MDVarReservoir_Release,            "m3/s", MFOutput, MFFlux,  MFBoundary)) == CMfailed) ||
  			    ((_MDOutResExtractableReleaseID = MFVarGetID (MDVarReservoir_ExtractableRelease, "m3/s", MFRoute,  MFState, MFBoundary)) == CMfailed) ||
                 (MFModelAddFunction (_MDReservoirOptimized) == CMfailed)) return (CMfailed);
-		case MDsnl:
+		case MDConstLPC:
 			if (((_MDInRouting_DischargeID      = MDRouting_DischargeUptakeDef  ()) == CMfailed) ||
             	((_MDInResCapacityID            = MFVarGetID (MDVarReservoir_Capacity,           "km3",  MFInput,  MFState, MFBoundary)) == CMfailed) ||
 			    ((_MDInResNatInflowID           = MFVarGetID (MDVarReservoir_NatInflow,          "m3/s", MFInput,  MFFlux,  MFBoundary)) == CMfailed) ||
