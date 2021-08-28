@@ -80,7 +80,7 @@ int MDSediment_DischargeBFDef () {
 		case MFinput: _MDOutDischargeID = MFVarGetID (MDVarRouting_Discharge,         "m3/s",   MFInput,  MFState, MFInitial); break;
 		case MFcalculate:
 			if (((_MDOutDischargeID      = MFVarGetID (MDVarRouting_Discharge,        "m3/s",   MFRoute,  MFState, MFInitial))  == CMfailed) ||
-				((_MDInDischLevel1ID     = MDRouting_DischargeReleaseDef ()) == CMfailed) ||
+				((_MDInDischLevel1ID     = MDRouting_DischargeUptakeDef ()) == CMfailed) ||
 				((_MDInBankfullQID       = MFVarGetID (MDVarRouting_BankfullQ,        "m3/s",   MFInput,  MFState, MFBoundary)) == CMfailed) ||
 				((_MDInBankfull_QnID  	 = MFVarGetID (MDVarRouting_Bankfull_Qn,      "m3/s",   MFInput,  MFState, MFBoundary)) == CMfailed) ||
 				((_MDInFlowCoefficientID = MFVarGetID (MDVarSediment_FlowCoefficient, "m3/s",   MFInput,  MFState, MFBoundary)) == CMfailed) ||

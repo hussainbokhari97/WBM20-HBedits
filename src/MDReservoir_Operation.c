@@ -205,7 +205,7 @@ static void _MDReservoirSNL (int itemID) {
 	MFVarSetFloat (_MDOutResExtractableReleaseID, itemID, resExtRelease);
 }
 
-enum { MDhelp, MDwisser, MDoptimized, MFsnl };
+enum { MDhelp, MDwisser, MDoptimized, MDsnl };
 
 int MDReservoir_OperationDef () {
 	int optID = MDwisser;
@@ -219,31 +219,31 @@ int MDReservoir_OperationDef () {
 		default:     MFOptionMessage (MDVarReservoir_Release, optStr, options); return (CMfailed);
 		case MDhelp: MFOptionMessage (MDVarReservoir_Release, optStr, options);
 		case MDwisser:
-			if (((_MDInRouting_DischargeID      = MDRouting_DischargeUptakeDef  ()) == CMfailed) ||
-				((_MDInResUptakeID              = MDReservoir_UptakeDef         ()) == CMfailed) ||
-				((_MDInAux_MeanDischargeID      = MDAux_MeanDischargeDef        ()) == CMfailed) ||
+			if (((_MDInRouting_DischargeID      = MDRouting_DischargeInChannelDef()) == CMfailed) ||
+				((_MDInResUptakeID              = MDReservoir_UptakeDef ())          == CMfailed) ||
+				((_MDInAux_MeanDischargeID      = MDAux_MeanDischargeDef ())         == CMfailed) ||
             	((_MDInResCapacityID            = MFVarGetID (MDVarReservoir_Capacity,           "km3",  MFInput,  MFState, MFBoundary)) == CMfailed) ||
                 ((_MDOutResStorageID            = MFVarGetID (MDVarReservoir_Storage,            "km3",  MFOutput, MFState, MFInitial))  == CMfailed) ||
                 ((_MDOutResStorageChgID         = MFVarGetID (MDVarReservoir_StorageChange,      "km3",  MFOutput, MFState, MFBoundary)) == CMfailed) ||
-			    ((_MDOutResInflowID             = MFVarGetID (MDVarReservoir_Inflow,             "m3/s", MFOutput, MFFlux,  MFBoundary)) == CMfailed) ||
-			    ((_MDOutResReleaseID            = MFVarGetID (MDVarReservoir_Release,            "m3/s", MFOutput, MFFlux,  MFBoundary)) == CMfailed) ||
+			    ((_MDOutResInflowID             = MFVarGetID (MDVarReservoir_Inflow,             "m3/s", MFOutput, MFState, MFBoundary)) == CMfailed) ||
+			    ((_MDOutResReleaseID            = MFVarGetID (MDVarReservoir_Release,            "m3/s", MFOutput, MFState, MFBoundary)) == CMfailed) ||
  			    ((_MDOutResExtractableReleaseID = MFVarGetID (MDVarReservoir_ExtractableRelease, "m3/s", MFRoute,  MFState, MFBoundary)) == CMfailed) ||
                 (MFModelAddFunction (_MDReservoirWisser) == CMfailed)) return (CMfailed);
 			break;
 		case MDoptimized: break;
-			if (((_MDInRouting_DischargeID      = MDRouting_DischargeUptakeDef  ()) == CMfailed) ||
-				((_MDInResUptakeID              = MDReservoir_UptakeDef         ()) == CMfailed) ||
-				((_MDInResTargetLowFlowID       = MDReservoir_TargetLowFlowDef  ()) == CMfailed) ||
-				((_MDInResTargetHighFlowID      = MDReservoir_TargetHighFlowDef ()) == CMfailed) ||                
+			if (((_MDInRouting_DischargeID      = MDRouting_DischargeInChannelDef()) == CMfailed) ||
+				((_MDInResUptakeID              = MDReservoir_UptakeDef ())          == CMfailed) ||
+				((_MDInResTargetLowFlowID       = MDReservoir_TargetLowFlowDef ())   == CMfailed) ||
+				((_MDInResTargetHighFlowID      = MDReservoir_TargetHighFlowDef ())  == CMfailed) ||                
             	((_MDInResCapacityID            = MFVarGetID (MDVarReservoir_Capacity,           "km3",  MFInput,  MFState, MFBoundary)) == CMfailed) ||
                 ((_MDOutResStorageID            = MFVarGetID (MDVarReservoir_Storage,            "km3",  MFOutput, MFState, MFInitial))  == CMfailed) ||
                 ((_MDOutResStorageChgID         = MFVarGetID (MDVarReservoir_StorageChange,      "km3",  MFOutput, MFState, MFBoundary)) == CMfailed) ||
-			    ((_MDOutResInflowID             = MFVarGetID (MDVarReservoir_Inflow,             "m3/s", MFOutput, MFFlux,  MFBoundary)) == CMfailed) ||
-			    ((_MDOutResReleaseID            = MFVarGetID (MDVarReservoir_Release,            "m3/s", MFOutput, MFFlux,  MFBoundary)) == CMfailed) ||
+			    ((_MDOutResInflowID             = MFVarGetID (MDVarReservoir_Inflow,             "m3/s", MFOutput, MFState, MFBoundary)) == CMfailed) ||
+			    ((_MDOutResReleaseID            = MFVarGetID (MDVarReservoir_Release,            "m3/s", MFOutput, MFState, MFBoundary)) == CMfailed) ||
  			    ((_MDOutResExtractableReleaseID = MFVarGetID (MDVarReservoir_ExtractableRelease, "m3/s", MFRoute,  MFState, MFBoundary)) == CMfailed) ||
                 (MFModelAddFunction (_MDReservoirOptimized) == CMfailed)) return (CMfailed);
-		case MDConstLPC:
-			if (((_MDInRouting_DischargeID      = MDRouting_DischargeUptakeDef  ()) == CMfailed) ||
+		case MDsnl:
+			if (((_MDInRouting_DischargeID      = MDRouting_DischargeInChannelDef()) == CMfailed) ||
             	((_MDInResCapacityID            = MFVarGetID (MDVarReservoir_Capacity,           "km3",  MFInput,  MFState, MFBoundary)) == CMfailed) ||
 			    ((_MDInResNatInflowID           = MFVarGetID (MDVarReservoir_NatInflow,          "m3/s", MFInput,  MFFlux,  MFBoundary)) == CMfailed) ||
 			    ((_MDInResNatMeanInflowID       = MFVarGetID (MDVarReservoir_NatMeanInflow,      "m3/s", MFInput,  MFFlux,  MFBoundary)) == CMfailed) ||
@@ -254,8 +254,9 @@ int MDReservoir_OperationDef () {
             	((_MDInResInitStorage           = MFVarGetID (MDVarReservoir_InitStorage,        "km3",  MFInput,  MFState, MFBoundary)) == CMfailed) ||
                 ((_MDOutResStorageID            = MFVarGetID (MDVarReservoir_Storage,            "km3",  MFOutput, MFState, MFInitial))  == CMfailed) ||
                 ((_MDOutResStorageChgID         = MFVarGetID (MDVarReservoir_StorageChange,      "km3",  MFOutput, MFState, MFBoundary)) == CMfailed) ||
-			    ((_MDOutResInflowID             = MFVarGetID (MDVarReservoir_Inflow,             "m3/s", MFOutput, MFFlux,  MFBoundary)) == CMfailed) ||
-			    ((_MDOutResReleaseID            = MFVarGetID (MDVarReservoir_Release,            "m3/s", MFOutput, MFFlux,  MFBoundary)) == CMfailed) ||
+			    ((_MDOutResInflowID             = MFVarGetID (MDVarReservoir_Inflow,             "m3/s", MFOutput, MFState, MFBoundary)) == CMfailed) ||
+			    ((_MDOutResReleaseID            = MFVarGetID (MDVarReservoir_Release,            "m3/s", MFOutput, MFState, MFBoundary)) == CMfailed) ||
+ 			    ((_MDOutResExtractableReleaseID = MFVarGetID (MDVarReservoir_ExtractableRelease, "m3/s", MFRoute,  MFState, MFBoundary)) == CMfailed) ||
                 (MFModelAddFunction (_MDReservoirSNL) == CMfailed)) return (CMfailed);
 			break;
 	}

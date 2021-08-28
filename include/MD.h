@@ -513,7 +513,6 @@ int MDRouting_DischargeInChannelAccumulateDef ();
 int MDRouting_DischargeInChannelCascadeDef ();
 int MDRouting_DischargeInChannelMuskingumDef ();
 int MDRouting_DischargeInChannelMuskingumCoeffDef ();
-int MDRouting_DischargeReleaseDef ();
 int MDRouting_DischargeUptakeDef ();
 int MDRouting_RiverShapeExponentDef ();
 int MDRouting_RiverWidthDef ();

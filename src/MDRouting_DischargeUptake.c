@@ -15,13 +15,13 @@ bfekete@gc.cuny.edu
 #include <MD.h>
 
 // Inputs
-static int _MDInRouting_DischargeInChannelID      = MFUnset;
+static int _MDInRouting_DischargeID               = MFUnset;
 static int _MDInIrrigation_UptakeExternalID       = MFUnset;
 static int _MDInIrrigation_AccumUptakeExternalID  = MFUnset;
-static int _MDInIrrigation_ExtractableReleaseID    = MFUnset;
+static int _MDInIrrigation_ExtractableReleaseID   = MFUnset;
 
 // Outputs
-static int _MDOutRouting_DischargeUptakeID        = MFUnset;
+static int _MDOutRouting_DischargeID              = MFUnset;
 static int _MDOutIrrigation_UptakeRiverID         = MFUnset;
 static int _MDOutIrrigation_UptakeExcessID        = MFUnset;
 
@@ -37,7 +37,7 @@ static void _MDRouting_DischargeUptake (int itemID) {
 	float irrUptakeRiver = 0.0; // Irrigational water uptake from river [mm/dt]
 	float irrUptakeExcess;      // Irrigational water uptake from unsustainable source [mm/dt]
 	
-	discharge = MFVarGetFloat (_MDInRouting_DischargeInChannelID, itemID, 0.0);
+	discharge = MFVarGetFloat (_MDInRouting_DischargeID, itemID, 0.0);
 
 	if (_MDInIrrigation_UptakeExternalID != MFUnset) { // Irrigation is turned on.
 		irrUptakeExt = MFVarGetFloat (_MDInIrrigation_UptakeExternalID, itemID, 0.0);
@@ -88,7 +88,7 @@ static void _MDRouting_DischargeUptake (int itemID) {
 		}
 		MFVarSetFloat (_MDOutIrrigation_UptakeExcessID, itemID, irrUptakeExcess);
 	}
-    MFVarSetFloat (_MDOutRouting_DischargeUptakeID,  itemID, discharge - irrUptakeRiver * MFModelGetArea (itemID) / (MFModelGet_dt () * 1000.0));
+    MFVarSetFloat (_MDOutRouting_DischargeID,  itemID, discharge - irrUptakeRiver * MFModelGetArea (itemID) / (MFModelGet_dt () * 1000.0));
 }
 
 int MDRouting_DischargeUptakeDef () {
@@ -96,11 +96,11 @@ int MDRouting_DischargeUptakeDef () {
 	const char *optStr;
 	float par;
 
-	if (_MDOutRouting_DischargeUptakeID != MFUnset) return (_MDOutRouting_DischargeUptakeID);
+	if (_MDOutRouting_DischargeID != MFUnset) return (_MDOutRouting_DischargeID);
 
 	MFDefEntering ("Discharge - Uptatakes");
-	if (((_MDInRouting_DischargeInChannelID  = MDRouting_DischargeInChannelDef()) == CMfailed) ||
-        ((_MDOutRouting_DischargeUptakeID    = MFVarGetID ("__DischLevel2",  "m3/s", MFOutput, MFState, MFBoundary)) == CMfailed))
+	if (((_MDInRouting_DischargeID  = MDReservoir_ReleaseDef ()) == CMfailed) ||
+        ((_MDOutRouting_DischargeID = MFVarGetID ("__DischLevel2",  "m3/s", MFOutput, MFState, MFBoundary)) == CMfailed))
 	    return (CMfailed);
 	
 	if ((ret = MDIrrigation_GrossDemandDef()) != MFUnset) {
@@ -133,5 +133,5 @@ int MDRouting_DischargeUptakeDef () {
 	}
 	if (MFModelAddFunction(_MDRouting_DischargeUptake) == CMfailed) return (CMfailed);
 	MFDefLeaving ("Discharge - Uptakes");
-	return (_MDOutRouting_DischargeUptakeID);
+	return (_MDOutRouting_DischargeID);
 }

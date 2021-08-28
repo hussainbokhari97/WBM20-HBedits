@@ -14,7 +14,7 @@ bfekete@gc.cuny.edu
 #include <MD.h>
  
 // Output
-static int _MDOutResReleaseID           = MFUnset;
+static int _MDOutResReleaseID            = MFUnset;
 static int _MDOutResExtractableReleaseID = MFUnset;
 
 int MDReservoir_ReleaseDef () {
@@ -28,7 +28,9 @@ int MDReservoir_ReleaseDef () {
  	switch (optID) {
 		default:     MFOptionMessage (MDOptConfig_Reservoirs, optStr, MFswitchOptions); return (CMfailed);
 		case MFhelp: MFOptionMessage (MDOptConfig_Reservoirs, optStr, MFswitchOptions);
-		case MFoff: break;
+		case MFoff:
+			if ((_MDOutResReleaseID = MDRouting_DischargeInChannelDef()) == CMfailed) return (CMfailed);
+			break; 
 		case MFon:
 			if ((_MDOutResReleaseID = MDReservoir_OperationDef ()) == CMfailed) return (CMfailed);
 			break;
