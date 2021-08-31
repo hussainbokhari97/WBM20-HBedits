@@ -254,7 +254,7 @@ static void _MDWTempRiverRoute (int itemID) {
             }
 
             channelLength =  MFModelGetLength(itemID);
-            RivTemp = (channelLength > 0.0) && (channelWidth > 0.0) ? equil2 + (Q_WTemp - equil2) * exp(-kay * channelLength / (4181.3*(Q * 86400.0 / channelWidth))) : initial_riverT; // FBM channel length can be zere
+            RivTemp = (channelLength > 0.0) && (channelWidth > 0.0) ? equil2 + (Q_WTemp - equil2) * exp(-kay * channelLength / (4181.3*(Q * 86400.0 / channelWidth))) : initial_riverT; // FBM channel length can be zero
 
             /// Resetting outgoing temperature:
             Q_WTemp_new = MDMaximum(0, RivTemp);
