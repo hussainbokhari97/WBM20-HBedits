@@ -336,11 +336,13 @@ static void _MDWTempRiverRoute (int itemID) {
 }
 
 int MDTP2M_WTempRiverRouteDef () {
+	int optID = MFoff;
+	const char *optStr;
 
 	if (_MDWTempRiverRouteID != MFUnset) return (_MDWTempRiverRouteID);
 
 	MFDefEntering ("Route river temperature");
-
+	if ((optStr = MFOptionGet (MDOptConfig_Reservoirs)) != (char *) NULL) optID = CMoptLookup (MFswitchOptions, optStr, true);
 	if ((MDCore_WaterBalanceDef () == CMfailed) ||
 	    ((_MDInRouting_DischargeID       = MDRouting_DischargeDef ())       == CMfailed) ||
         ((_MDInCommon_Common_SolarRadID  = MDCommon_SolarRadDef ())         == CMfailed) ||
@@ -350,11 +352,11 @@ int MDTP2M_WTempRiverRouteDef () {
         ((_MDInAux_RunoffVolumeID        = MDCore_RunoffVolumeDef ())       == CMfailed) ||
         ((_MDInCloudCoverID              = MDCommon_CloudCoverDef ())       == CMfailed) ||
         ((_MDInCommon_AirTemperatureID   = MDCommon_AirTemperatureDef ())   == CMfailed) ||
-        (((_MDInResReleaseID             = MDReservoir_ReleaseDef ()) != MFUnset) && 
-         ((_MDInResReleaseID == CMfailed) ||
-          ((_MDInResStorageChangeID      = MFVarGetID (MDVarReservoir_StorageChange,     "km3",       MFInput,  MFState, MFBoundary)) == CMfailed) ||
-          ((_MDInResStorageID            = MFVarGetID (MDVarReservoir_Storage,           "km3",       MFInput,  MFState, MFInitial))  == CMfailed) ||
-          ((_MDInResCapacityID           = MFVarGetID (MDVarReservoir_Capacity,          "km3",       MFInput,  MFState, MFBoundary)) == CMfailed))) ||
+        ((_MDInResReleaseID              = MDReservoir_ReleaseDef ())       == CMfailed) ||
+        ((optID == MFon ) &&
+          (((_MDInResStorageChangeID     = MFVarGetID (MDVarReservoir_StorageChange,     "km3",       MFInput,  MFState, MFBoundary)) == CMfailed) ||
+           ((_MDInResStorageID           = MFVarGetID (MDVarReservoir_Storage,           "km3",       MFInput,  MFState, MFInitial))  == CMfailed) ||
+           ((_MDInResCapacityID          = MFVarGetID (MDVarReservoir_Capacity,          "km3",       MFInput,  MFState, MFBoundary)) == CMfailed))) ||
         ((_MDInDischargeIncomingID       = MFVarGetID (MDVarRouting_Discharge0,          "m3/s",      MFInput,  MFState, MFInitial))  == CMfailed) ||
         ((_MDInWindSpeedID               = MFVarGetID (MDVarCommon_WindSpeed,            "m/s",       MFInput,  MFState, MFBoundary)) == CMfailed) ||
         ((_MDInRiverStorageChgID         = MFVarGetID (MDVarRouting_RiverStorageChg,     "m3",        MFInput,  MFFlux,  MFBoundary)) == CMfailed) ||
