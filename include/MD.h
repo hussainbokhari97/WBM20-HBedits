@@ -384,7 +384,6 @@ extern "C" {
 #define MDVarTP2M_StorageMixing_QxT             "QxT_StorageMixing"
 #define MDVarTP2M_DeltaStorageMixing_QxT        "QxT_DeltaStorageMixing"
 #define MDVarTP2M_WTempMixing_QxT               "QxT_WaterTempMixing"
-#define MDOptTP2M_ThermalInputs					"ThermalInputs3"
 
 // Varying Parameters
 #define MDVarParam_Albedo                       "Albedo"
