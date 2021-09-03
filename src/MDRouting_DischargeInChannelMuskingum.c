@@ -51,7 +51,7 @@ static void _MDDischLevel3Muskingum (int itemID) {
 	storage         = MFVarGetFloat (_MDOutAux_RiverStorageID, itemID, 0.0);
 
 	outDisch = C0 * inDischCurrent + C1 * inDischPrevious + C2 * outDisch;
-	outDisch = outDisch > 0.0 ? outDisch : 0.0;
+	outDisch = outDisch > 0.0 ? outDisch : inDischCurrent; // negative C1 and C2 could cause negative discharge so falling back to accumulation
 	storChg  = inDischCurrent - outDisch;
 	storage = storage + storChg > 0.0 ? storage + storChg : 0.0;
 
