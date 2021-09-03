@@ -28,7 +28,7 @@ static void _MDRunoff (int itemID) {
 
 	baseFlow  = MFVarGetFloat (_MDInBaseFlowID,   itemID, 0.0);
 	surfaceRO = MFVarGetFloat (_MDInSurfCore_RunoffID, itemID, 0.0);
-	runoffCorr = _MDInRunoffCorrID == MFUnset ? 1.0 : MFVarGetFloat (_MDInRunoffCorrID, itemID, 1.0);
+	runoffCorr = _MDInRunoffCorrID != MFUnset ? MFVarGetFloat (_MDInRunoffCorrID, itemID, 1.0) : 1.0;
 	MFVarSetFloat (_MDOutCore_RunoffID, itemID, (baseFlow + surfaceRO) * runoffCorr);
 }
  

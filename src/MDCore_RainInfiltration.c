@@ -21,7 +21,7 @@ static int _MDOutRainSurfCore_RunoffID   = MFUnset;
 static int _MDOutRainInfiltrationID      = MFUnset;
 static int _MDInRainInfiltrationID       = MFUnset;
 
-static float _MDInfiltrationFrac = 0.5;
+static float _MDInfiltrationFrac = 0.5;  // Water surplus that rechanrges the shallow groundwater pool.
 
 static void _MDRainInfiltrationSimple (int itemID) {
 
@@ -32,7 +32,7 @@ static void _MDRainInfiltrationSimple (int itemID) {
 	surplus = MFVarGetFloat(_MDInRainWaterSurplusID, itemID, 0.0);
 	surfRunoff   = surplus * (1.0 - _MDInfiltrationFrac);
 	infiltration = surplus *_MDInfiltrationFrac;
-	MFVarSetFloat (_MDOutRainSurfCore_RunoffID,       itemID, surfRunoff);
+	MFVarSetFloat (_MDOutRainSurfCore_RunoffID,  itemID, surfRunoff);
 	MFVarSetFloat (_MDOutRainInfiltrationID,     itemID, infiltration);
 }
 
