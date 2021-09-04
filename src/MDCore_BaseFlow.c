@@ -105,8 +105,8 @@ int MDCore_BaseFlowDef () {
 		if (strcmp(optStr,MFhelpStr) == 0) CMmsgPrint (CMmsgInfo,"%s = %f", MDParGroundWatBETA, _MDGroundWatBETA);
 		_MDGroundWatBETA = sscanf (optStr,"%f",&par) == 1 ? par : _MDGroundWatBETA;
 	}
-	if (((_MDInCore_RechargeID       = MDCore_RainInfiltrationDef()) == CMfailed) ||
-        ((_MDInIrrigation_GrossDemandID = MDIrrigation_GrossDemandDef()) == CMfailed)) return (CMfailed);
+	if (((_MDInCore_RechargeID          = MDCore_RainInfiltrationDef ())  == CMfailed) ||
+        ((_MDInIrrigation_GrossDemandID = MDIrrigation_GrossDemandDef ()) == CMfailed)) return (CMfailed);
 
 	if ( _MDInIrrigation_GrossDemandID != MFUnset) {
 		if (((_MDInReservoir_FarmPondReleaseID = MDReservoir_FarmPondReleaseDef ()) == CMfailed) ||
