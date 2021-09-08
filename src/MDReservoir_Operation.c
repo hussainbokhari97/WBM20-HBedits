@@ -179,6 +179,8 @@ static void _MDReservoirSNL (int itemID) {
 	     irrMeanDemand = MFVarGetFloat (_MDInIrrMeanDemand,            itemID, 0.0);
 	    resInitStorage = MFVarGetFloat (_MDInResInitStorage,           itemID, 0.0);
 
+		// Setting the initial storage to reservoir storage at the end of the hydrological year according to WRONG directions from SNL.
+  		resInitStorage = MFDateGetDayOfYear () == 274 ? prevResStorage : resInitStorage;
 		releaseTarget = irrMeanDemand <= 0.0 ? /* Non-irrigaitonal reservoirs */ natMeanInflow :
 		/* Irrigational reservoirs */ (irrDemand <= 0.5 * natMeanInflow ? irrDemand + nonIrrMeanDemand :
 						  	          (resInflow + 9.0 * (nonIrrDemand + irrDemand) / (nonIrrMeanDemand + irrMeanDemand)) / 10.0); 
@@ -200,6 +202,7 @@ static void _MDReservoirSNL (int itemID) {
 		resStorageChg = resStorage - prevResStorage;
 		resExtRelease = resRelease - nonIrrMeanDemand < irrDemand ? irrDemand - (resRelease - nonIrrMeanDemand) : irrDemand;
 	}
+	MFVarGetFloat (_MDInResInitStorage,           itemID, resInitStorage);
 	MFVarSetFloat (_MDOutResStorageID,            itemID, resStorage); 
 	MFVarSetFloat (_MDOutResStorageChgID,         itemID, resStorageChg); 
 	MFVarSetFloat (_MDOutResInflowID,             itemID, resInflow);
@@ -253,7 +256,7 @@ int MDReservoir_OperationDef () {
             	((_MDInNonIrrMeanDemand         = MFVarGetID (MDVarReservoir_NonIrrMeanDemand,   "m3/s", MFInput,  MFFlux,  MFBoundary)) == CMfailed) ||
             	((_MDInIrrDemand                = MFVarGetID (MDVarReservoir_IrrDemand,          "m3/s", MFInput,  MFFlux,  MFBoundary)) == CMfailed) ||
             	((_MDInIrrMeanDemand            = MFVarGetID (MDVarReservoir_IrrMeanDemand,      "m3/s", MFInput,  MFFlux,  MFBoundary)) == CMfailed) ||
-            	((_MDInResInitStorage           = MFVarGetID (MDVarReservoir_InitStorage,        "km3",  MFInput,  MFState, MFBoundary)) == CMfailed) ||
+            	((_MDInResInitStorage           = MFVarGetID (MDVarReservoir_InitStorage,        "km3",  MFInput,  MFState, MFInitial))  == CMfailed) ||
                 ((_MDOutResStorageID            = MFVarGetID (MDVarReservoir_Storage,            "km3",  MFOutput, MFState, MFInitial))  == CMfailed) ||
                 ((_MDOutResStorageChgID         = MFVarGetID (MDVarReservoir_StorageChange,      "km3",  MFOutput, MFState, MFBoundary)) == CMfailed) ||
 			    ((_MDOutResInflowID             = MFVarGetID (MDVarReservoir_Inflow,             "m3/s", MFOutput, MFState, MFBoundary)) == CMfailed) ||
