@@ -46,8 +46,8 @@ static void _MDDischLevel3Muskingum (int itemID) {
 
 	runoff          = MFVarGetFloat (_MDInAux_RunoffVolumeID,  itemID, 0.0);
  	inDischPrevious = MFVarGetFloat (_MDOutDischAux0ID,        itemID, 0.0);
-	outDisch        = MFVarGetFloat (_MDOutDischAux1ID,        itemID, 0.0);
 	inDischCurrent  = MFVarGetFloat (_MDInRouting_DischargeID, itemID, 0.0) + runoff;
+	outDisch        = MFVarGetFloat (_MDOutDischAux1ID,        itemID, 0.0);
 	storage         = MFVarGetFloat (_MDOutAux_RiverStorageID, itemID, 0.0);
 
 	outDisch    = C0 * inDischCurrent + C1 * inDischPrevious + C2 * outDisch;
