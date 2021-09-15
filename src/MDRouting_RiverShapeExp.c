@@ -25,45 +25,38 @@ static int _MDOutRiverShapeExponentID = MFUnset;
 
 static void _MDRiverShapeExponent (int itemID) {
 // Input
-	float slope;     // River slope [m/km]
-	float discharge; // Mean annual discharge [m3/s]
+	float slope;       // River slope [m/km]
+	float discharge;   // Mean annual discharge [m3/s]
 // Output
-	float yMean;     // River average depth at mean discharge [m]
-	float wMean;     // River width at mean discharge [m]
+	float yMean = 0.0; // River average depth at mean discharge [m]
+	float wMean = 0.0; // River width at mean discharge [m]
+	float vMean = 0.0; // River velocity at mean discharge [m/s]
 // Local
-	float dL;        // Reach length [m]
+	float dL;          // Reach length [m]
 //	float eta = 0.25, nu = 0.4,  tau = 8.0,  phi = 0.58;    //old
 //	float eta = 0.36, nu = 0.37, tau = 3.55, phi = 0.51;	//new based on Knighton (avg)
 	float eta = 0.33, nu = 0.35, tau = 3.67, phi = 0.45;	// Hey and Thorn (1986)
 
-	if (MFVarTestMissingVal (_MDInAux_MeanDischargeID, itemID)) {
-		MFVarSetFloat (_MDOutRiverAvgDepthMeanID,  itemID, 0.0);
-		MFVarSetFloat (_MDOutRiverWidthMeanID,     itemID, 0.0);
-		MFVarSetFloat (_MDOutRiverVelocityMeanID,  itemID, 0.0);
-		MFVarSetFloat (_MDOutRiverShapeExponentID, itemID, 2.0);
-		return;
-	}
-	discharge = fabs(MFVarGetFloat(_MDInAux_MeanDischargeID,  itemID, 0.0));
 	dL        = MFModelGetLength (itemID);
-	if (CMmathEqualValues (dL, 0.0) || (_MDInRiverSlopeID == MFUnset) || MFVarTestMissingVal (_MDInRiverSlopeID, itemID)) {
+	discharge = fabs(MFVarGetFloat(_MDInAux_MeanDischargeID,  itemID, 0.0));
+	if (discharge > 0.0) {
+		if ((_MDInRiverSlopeID == MFUnset) || CMmathEqualValues (dL, 0.0) || MFVarTestMissingVal (_MDInRiverSlopeID, itemID)) {
 		// Slope independent riverbed geometry
-		yMean = eta * pow (discharge, nu);
-		wMean = tau * pow (discharge, phi);
-		MFVarSetFloat (_MDOutRiverAvgDepthMeanID,  itemID, yMean);
-		MFVarSetFloat (_MDOutRiverWidthMeanID,     itemID, wMean);
-		MFVarSetFloat (_MDOutRiverVelocityMeanID,  itemID, discharge / (yMean * wMean));
-		MFVarSetFloat (_MDOutRiverShapeExponentID, itemID, 2.0);
-		return;	
+			yMean = eta * pow (discharge, nu);
+			wMean = tau * pow (discharge, phi);
+			vMean = discharge / (yMean * wMean);
+		}
+		else { // Slope dependent riverbed geometry
+			slope = MFVarGetFloat(_MDInRiverSlopeID,      itemID, 0.01) / 1000.0;
+			yMean = eta * pow (discharge, nu);
+			wMean = tau * pow (discharge, phi);
+			vMean = discharge / (yMean * wMean);
+		}
 	}
-	// Slope dependent riverbed geometry
-	slope     = MFVarGetFloat(_MDInRiverSlopeID,      itemID, 0.01) / 1000.0;
-
-	yMean = eta * pow (discharge, nu);
-	wMean = tau * pow (discharge, phi);
-	MFVarSetFloat (_MDOutRiverAvgDepthMeanID,      itemID, yMean);
-	MFVarSetFloat (_MDOutRiverWidthMeanID,         itemID, wMean);
-	MFVarSetFloat (_MDOutRiverVelocityMeanID,      itemID, discharge / (yMean * wMean));
-	MFVarSetFloat (_MDOutRiverShapeExponentID,     itemID, 2.0);
+	MFVarSetFloat (_MDOutRiverAvgDepthMeanID,  itemID, yMean);
+	MFVarSetFloat (_MDOutRiverWidthMeanID,     itemID, wMean);
+	MFVarSetFloat (_MDOutRiverVelocityMeanID,  itemID, vMean);
+	MFVarSetFloat (_MDOutRiverShapeExponentID, itemID, 2.0);
 }
 
 enum { MDhelp, MDinput, MDindependent, MDdependent };
