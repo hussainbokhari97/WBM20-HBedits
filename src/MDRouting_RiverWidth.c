@@ -39,7 +39,7 @@ static void _MDRiverWidth (int itemID) {
 	float alpha;     // Shape coefficient
 	float area;      // Cross-section area [m2]
 
-	discharge = MFVarGetFloat (_MDInRouting_DischargeID,              itemID, 0.0);
+	discharge = MFVarGetFloat (_MDInRouting_DischargeID,      itemID, 0.0);
 	shapeExp  = MFVarGetFloat (_MDInRiverbedShapeExponentID,  itemID, 0.0);
 	avgDepth  = MFVarGetFloat (_MDInRiverbedAvgDepthMeanID,   itemID, 0.0);
 	avgWidth  = MFVarGetFloat (_MDInRiverbedWidthMeanID,      itemID, 0.0);
