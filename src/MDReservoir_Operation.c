@@ -189,6 +189,7 @@ nonIrrAnnualMeanDemand = MFVarGetFloat (_MDInNonIrrAnnualMeanDemand,   itemID, 0
 	    resInitStorage = MFVarGetFloat (_MDInResInitStorage,           itemID, 0.0);
 
 		// Setting the initial storage to reservoir storage at the end of the hydrological year according to WRONG directions from SNL.
+		if (resInitStorage > resCapacity) resInitStorage = resCapacity; // This could only happen before the model updates the initial storage
   		resInitStorage = MFDateGetDayOfYear () == 274 ? prevResStorage : resInitStorage;
 		releaseTarget = irrAnnualMeanDemand <= 0.0 ? /* Non-irrigaitonal reservoirs */ natMeanInflow :
 		/* Irrigational reservoirs */ ((irrDailyMeanDemand + nonIrrDailyMeanDemand) < 0.5 * natMeanInflow ? natMeanInflow + irrDemand - irrAnnualMeanDemand :
@@ -203,7 +204,7 @@ nonIrrAnnualMeanDemand = MFVarGetFloat (_MDInNonIrrAnnualMeanDemand,   itemID, 0
 		resStorage = prevResStorage + (resInflow - resRelease) * dt / 1e9;
 		if (resStorage > resCapacity) {
 			   resRelease += (resStorage - resCapacity) * 1e9 / dt;
-			   resStorage  = resCapacity; 
+			   resStorage  = resCapacity; // This guarantees that the reservoir storage cannot exceed the reservoir capacity
 		}
 		else if (resStorage < 0.1 * resCapacity) {
 			   resRelease += (resStorage - 0.1 * resCapacity) * 1e9 / dt;
