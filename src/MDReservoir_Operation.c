@@ -229,7 +229,7 @@ enum { MDhelp, MDwisser, MDoptimized, MDsnl };
 
 int MDReservoir_OperationDef () {
 	int optID = MDwisser;
-	const char *optStr, *options [ ] = { MFhelpStr, "Wisser", "optimized" "SNL" , (char *) NULL };
+	const char *optStr, *options [ ] = { MFhelpStr, "Wisser", "optimized", "SNL" , (char *) NULL };
 
 	if (_MDOutResReleaseID != MFUnset) return (_MDOutResReleaseID);
 
