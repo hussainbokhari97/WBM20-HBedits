@@ -44,7 +44,7 @@ static void _MDRainSMoistChg (int itemID) {
 //	TODO float impAreaFrac = 0.0; // Impervious area fraction RJS 01-17-08
 //	TODO float H2OAreaFrac = 0.0; // water area fraction RJS 01-17-08
 //	float runofftoPerv;      // runoff from impervious to pervious [mm/dt]  RJS 01-17-08
-	float sMoist      = 0.0; // Soil moisture [mm/dt]
+	float sMoist      = 0.0; // Soil moisture [mm]
 // Output
 	float sMoistChg   = 0.0; // Soil moisture change [mm/dt]
 	float evapotrans;
