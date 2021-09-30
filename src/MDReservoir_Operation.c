@@ -83,7 +83,7 @@ static void _MDReservoirWisser (int itemID) {
 			resStorage  = resCapacity;
 		}
 		else if (resStorage < 0.0) {
-			resRelease += resStorage * 1e9 / dt;
+			resRelease  = prevResStorage * 1e9 / dt + discharge;
 			resStorage  = 0.0;
 		}
 		resStorageChg  = resStorage - prevResStorage;
