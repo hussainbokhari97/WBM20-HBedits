@@ -98,7 +98,7 @@ static void _MDReservoirWisser (int itemID) {
 
 static void _MDReservoirSNL (int itemID) {
 // Input
-	float discharge;              // Current discharge [m3/s]
+	float resInflow;              // Reservoir inflow [m3/s] 
 	float natInflowDailyMean;     // Naturalized long-term mean daily inflow [m3/s]
 	float natInflowAnnualMean;    // Naturalzied long-term mean annual inflow [m3/s]
 	float nonIrrDemand;           // Non-irrigational water demand [m3/s]
@@ -112,7 +112,6 @@ static void _MDReservoirSNL (int itemID) {
 // Output
 	float resStorage    = 0.0;    // Reservoir storage [km3]
 	float resStorageChg = 0.0;    // Reservoir storage change [km3/dt]
-	float resInflow;              // Reservoir release [m3/s] 
 	float resRelease;             // Reservoir release [m3/s] 
 	float resExtRelease;          // Reservoir extractable release [m3/s]
 // Local
@@ -127,8 +126,7 @@ static void _MDReservoirSNL (int itemID) {
 	float krls;                   // release ratio
 
 	resRelease     =
-	resInflow      =
-	discharge      = MFVarGetFloat (_MDInRouting_DischargeID,      itemID, 0.0);
+	resInflow      = MFVarGetFloat (_MDInRouting_DischargeID,      itemID, 0.0);
 	resExtRelease  = MFVarGetFloat (_MDOutResExtractableReleaseID, itemID, 0.0);
 
 	if ((resCapacity = MFVarGetFloat (_MDInResCapacityID, itemID, 0.0)) > 0.0001) { // TODO Arbitrary limit!!!!
