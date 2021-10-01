@@ -159,7 +159,7 @@ nonIrrDemandAnnualMean = MFVarGetFloat (_MDInNonIrrDemandAnnualMean,   itemID, 0
 		MFVarSetFloat (_MDOutResTargetReleaseID,    itemID, releaseTarget); // for Debuging only
 		MFVarSetFloat (_MDOutResAttemptedReleaseID, itemID, resRelease);    // for Debuging only
 
-		resInflow = resInflow >= 0.0 ? resInflow : 0.0; // TODO eliminating erroneous negative inflow
+		resInflow = resInflow >= 0.0 ? resInflow : 0.0; // TODO overwriting erroneous negative inflow
 		resStorage = prevResStorage + (resInflow - resRelease) * dt / 1e9;
 		if (resStorage > resCapacity) {
 			   resRelease += (resStorage - resCapacity) * 1e9 / dt;
