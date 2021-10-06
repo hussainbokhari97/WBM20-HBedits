@@ -56,9 +56,9 @@ static void _MDDischLevel3Muskingum (int itemID) {
 	storageChg  = (inDischCurrent - outDisch) * MFModelGet_dt () / 1e9;
 	if (storage + storageChg > 0.0) storage += storageChg;
 	else {
-		outDisch   = inDischCurrent + storage * 1e9 / MFModelGet_dt ();
 		storageChg = 0.0 - storage;
 		storage    = 0.0;
+		outDisch   = inDischCurrent + storageChg * 1e9 / MFModelGet_dt ();
 	}
 
 	MFVarSetFloat (_MDOutDischAux0ID,    itemID, inDischCurrent);
