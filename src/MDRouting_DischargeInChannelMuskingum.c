@@ -53,11 +53,11 @@ static void _MDDischLevel3Muskingum (int itemID) {
 	outDisch    = C0 * inDischCurrent + C1 * inDischPrevious + C2 * outDisch;
 	outDisch    = outDisch > 0.0 ? outDisch : inDischCurrent; // negative C1 and C2 could cause negative discharge so falling back to accumulation
 
-	storageChg  = (inDischCurrent - outDisch) * MFModelGet_dt ();
+	storageChg  = (inDischCurrent - outDisch) * MFModelGet_dt () / 1e9;
 	if (storage + storageChg > 0.0) storage += storageChg;
 	else {
-		outDisch   = inDischCurrent + storage / MFModelGet_dt ();
-		storageChg = storage;
+		outDisch   = inDischCurrent + storage * 1e9 / MFModelGet_dt ();
+		storageChg = 0.0 - storage;
 		storage    = 0.0;
 	}
 

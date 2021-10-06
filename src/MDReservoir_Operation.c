@@ -98,7 +98,7 @@ static void _MDReservoirWisser (int itemID) {
 
 static void _MDReservoirSNL (int itemID) {
 // Input
-	float resInflow;              // Reservoir inflow [m3/s] 
+	float discharge;              // Current discharge [m3/s]
 	float natInflowDailyMean;     // Naturalized long-term mean daily inflow [m3/s]
 	float natInflowAnnualMean;    // Naturalzied long-term mean annual inflow [m3/s]
 	float nonIrrDemand;           // Non-irrigational water demand [m3/s]
@@ -115,6 +115,7 @@ static void _MDReservoirSNL (int itemID) {
 	float resRelease;             // Reservoir release [m3/s] 
 	float resExtRelease;          // Reservoir extractable release [m3/s]
 // Local
+	float resInflow;              // Reservoir inflow [m3/s] 
 	float waterDemand;            // Daily water demand [m3/s] 
 	float waterDemandDailyMean;   // Long-term mean daily water demand [m3/s] 
 	float waterDemandAnnualMean;  // Long-term mean annual water demand [m3/s] 
@@ -126,7 +127,8 @@ static void _MDReservoirSNL (int itemID) {
 	float krls;                   // release ratio
 
 	resRelease     =
-	resInflow      = MFVarGetFloat (_MDInRouting_DischargeID,      itemID, 0.0);
+	resInflow      =
+	discharge      = MFVarGetFloat (_MDInRouting_DischargeID,      itemID, 0.0);
 	resExtRelease  = MFVarGetFloat (_MDOutResExtractableReleaseID, itemID, 0.0);
 
 	if ((resCapacity = MFVarGetFloat (_MDInResCapacityID, itemID, 0.0)) > 0.0001) { // TODO Arbitrary limit!!!!
@@ -159,14 +161,13 @@ nonIrrDemandAnnualMean = MFVarGetFloat (_MDInNonIrrDemandAnnualMean,   itemID, 0
 		MFVarSetFloat (_MDOutResTargetReleaseID,    itemID, releaseTarget); // for Debuging only
 		MFVarSetFloat (_MDOutResAttemptedReleaseID, itemID, resRelease);    // for Debuging only
 
-		resInflow = resInflow >= 0.0 ? resInflow : 0.0; // TODO overwriting erroneous negative inflow
-		resStorage = prevResStorage + (resInflow - resRelease) * dt / 1e9;
+		resStorage = prevResStorage + (discharge - resRelease) * dt / 1e9;
 		if (resStorage > resCapacity) {
 			   resRelease += (resStorage - resCapacity) * 1e9 / dt;
 			   resStorage  = resCapacity; // This guarantees that the reservoir storage cannot exceed the reservoir capacity
 		}
 		else if (resStorage < 0.1 * resCapacity) {
-			   resRelease  = (prevResStorage - 0.1 * resCapacity) * 1e9 / dt + resInflow;
+			   resRelease  = (prevResStorage - 0.1 * resCapacity) * 1e9 / dt + discharge;
 			   resStorage  = 0.1 * resCapacity; 
 		}
 		resStorageChg = resStorage - prevResStorage;
