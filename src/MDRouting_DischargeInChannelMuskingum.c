@@ -58,14 +58,14 @@ static void _MDDischLevel3Muskingum (int itemID) {
 	else {
 		storageChg = 0.0 - storage;
 		storage    = 0.0;
-		outDisch   = inDischCurrent - storageChg * MFModelGet_dt ();
+		outDisch   = inDischCurrent - storageChg / MFModelGet_dt ();
 	}
 
-	MFVarSetFloat (_MDOutDischAux0ID,    itemID, inDischCurrent);
-	MFVarSetFloat (_MDOutDischAux1ID,    itemID, outDisch);
+	MFVarSetFloat (_MDOutDischAux0ID,            itemID, inDischCurrent);
+	MFVarSetFloat (_MDOutDischAux1ID,            itemID, outDisch);
 	MFVarSetFloat (_MDOutRouting_DischLevel3ID,  itemID, outDisch);
 	MFVarSetFloat (_MDOutRouting_RiverStorChgID, itemID, storageChg);
-	MFVarSetFloat (_MDOutAux_RiverStorageID, itemID, storage);
+	MFVarSetFloat (_MDOutAux_RiverStorageID,     itemID, storage);
 }
 
 int MDRouting_DischargeInChannelMuskingumDef () {
