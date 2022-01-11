@@ -2,7 +2,7 @@
 
 GHAAS Water Balance/Transport Model
 Global Hydrological Archive and Analysis System
-Copyright 1994-2021, UNH - ASRC/CUNY
+Copyright 1994-2022, UNH - ASRC/CUNY
 
 MDCommon_WetDays.c
 
