@@ -154,7 +154,7 @@ nonIrrDemandAnnualMean = MFVarGetFloat (_MDInNonIrrDemandAnnualMean,   itemID, 0
 		releaseTarget = irrDemandAnnualMean <= 0.0 ? /* Non-irrigaitonal reservoirs */ natInflowAnnualMean :
 		/* Irrigational reservoirs */ (waterDemandDailyMean < 0.5 * natInflowAnnualMean ? natInflowAnnualMean + waterDemandDailyMean - waterDemandAnnualMean :
 						  	          (natInflowDailyMean + 9.0 * natInflowAnnualMean * waterDemandDailyMean / waterDemandAnnualMean) / 10.0); 
-		c = natInflowAnnualMean > 0.0 ? resCapacity / (natInflowAnnualMean * dt / 1e9) : 1.0;
+		c = natInflowAnnualMean > 0.0 ? resCapacity / (natInflowAnnualMean * 365 * dt / 1e9) : 1.0; // c is residency time that needs to be calculated from annual flow
 		krls = resInitStorage / (alpha * resCapacity);
  
 		resRelease = c < 0.5 ? pow (c / 0.5,2.0) * krls * releaseTarget + (1.0 - pow(c / 0.5,2.0)) * natInflowDailyMean : krls * releaseTarget; 
