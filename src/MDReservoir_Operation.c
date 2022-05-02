@@ -149,7 +149,7 @@ nonIrrDemandAnnualMean = MFVarGetFloat (_MDInNonIrrDemandAnnualMean,   itemID, 0
 	waterDemandAnnualMean = nonIrrDemandAnnualMean + irrDemandAnnualMean;
 		// Setting the initial storage to reservoir storage at the end of the hydrological year according to directions from SNL.
 		if (resInitStorage > resCapacity) resInitStorage = resCapacity; // This could only happen before the model updates the initial storage
-  		resInitStorage = MFDateGetDayOfYear () == 274 ? prevResStorage : resInitStorage;
+  		resInitStorage = MFDateGetDayOfYear () == 274 ? prevResStorage : (prevResStorage > resInitStorage ? prevResStorage : resInitStorage);
 		waterDemandAnnualMean = waterDemandAnnualMean < natInflowAnnualMean ? waterDemandAnnualMean : natInflowAnnualMean; // TODO Drastic
 		releaseTarget = irrDemandAnnualMean <= 0.0 ? /* Non-irrigaitonal reservoirs */ natInflowAnnualMean :
 		/* Irrigational reservoirs */ (waterDemandDailyMean < 0.5 * natInflowAnnualMean ? natInflowAnnualMean + waterDemandDailyMean - waterDemandAnnualMean :
