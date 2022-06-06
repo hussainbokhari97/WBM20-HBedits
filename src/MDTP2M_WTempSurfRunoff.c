@@ -21,27 +21,17 @@ Irrigation inputs are not accounted here.
 #include <MD.h>
 
 // Input
-static int _MDInCommon_AirTemperatureID  = MFUnset;
-static int _MDInSnowMeltID = MFUnset;
-static int _MDInWetBulbTempID = MFUnset;
+static int _MDInCommon_AirTemperatureID = MFUnset;
 
 // Output
-static int _MDOutWTempSurfROID   = MFUnset;
+static int _MDOutWTempSurfROID          = MFUnset;
 
 static void _MDWTempSurfRunoff (int itemID) {
 	float airT;
 	float SurfWatT;
-	float wet_b_temp;
 
-    wet_b_temp         = MFVarGetFloat (_MDInWetBulbTempID,     itemID, 0.0);
-    airT               = MFVarGetFloat (_MDInCommon_AirTemperatureID,         itemID, 0.0);
-
-//    SurfWatT = wet_b_temp; // CHANGED TO EQUAL WET BULB --> Feb 22 2019 MIARA
-//    SurfWatT = (SurfWatT >= airT) ? wet_b_temp : SurfWatT;
-
-// NEW METHOD: https://agupubs.onlinelibrary.wiley.com/doi/full/10.1029/2018WR023250.
-SurfWatT = MDMaximum(airT - 1.5, 0);
-
+    airT               = MFVarGetFloat (_MDInCommon_AirTemperatureID, itemID, 0.0);
+	SurfWatT = MDMaximum(airT - 1.5, 0);
     MFVarSetFloat (_MDOutWTempSurfROID, itemID, SurfWatT);
 }
 
@@ -50,10 +40,8 @@ int MDTP2M_WTempSurfRunoffDef () {
 	if (_MDOutWTempSurfROID != MFUnset) return (_MDOutWTempSurfROID);
 
 	MFDefEntering ("Surface runoff temperature");
-	if (((_MDInSnowMeltID              = MDCore_SnowPackMeltDef ())     == CMfailed) ||
-        ((_MDInWetBulbTempID           = MDCommon_WetBulbTempDef ())    == CMfailed) ||
-        ((_MDInCommon_AirTemperatureID = MDCommon_AirTemperatureDef ()) == CMfailed) ||
-        ((_MDOutWTempSurfROID = MFVarGetID (MDVarTP2M_WTempSurfRunoff,  "degC", MFOutput, MFState, MFBoundary)) == CMfailed) ||
+	if (((_MDInCommon_AirTemperatureID = MDCommon_AirTemperatureDef ()) == CMfailed) ||
+        ((_MDOutWTempSurfROID          = MFVarGetID (MDVarTP2M_WTempSurfRunoff,  "degC", MFOutput, MFState, MFBoundary)) == CMfailed) ||
         (MFModelAddFunction (_MDWTempSurfRunoff) == CMfailed)) return (CMfailed);
 	MFDefLeaving ("Surface runoff temperature");
 	return (_MDOutWTempSurfROID);

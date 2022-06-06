@@ -61,7 +61,7 @@ static int _MDInWetBulbTempID            = MFUnset;
 static int _MDInCommon_AirTemperatureID	 = MFUnset;
 
 // Output
-static int _MDWTemp_QxTID                = MFUnset;
+static int _MDWTempRiverID                = MFUnset;
 static int _MDOutRouting_DischargeID     = MFUnset; // Late-night discharge test
 static int _MDOutAvgEfficiencyID	     = MFUnset;
 static int _MDOutAvgDeltaTempID		     = MFUnset;
@@ -1036,7 +1036,7 @@ static void _MDThermalInputs3 (int itemID) {
     MFVarSetFloat(_MDOutLossToInletID,         itemID, loss_inlet_total);
     MFVarSetFloat(_MDOutLossToWaterID,         itemID, loss_water_total);
     MFVarSetFloat(_MDInRouting_DischargeID,    itemID, Q_outgoing_1); //late-night discharge test
-    MFVarSetFloat(_MDWTemp_QxTID,              itemID, Q_outgoing_WTemp_1);
+    MFVarSetFloat(_MDWTempRiverID,              itemID, Q_outgoing_WTemp_1);
     MFVarSetFloat(_MDFlux_QxTID,               itemID, flux_QxT_new);
     MFVarSetFloat(_MDOutTotalThermalWdlsID,    itemID, totalDaily_wdl_1);
     MFVarSetFloat(_MDOutTotalEvaporationID,    itemID, totalDaily_evap_1 + totalDaily_evap_2); //RJS 120912 added totalDaily_evap_2
@@ -1090,14 +1090,14 @@ static void _MDThermalInputs3 (int itemID) {
 int MDTP2M_ThermalInputsDef () {
 
 	MFDefEntering ("Thermal Inputs");
-    if (((_MDPlaceHolderID             = MDTP2M_WTempRiverRouteDef ())  == CMfailed) ||
+    if (((_MDPlaceHolderID             = MDTP2M_WTempRiverDef ())  == CMfailed) ||
         ((_MDInRouting_DischargeID     = MDRouting_DischargeDef ())     == CMfailed) ||
         ((_MDInWetBulbTempID           = MDCommon_WetBulbTempDef ())    == CMfailed) ||
 	    ((_MDInCommon_AirTemperatureID = MDCommon_AirTemperatureDef ()) == CMfailed) ||
 	    ((_MDInDischargeIncomingID     = MFVarGetID (MDVarRouting_Discharge0,       "m3/s",      MFInput,  MFState, MFInitial))  == CMfailed) ||
 	    ((_MDFluxMixing_QxTID          = MFVarGetID (MDVarTP2M_FluxMixing_QxT,      "m3*degC/d", MFInput,  MFFlux,  MFBoundary)) == CMfailed) ||
         ((_MDFlux_QxTID                = MFVarGetID (MDVarTP2M_Flux_QxT,            "m3*degC/d", MFInput,  MFFlux,  MFBoundary)) == CMfailed) ||
-	    ((_MDWTemp_QxTID               = MFVarGetID (MDVarTP2M_Temp_QxT,            "degC",      MFOutput, MFState, MFBoundary)) == CMfailed) ||
+	    ((_MDWTempRiverID               = MFVarGetID (MDVarTP2M_WTempRiver,            "degC",      MFOutput, MFState, MFBoundary)) == CMfailed) ||
         ((_MDInNamePlate1ID            = MFVarGetID (MDVarTP2M_NamePlate1,          "MW",        MFInput,  MFState, MFBoundary)) == CMfailed) ||
         ((_MDInFuelType1ID             = MFVarGetID (MDVarTP2M_FuelType1,           "-",         MFInput,  MFState, MFBoundary)) == CMfailed) ||
         ((_MDInTechnology1ID           = MFVarGetID (MDVarTP2M_Technology1,         "-",         MFInput,  MFState, MFBoundary)) == CMfailed) ||
@@ -1175,6 +1175,6 @@ int MDTP2M_ThermalInputsDef () {
         ((_MDOutLossToInlet4ID         = MFVarGetID (MDVarTP2M_LossToInlet4,        "degC",      MFOutput, MFState, MFBoundary)) == CMfailed) ||
         (MFModelAddFunction (_MDThermalInputs3) == CMfailed)) return (CMfailed);
 	MFDefLeaving ("Thermal Inputs");
-	return (_MDWTemp_QxTID);
+	return (_MDWTempRiverID);
 }
 

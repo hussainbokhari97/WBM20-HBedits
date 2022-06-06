@@ -30,7 +30,7 @@ static int _MDInRiverbedVelocityMeanID  = MFUnset;
 static int _MDInSedimentFluxID = MFUnset;
 //static int _MDInRiverbedWidthMeanID = MFUnset;
 static int _MDInMDVarBedloadEquationID = MFUnset;
-static int _MDInWTemp_QxT 			= MFUnset;
+static int _MDInWTempRiver 			= MFUnset;
 //static int _MDInRiverWidthID 	= MFUnset;
 //static int _MDInWaterDensityID	= MFUnset;
 static int _MDInQsConcID			= MFUnset;
@@ -75,7 +75,7 @@ static void _MDBedloadFlux (int itemID) {
 	Qsday = MFVarGetFloat (_MDInSedimentFluxID ,itemID, 0.0);
 	Qsbar = MFVarGetFloat (_MDInQs_barID ,itemID, 0.0);
 	rslope = MFVarGetFloat (_MDInRiverSlopeID,itemID, 0.0);// in %	
-	Tw =  MFVarGetFloat (_MDInWTemp_QxT ,itemID, 0.0);	// simulated water temperature in degC
+	Tw =  MFVarGetFloat (_MDInWTempRiver ,itemID, 0.0);	// simulated water temperature in degC
 	Qc = MFVarGetFloat(_MDInQsConcID ,itemID, 0.0);			// Fluid density
 	rhofluid = 1000; 			// Constant Fluid density
 	if (Qc > 0.0 ){
@@ -143,7 +143,7 @@ int MDSediment_BedloadFluxDef() {
 	
 	if (((_MDInDischargeID            = MDSediment_DischargeBFDef ()) == CMfailed) || 
 	    ((_MDInSedimentFluxID         = MDSediment_FluxDef ())        == CMfailed) ||
-	    ((_MDInWTemp_QxT              = MDTP2M_WTempRiverDef ())      == CMfailed) ||
+	    ((_MDInWTempRiver             = MDTP2M_WTempRiverDef ())      == CMfailed) ||
 	    ((_MDInDischMeanID            = MFVarGetID (MDVarAux_DischMean,               "m3/s",   MFRoute,  MFState, MFInitial))  == CMfailed) ||
 	    ((_MDInQs_barID               = MFVarGetID (MDVarSediment_Qs_bar,             "kg/s",   MFRoute,  MFState, MFBoundary)) == CMfailed) ||
 	    ((_MDInRiverSlopeID           = MFVarGetID (MDVarRouting_RiverSlope,          "m/km",   MFInput,  MFState, MFBoundary)) == CMfailed) ||

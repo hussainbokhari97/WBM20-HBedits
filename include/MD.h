@@ -374,14 +374,14 @@ extern "C" {
 #define MDVarTP2M_SimEfficiency                 "SimEfficiency"
 #define MDVarTP2M_TotalExternalWater			"TotalExternalWater"
 #define MDVarTP2M_WTempGrdWater                 "GroundWaterTemperature"
-#define MDVarTP2M_WTempRiver                    "RiverTemperature"
+#define MDVarTP2M_WTempRunoff                   "RunoffTemperature"
 #define MDVarTP2M_WTempSurfRunoff               "SurfaceROTemperature"
+#define MDVarTP2M_WTempRiver                    "RiverTemperature"
 #define MDVarTP2M_WTLocalIn_QxT                 "QxT_LocalIn"
 #define MDVarTP2M_Removal_QxT                   "QxT_Removal"
 #define MDVarTP2M_Flux_QxT                      "QxT_Flux"
 #define MDVarTP2M_Storage_QxT                   "QxT_Storage"
 #define MDVarTP2M_DeltaStorage_QxT              "QxT_DeltaStorage"
-#define MDVarTP2M_Temp_QxT                      "QxT_WaterTemp"
 #define MDVarTP2M_WTempDeltaT_QxT               "QxT_deltaT"
 #define MDVarTP2M_FluxMixing_QxT                "QxT_FluxMixing"
 #define MDVarTP2M_StorageMixing_QxT             "QxT_StorageMixing"
@@ -539,8 +539,8 @@ int MDSediment_ParticulateNutrients_noBFDef ();
 int MDSediment_WaterDensityDef ();
 
 int MDTP2M_WTempGrdWaterDef ();
+int MDTP2M_WTempRunoffDef ();
 int MDTP2M_WTempRiverDef ();
-int MDTP2M_WTempRiverRouteDef ();
 int MDTP2M_ThermalInputsDef ();  //changed AM 042415
 int MDTP2M_WTempSurfRunoffDef();
 
