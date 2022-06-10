@@ -31,7 +31,6 @@ static int _MDInRiverStorageChgID         = MFUnset;
 static int _MDInRiverStorageID            = MFUnset;
 static int _MDInCommon_Common_SolarRadID  = MFUnset;
 static int _MDInWindSpeedID               = MFUnset;
-static int _MDInCloudCoverID              = MFUnset;
 static int _MDInCommon_AirTemperatureID   = MFUnset;
 static int _MDInCommon_SnowPackID         = MFUnset;
 static int _MDInResReleaseID              = MFUnset;
@@ -79,7 +78,6 @@ static void _MDWTempRiver (int itemID) {
     float ResWaterStorage = 0;
     float solarRad;
     float windSpeed;
-    float cloudCover;
     float Tair;
     float Tequil = 0;
     float HeatLoss_int   = 4396.14; // is intercept assuming no wind and clouds
@@ -111,7 +109,6 @@ static void _MDWTempRiver (int itemID) {
    	channelWidth       = MFVarGetFloat (_MDInRiverWidthID,             itemID, 0.0);
  	solarRad           = MFVarGetFloat (_MDInCommon_Common_SolarRadID, itemID, 0.0); //MJ/m2/d - CHECK UNITS
  	windSpeed          = MFVarGetFloat (_MDInWindSpeedID,              itemID, 0.0);
-    cloudCover         = MFVarGetFloat (_MDInCloudCoverID,             itemID, 0.0);
     Tair               = MFVarGetFloat (_MDInCommon_AirTemperatureID,  itemID, 0.0);
     QxT                = MFVarGetFloat (_MDFlux_QxTID,                 itemID, 0.0);
     StorexT            = MFVarGetFloat (_MDStorage_QxTID,              itemID, 0.0);
@@ -267,7 +264,7 @@ static void _MDWTempRiver (int itemID) {
             if (isnan(Q_WTemp_new)){
                 //if( (equil2 > 20) && (Q > 0.0) && (MFModelGetLength(itemID) > 0)){
 	            printf(" NEW NEW NEW NEW NEW NEW \n");
-	            printf("Q_WTemp = %f, Tequil = %f, HeatLoss_slope = %f, length = %f, width = %f, cloudCover = %f, Q_WTemp_new = %f \n", Q_WTemp, Tequil, HeatLoss_slope, channelLength, channelWidth, cloudCover, Q_WTemp_new);
+	            printf("Q_WTemp = %f, Tequil = %f, HeatLoss_slope = %f, length = %f, width = %f, Q_WTemp_new = %f \n", Q_WTemp, Tequil, HeatLoss_slope, channelLength, channelWidth, Q_WTemp_new);
 	            printf("Tair = %f, HeatLoss_int = %f, windSpeed = %f, solarRad = %f, Q = %f \n", Tair, HeatLoss_int, windSpeed, solarRad, Q);
 	            printf("QxT_input = %f, RO_Vol =% f, RO_WTemp = %f, QxT_mix = %f, StorexT_mix = %f, QxT = %f, StorexT = %f \n", QxT_input, RO_Vol, RO_WTemp, QxT_mix, StorexT_mix, QxT, StorexT);
 	            printf("Tair = %f, e2 = %f, es2 = %f, dew_point = %f, relative_h = %f \n", Tair, e2, es2, dew_point, relative_h);
@@ -350,7 +347,6 @@ int MDTP2M_WTempRiverDef () {
         ((_MDInCommon_HumidityRelativeID = MDCommon_HumidityRelativeDef ()) == CMfailed) ||
         ((_MDInRiverWidthID              = MDRouting_RiverWidthDef ())      == CMfailed) ||
         ((_MDInAux_RunoffVolumeID        = MDCore_RunoffVolumeDef ())       == CMfailed) ||
-        ((_MDInCloudCoverID              = MDCommon_CloudCoverDef ())       == CMfailed) ||
         ((_MDInCommon_AirTemperatureID   = MDCommon_AirTemperatureDef ())   == CMfailed) ||
         ((_MDInResReleaseID              = MDReservoir_ReleaseDef ())       == CMfailed) ||
         ((optID == MFon ) &&
