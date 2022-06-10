@@ -22,6 +22,9 @@ Route temperature through river network
 static int _MDWTempRiverRouteID           = MFUnset;
 
 // Input
+static int _MDInCommon_AirTemperatureID   = MFUnset;
+static int _MDInCommon_SnowPackID         = MFUnset;
+static int _MDInCommon_SolarRadID         = MFUnset;
 static int _MDInRouting_DischargeID       = MFUnset;
 static int _MDInDischargeIncomingID       = MFUnset;
 static int _MDInAux_RunoffVolumeID        = MFUnset;
@@ -29,10 +32,7 @@ static int _MDInWTempRiverID              = MFUnset;
 static int _MDInRiverWidthID              = MFUnset;
 static int _MDInRiverStorageChgID         = MFUnset;
 static int _MDInRiverStorageID            = MFUnset;
-static int _MDInCommon_Common_SolarRadID  = MFUnset;
 static int _MDInWindSpeedID               = MFUnset;
-static int _MDInCommon_AirTemperatureID   = MFUnset;
-static int _MDInCommon_SnowPackID         = MFUnset;
 static int _MDInResReleaseID              = MFUnset;
 static int _MDInResStorageChangeID        = MFUnset;
 static int _MDInResStorageID              = MFUnset;
@@ -107,7 +107,7 @@ static void _MDWTempRiver (int itemID) {
  	waterStorageChange = MFVarGetFloat (_MDInRiverStorageChgID,        itemID, 0.0);
    	waterStorage       = MFVarGetFloat (_MDInRiverStorageID,           itemID, 0.0);
    	channelWidth       = MFVarGetFloat (_MDInRiverWidthID,             itemID, 0.0);
- 	solarRad           = MFVarGetFloat (_MDInCommon_Common_SolarRadID, itemID, 0.0); //MJ/m2/d - CHECK UNITS
+ 	solarRad           = MFVarGetFloat (_MDInCommon_SolarRadID, itemID, 0.0); //MJ/m2/d - CHECK UNITS
  	windSpeed          = MFVarGetFloat (_MDInWindSpeedID,              itemID, 0.0);
     Tair               = MFVarGetFloat (_MDInCommon_AirTemperatureID,  itemID, 0.0);
     QxT                = MFVarGetFloat (_MDFlux_QxTID,                 itemID, 0.0);
@@ -342,7 +342,7 @@ int MDTP2M_WTempRiverDef () {
 	if ((optStr = MFOptionGet (MDOptConfig_Reservoirs)) != (char *) NULL) optID = CMoptLookup (MFswitchOptions, optStr, true);
 	if ((MDCore_WaterBalanceDef () == CMfailed) ||
 	    ((_MDInRouting_DischargeID       = MDRouting_DischargeDef ())       == CMfailed) ||
-        ((_MDInCommon_Common_SolarRadID  = MDCommon_SolarRadDef ())         == CMfailed) ||
+        ((_MDInCommon_SolarRadID  = MDCommon_SolarRadDef ())         == CMfailed) ||
         ((_MDInWTempRiverID              = MDTP2M_WTempRunoffDef ())         == CMfailed) ||
         ((_MDInCommon_HumidityRelativeID = MDCommon_HumidityRelativeDef ()) == CMfailed) ||
         ((_MDInRiverWidthID              = MDRouting_RiverWidthDef ())      == CMfailed) ||
