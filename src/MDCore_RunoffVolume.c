@@ -40,7 +40,7 @@ int MDCore_RunoffVolumeDef () {
 		case MFhelp:   MFOptionMessage (MDVarCore_RunoffVolume, optStr, MFsourceOptions); 
 		case MFinput: _MDOutRunoffVolumeID = MFVarGetID (MDVarCore_RunoffVolume, "m3/s", MFInput, MFState, MFBoundary); break;
 		case MFcalculate:
-			if (((_MDInCore_RunoffID        = MDCore_RunoffDef()) == CMfailed) ||
+			if (((_MDInCore_RunoffID   = MDCore_RunoffDef()) == CMfailed) ||
                 ((_MDOutRunoffVolumeID = MFVarGetID (MDVarCore_RunoffVolume, "m3/s", MFOutput, MFState, MFBoundary)) == CMfailed) ||
                 (MFModelAddFunction (_MDRunoffVolume) == CMfailed)) return (CMfailed);
 			break;

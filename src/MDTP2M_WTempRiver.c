@@ -23,7 +23,6 @@ static int _MDWTempRiverRouteID           = MFUnset;
 
 // Input
 static int _MDInCommon_AirTemperatureID   = MFUnset;
-static int _MDInCommon_SnowPackID         = MFUnset;
 static int _MDInCommon_SolarRadID         = MFUnset;
 static int _MDInRouting_DischargeID       = MFUnset;
 static int _MDInDischargeIncomingID       = MFUnset;
@@ -67,8 +66,7 @@ static void _MDWTempRiver (int itemID) {
     float StorexT;
     float StorexT_new;
     float DeltaStorexT;
-    float SnowPack;
-
+    
     //processing variables
     float channelWidth;
     float channelLength;
@@ -103,7 +101,6 @@ static void _MDWTempRiver (int itemID) {
    	Q_incoming         = MFVarGetFloat (_MDInDischargeIncomingID,      itemID, 0.0); // already includes local runoff
     RO_Vol             = MFVarGetFloat (_MDInAux_RunoffVolumeID,       itemID, 0.0);
    	RO_WTemp           = MFVarGetFloat (_MDInWTempRiverID,             itemID, 0.0);
-    SnowPack           = MFVarGetFloat (_MDInCommon_SnowPackID,        itemID, 0.0);
  	waterStorageChange = MFVarGetFloat (_MDInRiverStorageChgID,        itemID, 0.0);
    	waterStorage       = MFVarGetFloat (_MDInRiverStorageID,           itemID, 0.0);
    	channelWidth       = MFVarGetFloat (_MDInRiverWidthID,             itemID, 0.0);
@@ -356,7 +353,6 @@ int MDTP2M_WTempRiverDef () {
         ((_MDInWindSpeedID               = MFVarGetID (MDVarCommon_WindSpeed,            "m/s",       MFInput,  MFState, MFBoundary)) == CMfailed) ||
         ((_MDInRiverStorageChgID         = MFVarGetID (MDVarRouting_RiverStorageChg,     "m3",        MFInput,  MFFlux,  MFBoundary)) == CMfailed) ||
         ((_MDInRiverStorageID            = MFVarGetID (MDVarRouting_RiverStorage,        "m3",        MFInput,  MFState, MFInitial))  == CMfailed) ||
-        ((_MDInCommon_SnowPackID         = MFVarGetID (MDVarCore_SnowPack,               "mm",        MFInput,  MFState, MFInitial))  == CMfailed) ||
         ((_MDLocalIn_QxTID               = MFVarGetID (MDVarTP2M_WTLocalIn_QxT,          "m3*degC/d", MFOutput, MFFlux,  MFBoundary)) == CMfailed) ||
         ((_MDRemoval_QxTID               = MFVarGetID (MDVarTP2M_Removal_QxT,            "m3*degC/d", MFOutput, MFFlux,  MFBoundary)) == CMfailed) ||
         ((_MDFlux_QxTID                  = MFVarGetID (MDVarTP2M_Flux_QxT,               "m3*degC/d", MFRoute,  MFFlux,  MFBoundary)) == CMfailed) ||
