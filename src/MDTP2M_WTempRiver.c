@@ -340,14 +340,13 @@ int MDTP2M_WTempRiverDef () {
 
 	MFDefEntering ("Route river temperature");
 	if ((optStr = MFOptionGet (MDOptConfig_Reservoirs)) != (char *) NULL) optID = CMoptLookup (MFswitchOptions, optStr, true);
-	if ((MDCore_WaterBalanceDef () == CMfailed) ||
-	    ((_MDInRouting_DischargeID       = MDRouting_DischargeDef ())       == CMfailed) ||
-        ((_MDInCommon_SolarRadID  = MDCommon_SolarRadDef ())         == CMfailed) ||
-        ((_MDInWTempRiverID              = MDTP2M_WTempRunoffDef ())         == CMfailed) ||
-        ((_MDInCommon_HumidityRelativeID = MDCommon_HumidityRelativeDef ()) == CMfailed) ||
-        ((_MDInRiverWidthID              = MDRouting_RiverWidthDef ())      == CMfailed) ||
-        ((_MDInAux_RunoffVolumeID        = MDCore_RunoffVolumeDef ())       == CMfailed) ||
+	if (((_MDInAux_RunoffVolumeID        = MDCore_RunoffVolumeDef ())       == CMfailed) ||
+        ((_MDInWTempRiverID              = MDTP2M_WTempRunoffDef ())        == CMfailed) ||
+        ((_MDInRouting_DischargeID       = MDRouting_DischargeDef ())       == CMfailed) ||
         ((_MDInCommon_AirTemperatureID   = MDCommon_AirTemperatureDef ())   == CMfailed) ||
+        ((_MDInCommon_HumidityRelativeID = MDCommon_HumidityRelativeDef ()) == CMfailed) ||
+        ((_MDInCommon_SolarRadID         = MDCommon_SolarRadDef ())         == CMfailed) ||
+        ((_MDInRiverWidthID              = MDRouting_RiverWidthDef ())      == CMfailed) ||
         ((_MDInResReleaseID              = MDReservoir_ReleaseDef ())       == CMfailed) ||
         ((optID == MFon ) &&
           (((_MDInResStorageChangeID     = MFVarGetID (MDVarReservoir_StorageChange,     "km3",       MFInput,  MFState, MFBoundary)) == CMfailed) ||
