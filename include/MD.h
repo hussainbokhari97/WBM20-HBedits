@@ -326,7 +326,6 @@ extern "C" {
 #define MDVarTP2M_Generation2                   "Generation2"
 #define MDVarTP2M_Generation3                   "Generation3"
 #define MDVarTP2M_Generation4                   "Generation4"
-#define MDVarTP2M_GW_Temp					    "GW_Temp"
 #define MDVarTP2M_HeatToRiver1                  "HeatToRiver1"
 #define MDVarTP2M_HeatToRiver2                  "HeatToRiver2"
 #define MDVarTP2M_HeatToRiver3                  "HeatToRiver3"
