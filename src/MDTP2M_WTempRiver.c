@@ -298,29 +298,27 @@ static void _MDWTempRiver (int itemID) {
                 QxTnew = QxT_input + StorexT; //m3*degC
                 QxTnew_mix = QxT_input + StorexT_mix;
         	} else {
-				Q_WTemp 	= RO_WTemp;	// FBM 2022-06-06
-				Q_WTemp_mix = RO_WTemp; // FBM 2022-06-06
+				Q_WTemp 	 = RO_WTemp;	// FBM 2022-06-06
+				Q_WTemp_mix  = RO_WTemp; // FBM 2022-06-06
             }
-        	StorexT_new  = 0.0; //m3*degC
-        	DeltaStorexT = StorexT_new - StorexT; //
-        	QxTout       = 0.0; //m3*degC/dStorexT_new_mix  = 0; //m3*degC
-            QxTRemoval   = 0.0; //m3*degC/d
+        	StorexT_new      = 0.0; //m3*degC
+        	DeltaStorexT     = StorexT_new - StorexT; //
+        	QxTout           = 0.0; //m3*degC/dStorexT_new_mix  = 0; //m3*degC
+            QxTRemoval       = 0.0; //m3*degC/d
             StorexT_new_mix  = 0.0; //m3*degC
         	DeltaStorexT_mix = StorexT_new_mix - StorexT_mix;
         	QxTout_mix       = 0.0; //m3*degC/s
 
-            MFVarSetFloat(_MDOutLocalIn_QxTID, itemID, 0.0);
-            MFVarSetFloat(_MDOutRemoval_QxTID, itemID, QxTRemoval);
-        	MFVarSetFloat(_MDOutFlux_QxTID, itemID, QxTout);
-        	MFVarSetFloat(_MDOutStorage_QxTID, itemID, StorexT_new);
-        	MFVarSetFloat(_MDOutDeltaStorage_QxTID, itemID, DeltaStorexT);
-           	MFVarSetFloat(_MDOutFluxMixing_QxTID, itemID, QxTout_mix);
-        	MFVarSetFloat(_MDOutStorageMixing_QxTID, itemID, StorexT_new_mix);
+            MFVarSetFloat(_MDOutLocalIn_QxTID,            itemID, 0.0);
+            MFVarSetFloat(_MDOutRemoval_QxTID,            itemID, QxTRemoval);
+        	MFVarSetFloat(_MDOutFlux_QxTID,               itemID, QxTout);
+        	MFVarSetFloat(_MDOutStorage_QxTID,            itemID, StorexT_new);
+        	MFVarSetFloat(_MDOutDeltaStorage_QxTID,       itemID, DeltaStorexT);
+            MFVarSetFloat(_MDOutWTempRiverID,             itemID, Tair);        // FBM 2022-06-16 Setting to valid value instead of missing 
+            MFVarSetFloat(_MDOutWTempDeltaT_QxTID,        itemID, 0.0);         // FBM 2022-06-16 Setting to valid value instead of missing 
+           	MFVarSetFloat(_MDOutFluxMixing_QxTID,         itemID, QxTout_mix);  // FBM 2022-06-16 Setting to valid value instead of missing 
+        	MFVarSetFloat(_MDOutStorageMixing_QxTID,      itemID, StorexT_new_mix);
         	MFVarSetFloat(_MDOutDeltaStorageMixing_QxTID, itemID, DeltaStorexT_mix);
-        
-        	MFVarSetMissingVal(_MDOutWTempRiverID, itemID);
-            MFVarSetMissingVal(_MDOutWTempDeltaT_QxTID, itemID);
-            MFVarSetMissingVal(_MDOutWTempMixing_QxTID, itemID);
         }
   	float mb;
   	float mbmix;
