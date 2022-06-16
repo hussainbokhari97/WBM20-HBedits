@@ -27,7 +27,7 @@ static int _MDInCommon_SolarRadID         = MFUnset;
 static int _MDInRouting_DischargeID       = MFUnset;
 static int _MDInDischargeIncomingID       = MFUnset;
 static int _MDInAux_RunoffVolumeID        = MFUnset;
-static int _MDInWTempRiverID              = MFUnset;
+static int _MDInWTempRunoffID              = MFUnset;
 static int _MDInRiverWidthID              = MFUnset;
 static int _MDInRiverStorageChgID         = MFUnset;
 static int _MDInRiverStorageID            = MFUnset;
@@ -37,18 +37,18 @@ static int _MDInResStorageChangeID        = MFUnset;
 static int _MDInResStorageID              = MFUnset;
 static int _MDInResCapacityID     	      = MFUnset;
 // Output
-static int _MDLocalIn_QxTID               = MFUnset;
-static int _MDRemoval_QxTID               = MFUnset;
-static int _MDFlux_QxTID                  = MFUnset;
-static int _MDStorage_QxTID               = MFUnset;
-static int _MDDeltaStorage_QxTID          = MFUnset;
-static int _MDWTempRiverID                 = MFUnset;
-static int _MDWTempDeltaT_QxTID           = MFUnset;
-static int _MDFluxMixing_QxTID            = MFUnset;
-static int _MDStorageMixing_QxTID         = MFUnset;
-static int _MDDeltaStorageMixing_QxTID    = MFUnset;
-static int _MDWTempMixing_QxTID           = MFUnset;
-static int _MDEquil_Temp	              = MFUnset;
+static int _MDOutLocalIn_QxTID            = MFUnset;
+static int _MDOutRemoval_QxTID            = MFUnset;
+static int _MDOutFlux_QxTID               = MFUnset;
+static int _MDOutStorage_QxTID            = MFUnset;
+static int _MDOutDeltaStorage_QxTID       = MFUnset;
+static int _MDOutWTempRiverID             = MFUnset;
+static int _MDOutWTempDeltaT_QxTID        = MFUnset;
+static int _MDOutFluxMixing_QxTID         = MFUnset;
+static int _MDOutStorageMixing_QxTID      = MFUnset;
+static int _MDOutDeltaStorageMixing_QxTID = MFUnset;
+static int _MDOutWTempMixing_QxTID        = MFUnset;
+static int _MDOutEquil_Temp	              = MFUnset;
 
 static int _MDInCommon_HumidityRelativeID = MFUnset; // FOR NEW TEMP MODULE
 
@@ -100,17 +100,17 @@ static void _MDWTempRiver (int itemID) {
     Q                  = MFVarGetFloat (_MDInRouting_DischargeID,      itemID, 0.0);
    	Q_incoming         = MFVarGetFloat (_MDInDischargeIncomingID,      itemID, 0.0); // already includes local runoff
     RO_Vol             = MFVarGetFloat (_MDInAux_RunoffVolumeID,       itemID, 0.0);
-   	RO_WTemp           = MFVarGetFloat (_MDInWTempRiverID,             itemID, 0.0);
+   	RO_WTemp           = MFVarGetFloat (_MDInWTempRunoffID,             itemID, 0.0);
  	waterStorageChange = MFVarGetFloat (_MDInRiverStorageChgID,        itemID, 0.0);
    	waterStorage       = MFVarGetFloat (_MDInRiverStorageID,           itemID, 0.0);
    	channelWidth       = MFVarGetFloat (_MDInRiverWidthID,             itemID, 0.0);
  	solarRad           = MFVarGetFloat (_MDInCommon_SolarRadID, itemID, 0.0); //MJ/m2/d - CHECK UNITS
  	windSpeed          = MFVarGetFloat (_MDInWindSpeedID,              itemID, 0.0);
     Tair               = MFVarGetFloat (_MDInCommon_AirTemperatureID,  itemID, 0.0);
-    QxT                = MFVarGetFloat (_MDFlux_QxTID,                 itemID, 0.0);
-    StorexT            = MFVarGetFloat (_MDStorage_QxTID,              itemID, 0.0);
-    QxT_mix            = MFVarGetFloat (_MDFluxMixing_QxTID,           itemID, 0.0);
-    StorexT_mix        = MFVarGetFloat (_MDStorageMixing_QxTID,        itemID, 0.0);
+    QxT                = MFVarGetFloat (_MDOutFlux_QxTID,                 itemID, 0.0);
+    StorexT            = MFVarGetFloat (_MDOutStorage_QxTID,              itemID, 0.0);
+    QxT_mix            = MFVarGetFloat (_MDOutFluxMixing_QxTID,           itemID, 0.0);
+    StorexT_mix        = MFVarGetFloat (_MDOutStorageMixing_QxTID,        itemID, 0.0);
 
      if (_MDInResStorageID != MFUnset) {
          ResWaterStorageChange = MFVarGetFloat ( _MDInResStorageChangeID, itemID, 0.0) * pow(1000,3); // convert to m3/
@@ -160,16 +160,16 @@ static void _MDWTempRiver (int itemID) {
     	DeltaStorexT_mix = StorexT_new_mix - StorexT_mix;							//RJS 071511
     	QxTout_mix       = Q * 86400.0 * Q_WTemp_mix; 								//RJS 071511	//m3*degC/s
 
-    	MFVarSetFloat(_MDLocalIn_QxTID,            itemID, QxT_input);
-    	MFVarSetFloat(_MDFlux_QxTID,               itemID, QxTout);
-    	MFVarSetFloat(_MDStorage_QxTID,            itemID, StorexT_new);
-    	MFVarSetFloat(_MDDeltaStorage_QxTID,       itemID, DeltaStorexT);
-    	MFVarSetFloat(_MDWTempRiverID,              itemID, Q_WTemp_new);
-    	MFVarSetFloat(_MDWTempDeltaT_QxTID,        itemID, deltaT);
-    	MFVarSetFloat(_MDFluxMixing_QxTID,         itemID, QxTout_mix);
-    	MFVarSetFloat(_MDStorageMixing_QxTID,      itemID, StorexT_new_mix);
-    	MFVarSetFloat(_MDDeltaStorageMixing_QxTID, itemID, DeltaStorexT_mix);
-    	MFVarSetFloat(_MDWTempMixing_QxTID,        itemID, Q_WTemp_mix);
+    	MFVarSetFloat(_MDOutLocalIn_QxTID,            itemID, QxT_input);
+    	MFVarSetFloat(_MDOutFlux_QxTID,               itemID, QxTout);
+    	MFVarSetFloat(_MDOutStorage_QxTID,            itemID, StorexT_new);
+    	MFVarSetFloat(_MDOutDeltaStorage_QxTID,       itemID, DeltaStorexT);
+    	MFVarSetFloat(_MDOutWTempRiverID,              itemID, Q_WTemp_new);
+    	MFVarSetFloat(_MDOutWTempDeltaT_QxTID,        itemID, deltaT);
+    	MFVarSetFloat(_MDOutFluxMixing_QxTID,         itemID, QxTout_mix);
+    	MFVarSetFloat(_MDOutStorageMixing_QxTID,      itemID, StorexT_new_mix);
+    	MFVarSetFloat(_MDOutDeltaStorageMixing_QxTID, itemID, DeltaStorexT_mix);
+    	MFVarSetFloat(_MDOutWTempMixing_QxTID,        itemID, Q_WTemp_mix);
     } else {
     	ReservoirArea     = 0.0;
     	ReservoirVelocity = 0.0;
@@ -252,7 +252,7 @@ static void _MDWTempRiver (int itemID) {
 
             /// Resetting outgoing temperature:
             Q_WTemp_new = MDMaximum(0, RivTemp);
-            MFVarSetFloat(_MDEquil_Temp, itemID, equil2);
+            MFVarSetFloat(_MDOutEquil_Temp, itemID, equil2);
             //Q_WTemp_new = (MFModelGetLength(itemID) == 0.0) ? initial_riverT : Q_WTemp_new;
             /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -282,17 +282,17 @@ static void _MDWTempRiver (int itemID) {
 
             // end
 
-            MFVarSetFloat(_MDLocalIn_QxTID, itemID, QxT_input);
-            MFVarSetFloat(_MDRemoval_QxTID, itemID, QxTRemoval);
-            MFVarSetFloat(_MDFlux_QxTID, itemID, QxTout);
-            MFVarSetFloat(_MDStorage_QxTID, itemID, StorexT_new);
-            MFVarSetFloat(_MDDeltaStorage_QxTID, itemID, DeltaStorexT);
-            MFVarSetFloat(_MDWTempRiverID, itemID, Q_WTemp_new);
-            MFVarSetFloat(_MDWTempDeltaT_QxTID, itemID, deltaT);
-            MFVarSetFloat(_MDFluxMixing_QxTID, itemID, QxTout_mix);
-            MFVarSetFloat(_MDStorageMixing_QxTID, itemID, StorexT_new_mix);
-            MFVarSetFloat(_MDDeltaStorageMixing_QxTID, itemID, DeltaStorexT_mix);
-            MFVarSetFloat(_MDWTempMixing_QxTID, itemID, Q_WTemp_mix);
+            MFVarSetFloat(_MDOutLocalIn_QxTID, itemID, QxT_input);
+            MFVarSetFloat(_MDOutRemoval_QxTID, itemID, QxTRemoval);
+            MFVarSetFloat(_MDOutFlux_QxTID, itemID, QxTout);
+            MFVarSetFloat(_MDOutStorage_QxTID, itemID, StorexT_new);
+            MFVarSetFloat(_MDOutDeltaStorage_QxTID, itemID, DeltaStorexT);
+            MFVarSetFloat(_MDOutWTempRiverID, itemID, Q_WTemp_new);
+            MFVarSetFloat(_MDOutWTempDeltaT_QxTID, itemID, deltaT);
+            MFVarSetFloat(_MDOutFluxMixing_QxTID, itemID, QxTout_mix);
+            MFVarSetFloat(_MDOutStorageMixing_QxTID, itemID, StorexT_new_mix);
+            MFVarSetFloat(_MDOutDeltaStorageMixing_QxTID, itemID, DeltaStorexT_mix);
+            MFVarSetFloat(_MDOutWTempMixing_QxTID, itemID, Q_WTemp_mix);
    	    } else {
         	if (waterStorage > 0){
                 QxTnew = QxT_input + StorexT; //m3*degC
@@ -309,18 +309,18 @@ static void _MDWTempRiver (int itemID) {
         	DeltaStorexT_mix = StorexT_new_mix - StorexT_mix;
         	QxTout_mix       = 0.0; //m3*degC/s
 
-            MFVarSetFloat(_MDLocalIn_QxTID, itemID, 0.0);
-            MFVarSetFloat(_MDRemoval_QxTID, itemID, QxTRemoval);
-        	MFVarSetFloat(_MDFlux_QxTID, itemID, QxTout);
-        	MFVarSetFloat(_MDStorage_QxTID, itemID, StorexT_new);
-        	MFVarSetFloat(_MDDeltaStorage_QxTID, itemID, DeltaStorexT);
-           	MFVarSetFloat(_MDFluxMixing_QxTID, itemID, QxTout_mix);
-        	MFVarSetFloat(_MDStorageMixing_QxTID, itemID, StorexT_new_mix);
-        	MFVarSetFloat(_MDDeltaStorageMixing_QxTID, itemID, DeltaStorexT_mix);
+            MFVarSetFloat(_MDOutLocalIn_QxTID, itemID, 0.0);
+            MFVarSetFloat(_MDOutRemoval_QxTID, itemID, QxTRemoval);
+        	MFVarSetFloat(_MDOutFlux_QxTID, itemID, QxTout);
+        	MFVarSetFloat(_MDOutStorage_QxTID, itemID, StorexT_new);
+        	MFVarSetFloat(_MDOutDeltaStorage_QxTID, itemID, DeltaStorexT);
+           	MFVarSetFloat(_MDOutFluxMixing_QxTID, itemID, QxTout_mix);
+        	MFVarSetFloat(_MDOutStorageMixing_QxTID, itemID, StorexT_new_mix);
+        	MFVarSetFloat(_MDOutDeltaStorageMixing_QxTID, itemID, DeltaStorexT_mix);
         
-        	MFVarSetMissingVal(_MDWTempRiverID, itemID);
-            MFVarSetMissingVal(_MDWTempDeltaT_QxTID, itemID);
-            MFVarSetMissingVal(_MDWTempMixing_QxTID, itemID);
+        	MFVarSetMissingVal(_MDOutWTempRiverID, itemID);
+            MFVarSetMissingVal(_MDOutWTempDeltaT_QxTID, itemID);
+            MFVarSetMissingVal(_MDOutWTempMixing_QxTID, itemID);
         }
   	float mb;
   	float mbmix;
@@ -338,7 +338,7 @@ int MDTP2M_WTempRiverDef () {
 	MFDefEntering ("Route river temperature");
 	if ((optStr = MFOptionGet (MDOptConfig_Reservoirs)) != (char *) NULL) optID = CMoptLookup (MFswitchOptions, optStr, true);
 	if (((_MDInAux_RunoffVolumeID        = MDCore_RunoffVolumeDef ())       == CMfailed) ||
-        ((_MDInWTempRiverID              = MDTP2M_WTempRunoffDef ())        == CMfailed) ||
+        ((_MDInWTempRunoffID             = MDTP2M_WTempRunoffDef ())        == CMfailed) ||
         ((_MDInRouting_DischargeID       = MDRouting_DischargeDef ())       == CMfailed) ||
         ((_MDInCommon_AirTemperatureID   = MDCommon_AirTemperatureDef ())   == CMfailed) ||
         ((_MDInCommon_HumidityRelativeID = MDCommon_HumidityRelativeDef ()) == CMfailed) ||
@@ -353,19 +353,19 @@ int MDTP2M_WTempRiverDef () {
         ((_MDInWindSpeedID               = MFVarGetID (MDVarCommon_WindSpeed,            "m/s",       MFInput,  MFState, MFBoundary)) == CMfailed) ||
         ((_MDInRiverStorageChgID         = MFVarGetID (MDVarRouting_RiverStorageChg,     "m3",        MFInput,  MFFlux,  MFBoundary)) == CMfailed) ||
         ((_MDInRiverStorageID            = MFVarGetID (MDVarRouting_RiverStorage,        "m3",        MFInput,  MFState, MFInitial))  == CMfailed) ||
-        ((_MDLocalIn_QxTID               = MFVarGetID (MDVarTP2M_WTLocalIn_QxT,          "m3*degC/d", MFOutput, MFFlux,  MFBoundary)) == CMfailed) ||
-        ((_MDRemoval_QxTID               = MFVarGetID (MDVarTP2M_Removal_QxT,            "m3*degC/d", MFOutput, MFFlux,  MFBoundary)) == CMfailed) ||
-        ((_MDFlux_QxTID                  = MFVarGetID (MDVarTP2M_Flux_QxT,               "m3*degC/d", MFRoute,  MFFlux,  MFBoundary)) == CMfailed) ||
-        ((_MDStorage_QxTID               = MFVarGetID (MDVarTP2M_Storage_QxT,            "m3*degC",   MFOutput, MFState, MFInitial))  == CMfailed) ||
-        ((_MDDeltaStorage_QxTID          = MFVarGetID (MDVarTP2M_DeltaStorage_QxT,       "m3*degC/d", MFOutput, MFFlux,  MFBoundary)) == CMfailed) ||
-        ((_MDWTempRiverID                = MFVarGetID (MDVarTP2M_WTempRiver,             "degC",      MFOutput, MFState, MFBoundary)) == CMfailed) ||
-        ((_MDWTempDeltaT_QxTID           = MFVarGetID (MDVarTP2M_WTempDeltaT_QxT,        "degC",      MFOutput, MFState, MFBoundary)) == CMfailed) ||
-        ((_MDEquil_Temp   	             = MFVarGetID (MDVarTP2M_Equil_Temp,             "degC",      MFOutput, MFState, MFBoundary)) == CMfailed) ||
-        ((_MDFluxMixing_QxTID            = MFVarGetID (MDVarTP2M_FluxMixing_QxT,         "m3*degC/d", MFRoute,  MFFlux,  MFBoundary)) == CMfailed) ||
-        ((_MDStorageMixing_QxTID         = MFVarGetID (MDVarTP2M_StorageMixing_QxT,      "m3*degC",   MFOutput, MFState, MFInitial))  == CMfailed) ||
-        ((_MDDeltaStorageMixing_QxTID    = MFVarGetID (MDVarTP2M_DeltaStorageMixing_QxT, "m3*degC/d", MFOutput, MFFlux,  MFBoundary)) == CMfailed) ||
-        ((_MDWTempMixing_QxTID           = MFVarGetID (MDVarTP2M_WTempMixing_QxT,        "degC",      MFOutput, MFState, MFBoundary)) == CMfailed) ||
+        ((_MDOutLocalIn_QxTID            = MFVarGetID (MDVarTP2M_WTLocalIn_QxT,          "m3*degC/d", MFOutput, MFFlux,  MFBoundary)) == CMfailed) ||
+        ((_MDOutRemoval_QxTID            = MFVarGetID (MDVarTP2M_Removal_QxT,            "m3*degC/d", MFOutput, MFFlux,  MFBoundary)) == CMfailed) ||
+        ((_MDOutFlux_QxTID               = MFVarGetID (MDVarTP2M_Flux_QxT,               "m3*degC/d", MFRoute,  MFFlux,  MFBoundary)) == CMfailed) ||
+        ((_MDOutStorage_QxTID            = MFVarGetID (MDVarTP2M_Storage_QxT,            "m3*degC",   MFOutput, MFState, MFInitial))  == CMfailed) ||
+        ((_MDOutDeltaStorage_QxTID       = MFVarGetID (MDVarTP2M_DeltaStorage_QxT,       "m3*degC/d", MFOutput, MFFlux,  MFBoundary)) == CMfailed) ||
+        ((_MDOutWTempRiverID             = MFVarGetID (MDVarTP2M_WTempRiver,             "degC",      MFOutput, MFState, MFBoundary)) == CMfailed) ||
+        ((_MDOutWTempDeltaT_QxTID        = MFVarGetID (MDVarTP2M_WTempDeltaT_QxT,        "degC",      MFOutput, MFState, MFBoundary)) == CMfailed) ||
+        ((_MDOutEquil_Temp   	         = MFVarGetID (MDVarTP2M_Equil_Temp,             "degC",      MFOutput, MFState, MFBoundary)) == CMfailed) ||
+        ((_MDOutFluxMixing_QxTID         = MFVarGetID (MDVarTP2M_FluxMixing_QxT,         "m3*degC/d", MFRoute,  MFFlux,  MFBoundary)) == CMfailed) ||
+        ((_MDOutStorageMixing_QxTID      = MFVarGetID (MDVarTP2M_StorageMixing_QxT,      "m3*degC",   MFOutput, MFState, MFInitial))  == CMfailed) ||
+        ((_MDOutDeltaStorageMixing_QxTID = MFVarGetID (MDVarTP2M_DeltaStorageMixing_QxT, "m3*degC/d", MFOutput, MFFlux,  MFBoundary)) == CMfailed) ||
+        ((_MDOutWTempMixing_QxTID        = MFVarGetID (MDVarTP2M_WTempMixing_QxT,        "degC",      MFOutput, MFState, MFBoundary)) == CMfailed) ||
         (MFModelAddFunction (_MDWTempRiver) == CMfailed)) return (CMfailed);
 	   MFDefLeaving ("Route river temperature");
-	   return (_MDWTempRiverID);
+	   return (_MDOutWTempRiverID);
 }

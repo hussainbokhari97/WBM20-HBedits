@@ -28,12 +28,7 @@ static int _MDInTP2M_GW_TempID   = MFUnset;
 static int _MDOutTP2M_WTempGrdWaterID  = MFUnset;
 
 static void _MDWTP2M_TempGrdWater (int itemID) {
-	float airT;
-	float Gw_Temp;
-	airT               = MFVarGetFloat (_MDInCommon_AirTemperatureID,         itemID, 0.0);
-
-	Gw_Temp = MDMaximum(5.0, airT);
-    MFVarSetFloat (_MDOutTP2M_WTempGrdWaterID,itemID,Gw_Temp);
+    MFVarSetFloat (_MDOutTP2M_WTempGrdWaterID, itemID, MDMaximum (MFVarGetFloat (_MDInCommon_AirTemperatureID, itemID, 0.0), 5.0));
 }
 
 int MDTP2M_WTempGrdWaterDef () {
@@ -43,7 +38,7 @@ int MDTP2M_WTempGrdWaterDef () {
 	MFDefEntering ("Groundwater temperature");
 
 	if (((_MDInCommon_AirTemperatureID = MDCommon_AirTemperatureDef ()) == CMfailed) ||
-        ((_MDOutTP2M_WTempGrdWaterID   = MFVarGetID (MDVarTP2M_WTempGrdWater,    "degC", MFOutput, MFState, MFInitial))  == CMfailed) ||
+        ((_MDOutTP2M_WTempGrdWaterID   = MFVarGetID (MDVarTP2M_WTempGrdWater, "degC", MFOutput, MFState, MFInitial))  == CMfailed) ||
 		(MFModelAddFunction(_MDWTP2M_TempGrdWater) == CMfailed)) return (CMfailed);
 
 	MFDefLeaving ("Groundwater temperature");

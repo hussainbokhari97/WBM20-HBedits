@@ -29,34 +29,46 @@ static void _MDWTempRunoff (int itemID) {
 	float baseFlowT;
 	float surfaceRO;
 	float baseFlow;
-	float TemperatureRO;
+	float tempRo;
 
 	surfaceRO   = MFVarGetFloat (_MDInSurfCore_RunoffID, itemID, 0.0);
 	baseFlow    = MFVarGetFloat (_MDInBaseFlowID,        itemID, 0.0);
 	surfRunoffT = MFVarGetFloat (_MDInWTempSurfRunoffID, itemID, 0.0);
 	baseFlowT   = MFVarGetFloat (_MDInWTempGrdWaterID,   itemID, 0.0);
 
-	surfaceRO = MDMaximum (0, surfaceRO);
-	baseFlow  = MDMaximum (0, baseFlow);
+	surfaceRO = MDMaximum (0.0, surfaceRO);
+	baseFlow  = MDMaximum (0.0, baseFlow);
 
-	TemperatureRO = surfaceRO + baseFlow > 0 ? MDMaximum ((((surfaceRO * surfRunoffT) + (baseFlow * baseFlowT)) / (surfaceRO + baseFlow)),0.0)
-	                                         : MDMaximum (surfRunoffT, baseFlowT);
-	MFVarSetFloat(_MDOutWTempRunoffID,itemID,TemperatureRO);
+	tempRo = surfaceRO + baseFlow > 0.0 ?
+	         ((surfaceRO * surfRunoffT) + (baseFlow * baseFlowT)) / (surfaceRO + baseFlow) : surfRunoffT;
+	MFVarSetFloat(_MDOutWTempRunoffID,itemID,tempRo);
 }
 
+enum { MDhelp, MDinput, MDcalculate, MDsurface };
+
 int MDTP2M_WTempRunoffDef () {
+    int optID = MFinput;
+    const char *optStr;
+	const char *options [] = { MFhelpStr, MFinputStr, MFcalculateStr, "surfaceRO", (char *) NULL };
 
 	if (_MDOutWTempRunoffID != MFUnset) return (_MDOutWTempRunoffID);
 
 	MFDefEntering ("Runoff temperature");
-
-	if (((_MDInSurfCore_RunoffID = MDCore_RainSurfRunoffDef())  == CMfailed) ||
-        ((_MDInBaseFlowID        = MDCore_BaseFlowDef())        == CMfailed) ||
-        ((_MDInWTempSurfRunoffID = MDTP2M_WTempSurfRunoffDef()) == CMfailed) ||
-        ((_MDInWTempGrdWaterID   = MDTP2M_WTempGrdWaterDef())   == CMfailed) ||
-        ((_MDOutWTempRunoffID    = MFVarGetID (MDVarTP2M_WTempRunoff, "degC", MFOutput, MFState, MFBoundary)) == CMfailed) ||
-        (MFModelAddFunction (_MDWTempRunoff) == CMfailed)) return (CMfailed);
-
+    if ((optStr = MFOptionGet (MDVarTP2M_WTempRunoff)) != (char *) NULL) optID = CMoptLookup (options, optStr, true);
+	switch (optID) {
+		default:      MFOptionMessage (MDVarCore_LandCoverWBM, optStr, options); return (CMfailed);
+		case MDhelp:  MFOptionMessage (MDVarCore_LandCoverWBM, optStr, options);
+		case MDinput: _MDOutWTempRunoffID = MFVarGetID (MDVarTP2M_WTempRunoff, "degC", MFInput, MFState, MFBoundary); break;
+		case MDcalculate:
+			if (((_MDInSurfCore_RunoffID = MDCore_RainSurfRunoffDef())  == CMfailed) ||
+			    ((_MDInBaseFlowID        = MDCore_BaseFlowDef())        == CMfailed) ||
+        	    ((_MDInWTempSurfRunoffID = MDTP2M_WTempSurfRunoffDef()) == CMfailed) ||
+        	    ((_MDInWTempGrdWaterID   = MDTP2M_WTempGrdWaterDef())   == CMfailed) ||
+        	    ((_MDOutWTempRunoffID    = MFVarGetID (MDVarTP2M_WTempRunoff, "degC", MFOutput, MFState, MFBoundary)) == CMfailed) ||
+        	    (MFModelAddFunction (_MDWTempRunoff) == CMfailed)) return (CMfailed);
+			break;
+		case MDsurface: _MDOutWTempRunoffID = MDTP2M_WTempSurfRunoffDef (); break;
+	}
 	MFDefLeaving ("Runoff temperature");
 	return (_MDOutWTempRunoffID);
 }

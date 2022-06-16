@@ -27,12 +27,7 @@ static int _MDInCommon_AirTemperatureID = MFUnset;
 static int _MDOutWTempSurfROID          = MFUnset;
 
 static void _MDWTempSurfRunoff (int itemID) {
-	float airT;
-	float SurfWatT;
-
-    airT               = MFVarGetFloat (_MDInCommon_AirTemperatureID, itemID, 0.0);
-	SurfWatT = MDMaximum(airT - 1.5, 0);
-    MFVarSetFloat (_MDOutWTempSurfROID, itemID, SurfWatT);
+    MFVarSetFloat (_MDOutWTempSurfROID, itemID, MDMaximum (MFVarGetFloat (_MDInCommon_AirTemperatureID, itemID, 0.0) - 1.5, 0.0));
 }
 
 int MDTP2M_WTempSurfRunoffDef () {
