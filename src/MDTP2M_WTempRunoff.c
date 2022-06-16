@@ -49,15 +49,15 @@ enum { MDhelp, MDinput, MDcalculate, MDsurface };
 int MDTP2M_WTempRunoffDef () {
     int optID = MFinput;
     const char *optStr;
-	const char *options [] = { MFhelpStr, MFinputStr, MFcalculateStr, "surfaceRO", (char *) NULL };
+	const char *options [] = { MFhelpStr, MFinputStr, MFcalculateStr, "surface", (char *) NULL };
 
 	if (_MDOutWTempRunoffID != MFUnset) return (_MDOutWTempRunoffID);
 
 	MFDefEntering ("Runoff temperature");
     if ((optStr = MFOptionGet (MDVarTP2M_WTempRunoff)) != (char *) NULL) optID = CMoptLookup (options, optStr, true);
 	switch (optID) {
-		default:      MFOptionMessage (MDVarCore_LandCoverWBM, optStr, options); return (CMfailed);
-		case MDhelp:  MFOptionMessage (MDVarCore_LandCoverWBM, optStr, options);
+		default:      MFOptionMessage (MDVarTP2M_WTempRunoff, optStr, options); return (CMfailed);
+		case MDhelp:  MFOptionMessage (MDVarTP2M_WTempRunoff, optStr, options);
 		case MDinput: _MDOutWTempRunoffID = MFVarGetID (MDVarTP2M_WTempRunoff, "degC", MFInput, MFState, MFBoundary); break;
 		case MDcalculate:
 			if (((_MDInSurfCore_RunoffID = MDCore_RainSurfRunoffDef())  == CMfailed) ||
