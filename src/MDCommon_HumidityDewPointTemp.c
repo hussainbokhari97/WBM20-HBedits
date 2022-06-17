@@ -24,12 +24,12 @@ static int _MDOutCommon_HumidityDewPointTempID = MFUnset;
 
 static void _MDCommon_HumidityDewPointTemp (int itemID) {
 // Input
-    float vaporPress; // Pa
-    float dewPointTemp;
+    float vaporPressure;  // Vapor pressure in Pa
+    float dewPointTemp;   // Dew point temperature in degC
 
-    vaporPress   = MFVarGetFloat (_MDInCommon_HumidityVaporPressureID,   itemID, 0.0);
-    dewPointTemp = vaporPress > 611 ? 237.3 * log (vaporPress / 611) / (17.27 - log (vaporPress / 611.0))  // Over water 
-                                    : 265.5 * log (vaporPress / 611) / (21.87 - log (vaporPress / 611.0)); // Over ice
+    vaporPressure = MFVarGetFloat (_MDInCommon_HumidityVaporPressureID,   itemID, 0.0);
+    dewPointTemp  = vaporPressure > 611 ? 237.3 * log (vaporPressure / 611) / (17.27 - log (vaporPressure / 611.0))  // Over water 
+                                        : 265.5 * log (vaporPressure / 611) / (21.87 - log (vaporPressure / 611.0)); // Over ice
     MFVarSetFloat(_MDOutCommon_HumidityDewPointTempID, itemID, dewPointTemp);
 }
 
@@ -42,8 +42,8 @@ int MDCommon_HumidityDewPointTemperatureDef () {
     MFDefEntering ("DewPointTemperature");
     if ((optStr = MFOptionGet(MDVarCommon_HumidityDewPointTemperature)) != (char *) NULL) optID = CMoptLookup(MFsourceOptions, optStr, true);
     switch (optID) {
-        default:      MFOptionMessage (MDVarCommon_HumidityDewPointTemperature, optStr, MFsourceOptions); return (CMfailed);
-        case MFhelp:  MFOptionMessage (MDVarCommon_HumidityDewPointTemperature, optStr, MFsourceOptions);
+        default:
+        case MFhelp: MFOptionMessage (MDVarCommon_HumidityDewPointTemperature, optStr, MFsourceOptions); return (CMfailed);
         case MFinput: _MDOutCommon_HumidityDewPointTempID = MFVarGetID (MDVarCommon_HumidityDewPointTemperature, "degC", MFInput, MFState, MFBoundary); break;
         case MFcalculate:
             if (((_MDInCommon_HumidityVaporPressureID = MDCommon_HumidityVaporPressureDef ()) == CMfailed) ||

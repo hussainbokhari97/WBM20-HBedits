@@ -86,8 +86,8 @@ int MDCommon_AirTemperatureDef () {
 	MFDefEntering ("Air Temperature");
 	if ((optStr = MFOptionGet (MDVarCommon_AirTemperature)) != (char *) NULL) optID = CMoptLookup (options,optStr,true);
 	switch (optID) {
-		default:      MFOptionMessage (MDVarCommon_AirTemperature, optStr, options); return (CMfailed);
-		case MDhelp:  MFOptionMessage (MDVarCommon_AirTemperature, optStr, options);
+		default:
+		case MDhelp: MFOptionMessage (MDVarCommon_AirTemperature, optStr, options); return (CMfailed);
 		case MDinput: _MDOutCommon_AirTemperatureID = MFVarGetID (MDVarCommon_AirTemperature, "degC",   MFInput,  MFState, MFBoundary); break;
 		case MDdownscale:
 			if (((_MDInCommon_AirTemperatureDailyID     = MFVarGetID (MDVarCommon_AirTemperatureDaily,     "degC",   MFInput,  MFState, MFBoundary)) == CMfailed) ||
@@ -102,8 +102,8 @@ int MDCommon_AirTemperatureDef () {
 	MFDefEntering ("Elevation Adjustment");
 	if ((optStr = MFOptionGet ("ElevationAdjustment")) != (char *) NULL) switchID = CMoptLookup (MFswitchOptions, optStr,true);
 	switch (switchID) {
-		default:     MFOptionMessage ("ElevationAdjustment", optStr, MFswitchOptions); return (CMfailed);
-		case MFhelp: MFOptionMessage ("ElevationAdjustment", optStr, MFswitchOptions);
+		default:
+		case MFhelp: MFOptionMessage ("ElevationAdjustment", optStr, MFswitchOptions); return (CMfailed);
 		case MFoff:  break;
 		case MFon:
 			MFDefEntering ("Elevation Adjustment");

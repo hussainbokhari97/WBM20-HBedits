@@ -23,7 +23,7 @@ static int _MDInCommon_AirTemperatureID    = MFUnset;
 static int _MDOutCommon_HumiditySaturatedVaporPressID = MFUnset;
 
 static void _MDCommon_HumiditySaturatedVaporPressure (int itemID) {
-    float airTemp;
+    float airTemp;     // Air temperature in degC
     float saturatedVP; // Saturated vapor pressure in Pa
 
     saturatedVP = airTemp > 0.0 ? 611 * exp (17.27 * airTemp / (airTemp + 237.3))  // Over water
@@ -41,8 +41,8 @@ int MDCommon_HumiditySaturatedVaporPressureDef () {
     MFDefEntering ("RelativeHumidity");
     if ((optStr = MFOptionGet(MDVarCommon_HumiditySaturatedVaporPress)) != (char *) NULL) optID = CMoptLookup(MFsourceOptions, optStr, true);
     switch (optID) {
-        default:      MFOptionMessage (MDVarCommon_HumiditySaturatedVaporPress, optStr, MFsourceOptions); return (CMfailed);
-        case MFhelp:  MFOptionMessage (MDVarCommon_HumiditySaturatedVaporPress, optStr, MFsourceOptions);
+        default:
+        case MFhelp: MFOptionMessage (MDVarCommon_HumiditySaturatedVaporPress, optStr, MFsourceOptions); return (CMfailed);
         case MFinput: _MDOutCommon_HumiditySaturatedVaporPressID = MFVarGetID (MDVarCommon_HumiditySaturatedVaporPress, "Pa", MFInput, MFState, MFBoundary); break;
         case MFcalculate:
             if (((_MDInCommon_AirTemperatureID               = MDCommon_AirTemperatureDef ()) == CMfailed) ||

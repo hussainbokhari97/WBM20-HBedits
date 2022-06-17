@@ -24,14 +24,14 @@ static int _MDInCommon_HumidityVaporPressureID       = MFUnset;
 static int _MDOutCommon_HumidityRelativeID           = MFUnset;
 
 static void _MDCommon_HumidityRelative (int itemID) {
-    float saturatedVP;
-    float vaporPress;
-    float relativehumidity;
+    float saturatedVP;      // Saturated vapor pressure in Pa
+    float vaporPress;       // Vapor pressure in Pa
+    float relativehumidity; // Relative humidity in precent
 
     saturatedVP = MFVarGetFloat (_MDInCommon_HumiditySaturatedVaporPressID, itemID, 0.0);
     vaporPress  = MFVarGetFloat (_MDInCommon_HumidityVaporPressureID,       itemID, 0.0); //pressure (Pa)
 
-    relativehumidity = vaporPress > saturatedVP ? vaporPress / saturatedVP : 1.0;
+    relativehumidity = vaporPress < saturatedVP ? 100.0 * vaporPress / saturatedVP : 100.0;
     MFVarSetFloat(_MDOutCommon_HumidityRelativeID, itemID, relativehumidity);
 }
 
@@ -44,8 +44,8 @@ int MDCommon_HumidityRelativeDef () {
     MFDefEntering ("RelativeHumidity");
     if ((optStr = MFOptionGet(MDOptWeather_RelativeHumidity)) != (char *) NULL) optID = CMoptLookup(MFsourceOptions, optStr, true);
     switch (optID) {
-        default:      MFOptionMessage (MDOptWeather_RelativeHumidity, optStr, MFsourceOptions); return (CMfailed);
-        case MFhelp:  MFOptionMessage (MDOptWeather_RelativeHumidity, optStr, MFsourceOptions);
+        default:
+        case MFhelp: MFOptionMessage (MDOptWeather_RelativeHumidity, optStr, MFsourceOptions); return (CMfailed);
         case MFinput: _MDOutCommon_HumidityRelativeID = MFVarGetID (MDVarCommon_HumidityRelative, "%", MFInput, MFState, MFBoundary); break;
         case MFcalculate:
             if (((_MDInCommon_HumiditySaturatedVaporPressID = MDCommon_HumiditySaturatedVaporPressureDef ()) == CMfailed) ||
