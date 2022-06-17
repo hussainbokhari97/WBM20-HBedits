@@ -97,7 +97,6 @@ static void _MDWTempRiver (int itemID) {
     float ReservoirVelocity;
 
     // conservative mixing variables (parallel to those above_
-    float QxT_mix;
     float QxTnew_mix = 0;
     float QxTRemoval;
     float dt = MFModelGet_dt ();
