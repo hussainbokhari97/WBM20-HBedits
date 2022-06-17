@@ -18,7 +18,7 @@
 #include <MD.h>
 
 // Input
-static int _MDInCommon_HumidityVaporPressureID        = MFUnset;
+static int _MDInCommon_HumidityVaporPressureID = MFUnset;
 // Output
 static int _MDOutCommon_HumidityDewPointTempID = MFUnset;
 
