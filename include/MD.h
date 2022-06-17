@@ -69,8 +69,11 @@ extern "C" {
 #define MDVarCommon_AirTempMaximum              "AirTempMaximum"
 #define MDVarCommon_AirPressure                 "AirPressure"
 #define MDVarCommon_CloudCover		            "CloudCover"
+#define MDVarCommon_HumidityDewPointTemperature "DewPointTemperature"
+#define MDVarCommon_HumiditySaturatedVaporPress "SaturatedVaporPressure"
 #define MDVarCommon_HumiditySpecific            "SpecificHumidity"
 #define MDVarCommon_HumidityRelative            "RelativeHumidity"
+#define MDVarCommon_HumidityVaporPressure       "VaporPressure"
 #define MDVarCommon_IceCover		            "IceCover"
 #define	MDVarCommon_Elevation                   "Elevation"
 #define	MDVarCommon_ElevationMin                "ElevationMin"
@@ -446,8 +449,11 @@ int MDAux_MeanRunoffDef ();
 int MDCommon_AirTemperatureDef ();
 int MDCommon_CloudCoverDef ();
 int MDCommon_GrossRadDef ();
+int MDCommon_HumidityDewPointTemperatureDef ();
 int MDCommon_HumidityRelativeDef ();
+int MDCommon_HumiditySaturatedVaporPressureDef ();
 int MDCommon_HumiditySpecificDef ();
+int MDCommon_HumidityVaporPressureDef ();
 int MDCommon_PrecipitationDef ();
 int MDCommon_SolarRadDef ();
 int MDCommon_SolarRadDayLengthDef ();
