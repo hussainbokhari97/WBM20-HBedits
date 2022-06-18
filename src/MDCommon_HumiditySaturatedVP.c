@@ -24,10 +24,10 @@ static int _MDOutCommon_HumiditySaturatedVaporPressID = MFUnset;
 
 static void _MDCommon_HumiditySaturatedVaporPressure (int itemID) {
     float airTemp;     // Air temperature in degC
-    float saturatedVP; // Saturated vapor pressure in Pa
+    float saturatedVP; // Saturated vapor pressure in kPa
 
-    saturatedVP = airTemp > 0.0 ? 611 * exp (17.27 * airTemp / (airTemp + 237.3))  // Over water
-                                : 611 * exp (21.87 * airTemp / (airTemp + 265.5)); // Over ice
+    saturatedVP = airTemp > 0.0 ? 0.611 * exp (17.27 * airTemp / (airTemp + 237.3))  // Over water
+                                : 0.611 * exp (21.87 * airTemp / (airTemp + 265.5)); // Over ice
     
     MFVarSetFloat(_MDOutCommon_HumiditySaturatedVaporPressID, itemID, saturatedVP);
 }
@@ -38,7 +38,7 @@ int MDCommon_HumiditySaturatedVaporPressureDef () {
      
     if (_MDOutCommon_HumiditySaturatedVaporPressID != MFUnset) return (_MDOutCommon_HumiditySaturatedVaporPressID);    
 
-    MFDefEntering ("RelativeHumidity");
+    MFDefEntering ("SaturatedVaporPressure");
     if ((optStr = MFOptionGet(MDVarCommon_HumiditySaturatedVaporPress)) != (char *) NULL) optID = CMoptLookup(MFsourceOptions, optStr, true);
     switch (optID) {
         default:
@@ -50,6 +50,6 @@ int MDCommon_HumiditySaturatedVaporPressureDef () {
                 ((MFModelAddFunction (_MDCommon_HumiditySaturatedVaporPressure) == CMfailed))) return (CMfailed);
             break;
     }
-    MFDefLeaving ("RelativeHumidity");
+    MFDefLeaving ("SaturatedVapoerPressure");
     return (_MDOutCommon_HumiditySaturatedVaporPressID);
 }

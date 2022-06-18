@@ -283,7 +283,7 @@ int MDTP2M_WTempRiverDef () {
 	if (_MDOutTP2M_WTempRiverID != MFUnset) return (_MDOutTP2M_WTempRiverID);
 
 	MFDefEntering ("Route river temperature");
-	if (((_MDInCommon_AirTemperatureID     = MDCommon_AirTemperatureDef ())              == CMfailed) ||
+	if (((_MDInCommon_AirTemperatureID        = MDCommon_AirTemperatureDef ())              == CMfailed) ||
         ((_MDInCommon_HumidityDewPointID      = MDCommon_HumidityDewPointTemperatureDef ()) == CMfailed) ||
         ((_MDInCommon_SolarRadID              = MDCommon_SolarRadDef ())                    == CMfailed) ||
         ((_MDInCore_RunoffVolumeID            = MDCore_RunoffVolumeDef ())                  == CMfailed) ||

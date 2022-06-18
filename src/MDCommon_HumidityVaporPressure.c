@@ -25,11 +25,11 @@ static int _MDOutCommon_HumidityVaporPressureID = MFUnset;
 
 static void _MDCommon_HumidityVaporPressure (int itemID) {
     float specificHumidity; // Specific humidity kg/kg
-    float airPressure;      // Air pressure in Pa
-    float vaporPressure;    // Vapor pressure in Pa
+    float airPressure;      // Air pressure in kPa
+    float vaporPressure;    // Vapor pressure in kPa
 
     specificHumidity = MFVarGetFloat (_MDInCommon_HumiditySpecificID, itemID, 0.0);
-    airPressure      = MFVarGetFloat (_MDInCommon_AirPressureID,      itemID, 0.0); // air pressure (Pa)
+    airPressure      = MFVarGetFloat (_MDInCommon_AirPressureID,      itemID, 0.0); // air pressure (kPa)
 
     vaporPressure = specificHumidity * airPressure / (0.622 + specificHumidity * 0.378);
     // 0.378 comes from if specific humidity is defined as density of water vapor over density of moist air
@@ -50,8 +50,8 @@ int MDCommon_HumidityVaporPressureDef () {
         case MFinput: _MDOutCommon_HumidityVaporPressureID = MFVarGetID (MDVarCommon_HumidityVaporPressure, "Pa", MFInput, MFState, MFBoundary); break;
         case MFcalculate:
             if (((_MDInCommon_HumiditySpecificID       = MDCommon_HumiditySpecificDef ()) == CMfailed) ||
-                ((_MDInCommon_AirPressureID            = MFVarGetID (MDVarCommon_AirPressure,           "Pa", MFInput,  MFState, MFBoundary)) == CMfailed) ||
-                ((_MDOutCommon_HumidityVaporPressureID = MFVarGetID (MDVarCommon_HumidityVaporPressure, "Pa", MFOutput, MFState, MFBoundary)) == CMfailed) ||
+                ((_MDInCommon_AirPressureID            = MFVarGetID (MDVarCommon_AirPressure,           "kPa", MFInput,  MFState, MFBoundary)) == CMfailed) ||
+                ((_MDOutCommon_HumidityVaporPressureID = MFVarGetID (MDVarCommon_HumidityVaporPressure, "Pa",  MFOutput, MFState, MFBoundary)) == CMfailed) ||
                 ((MFModelAddFunction (_MDCommon_HumidityVaporPressure) == CMfailed))) return (CMfailed);
             break;
     }

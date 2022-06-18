@@ -24,12 +24,12 @@ static int _MDOutCommon_HumidityDewPointTempID = MFUnset;
 
 static void _MDCommon_HumidityDewPointTemp (int itemID) {
 // Input
-    float vaporPressure;  // Vapor pressure in Pa
+    float vaporPressure;  // Vapor pressure in kPa
     float dewPointTemp;   // Dew point temperature in degC
 
     vaporPressure = MFVarGetFloat (_MDInCommon_HumidityVaporPressureID,   itemID, 0.0);
-    dewPointTemp  = vaporPressure > 611 ? 237.3 * log (vaporPressure / 611) / (17.27 - log (vaporPressure / 611.0))  // Over water 
-                                        : 265.5 * log (vaporPressure / 611) / (21.87 - log (vaporPressure / 611.0)); // Over ice
+    dewPointTemp  = vaporPressure > 0.611 ? 237.3 * log (vaporPressure / 0.611) / (17.27 - log (vaporPressure / 0.611))  // Over water 
+                                          : 265.5 * log (vaporPressure / 0.611) / (21.87 - log (vaporPressure / 0.611)); // Over ice
     MFVarSetFloat(_MDOutCommon_HumidityDewPointTempID, itemID, dewPointTemp);
 }
 
@@ -47,6 +47,7 @@ int MDCommon_HumidityDewPointTemperatureDef () {
         case MFinput: _MDOutCommon_HumidityDewPointTempID = MFVarGetID (MDVarCommon_HumidityDewPointTemperature, "degC", MFInput, MFState, MFBoundary); break;
         case MFcalculate:
             if (((_MDInCommon_HumidityVaporPressureID = MDCommon_HumidityVaporPressureDef ()) == CMfailed) ||
+                ((_MDOutCommon_HumidityDewPointTempID = MFVarGetID (MDVarCommon_HumidityDewPointTemperature, "degC", MFInput, MFState, MFBoundary)) == CMfailed) ||
                 ((MFModelAddFunction (_MDCommon_HumidityDewPointTemp) == CMfailed))) return (CMfailed);
             break;
     }
