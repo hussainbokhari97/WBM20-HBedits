@@ -55,7 +55,7 @@ static void _MDRainPotETPsTaylor (int itemID) {
 	albedo  = MFVarGetFloat (_MDInCParamAlbedoID, itemID, 0.0);
 	airT    = MFVarGetFloat (_MDInCommon_AtMeanID,       itemID, 0.0);
 	solRad  = MFVarGetFloat (_MDInSolRadID,       itemID, 0.0);
-	vPress  = MFVarGetFloat (_MDInVPressID,       itemID, 0.0);
+	vPress  = MFVarGetFloat (_MDInVPressID,       itemID, 0.0) / 1000.0;
 
 	solNet = (1.0 - albedo) * solRad / MDConstIGRATE;
 	lngNet = MDSRadNETLong (i0hDay,airT,solRad,vPress);
@@ -80,8 +80,8 @@ int MDCore_RainPotETPsTaylorDef () {
         ((_MDInCParamAlbedoID  = MDParam_LCAlbedoDef ())           == CMfailed) ||
         ((_MDInSolRadID        = MDCommon_SolarRadDef ())          == CMfailed) ||
         ((_MDInCommon_AtMeanID = MDCommon_AirTemperatureDef ())    == CMfailed) ||
-        ((_MDInVPressID  = MFVarGetID (MDVarCore_VaporPressure,     "kPa", MFInput,  MFState, MFBoundary)) == CMfailed) ||
-        ((_MDOutPetID    = MFVarGetID (MDVarCore_RainPotEvapotrans, "mm",  MFOutput, MFFlux,  MFBoundary)) == CMfailed) ||
+        ((_MDInVPressID  = MFVarGetID (MDVarCommon_HumidityVaporPressure, "Pa",  MFInput,  MFState, MFBoundary)) == CMfailed) ||
+        ((_MDOutPetID    = MFVarGetID (MDVarCore_RainPotEvapotrans,       "mm",  MFOutput, MFFlux,  MFBoundary)) == CMfailed) ||
         (MFModelAddFunction (_MDRainPotETPsTaylor) == CMfailed)) return (CMfailed);
 	MFDefLeaving  ("Rainfed Potential Evapotranspiration (Priestley - Taylor)");
 	return (_MDOutPetID);

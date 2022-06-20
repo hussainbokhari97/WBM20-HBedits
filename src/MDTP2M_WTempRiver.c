@@ -104,6 +104,9 @@ static void _MDWTempRiver (int itemID) {
     StorexT            = MFVarGetFloat (_MDInTP2M_Storage_QxTID,          itemID, 0.0);
     QxT                = MFVarGetFloat (_MDInTP2M_Flux_QxTID,             itemID, 0.0);
     
+    if (itemID == 282180) {
+        dt = MFModelGet_dt ();
+    }
      if (_MDInReservoir_StorageID != MFUnset) {
          resCapacity           = MFVarGetFloat ( _MDInReservoir_CapacityID,   itemID, 0.0) * 1e9; // convert to m3
          ResWaterStorage       = MFVarGetFloat ( _MDInReservoir_StorageID,    itemID, 0.0) * 1e9; // convert to m3 
@@ -120,7 +123,7 @@ static void _MDWTempRiver (int itemID) {
     if(resCapacity > 0.0) {
     	waterStorage = waterStorage + ResWaterStorage;
     	waterStorageChange = waterStorageChange + ResWaterStorageChange;
-    	ReservoirArea = pow(((ResWaterStorage / pow(10,6)) / 9.208),(1 / 1.114)) * 1000 * 1000;  // m2, from Takeuchi 1997 - original equation has V in 10^6 m3 and A in km2
+    	ReservoirArea = pow(((ResWaterStorage / 1e6) / 9.208),(1 / 1.114)) * 1e6;  // m2, from Takeuchi 1997 - original equation has V in 10^6 m3 and A in km2
     	ReservoirDepth = (ResWaterStorage / ReservoirArea); //m
     	ReservoirVelocity = Q / (ReservoirArea); // m/s
     	channelWidth = MDMaximum(channelWidth, (Q / (ReservoirDepth * ReservoirVelocity))); // m

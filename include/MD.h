@@ -133,7 +133,6 @@ extern "C" {
 #define MDVarCore_StemAreaIndex                 "StemAreaIndex"
 #define MDVarCore_SunShine                      "SunShine"
 #define MDVarCore_SurfRunoff                    "SurfaceRunoff"
-#define MDVarCore_VaporPressure                 "VaporPressure"
 #define MDVarCore_WaterBalance                  "WaterBalance"
 
 // Data assimilation variables

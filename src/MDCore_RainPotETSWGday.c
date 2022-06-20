@@ -28,7 +28,7 @@ static int _MDInCParamZ0gID     = MFUnset;
 static int _MDInLeafAreaIndexID = MFUnset;
 static int _MDInStemAreaIndexID = MFUnset;
 
-static int _MDInCommon_AtMeanID        = MFUnset;
+static int _MDInCommon_AtMeanID = MFUnset;
 static int _MDInAtMinID         = MFUnset;
 static int _MDInSolRadID        = MFUnset;
 static int _MDInVPressID        = MFUnset;
@@ -79,43 +79,43 @@ static void _MDRainPotETSWGday (int itemID) {
 // Output
 	float pet;
 
-	if (MFVarTestMissingVal (_MDInDayLengthID,    itemID) ||
-		 MFVarTestMissingVal (_MDInI0HDayID,       itemID) ||
-		 MFVarTestMissingVal (_MDInCParamAlbedoID, itemID) ||
-		 MFVarTestMissingVal (_MDInCParamCHeightID,itemID) ||
-		 MFVarTestMissingVal (_MDInCParamLWidthID, itemID) ||
-		 MFVarTestMissingVal (_MDInCParamRSSID,    itemID) ||
-		 MFVarTestMissingVal (_MDInCParamR5ID,     itemID) ||
-		 MFVarTestMissingVal (_MDInCParamCDID,     itemID) ||
-		 MFVarTestMissingVal (_MDInCParamCRID,     itemID) ||
-		 MFVarTestMissingVal (_MDInCParamGLMaxID,  itemID) ||
-		 MFVarTestMissingVal (_MDInCParamZ0gID,    itemID) ||
-		 MFVarTestMissingVal (_MDInLeafAreaIndexID,itemID) ||
-		 MFVarTestMissingVal (_MDInStemAreaIndexID,itemID) ||
-		 MFVarTestMissingVal (_MDInCommon_AtMeanID,       itemID) ||
-		 MFVarTestMissingVal (_MDInAtMinID,        itemID) ||
-		 MFVarTestMissingVal (_MDInSolRadID,       itemID) ||
-		 MFVarTestMissingVal (_MDInVPressID,       itemID) ||
-		 MFVarTestMissingVal (_MDInWSpeedID,       itemID)) { MFVarSetMissingVal (_MDOutPetID,itemID); return; }
+	if (MFVarTestMissingVal (_MDInDayLengthID,      itemID) ||
+		 MFVarTestMissingVal (_MDInI0HDayID,        itemID) ||
+		 MFVarTestMissingVal (_MDInCParamAlbedoID,  itemID) ||
+		 MFVarTestMissingVal (_MDInCParamCHeightID, itemID) ||
+		 MFVarTestMissingVal (_MDInCParamLWidthID,  itemID) ||
+		 MFVarTestMissingVal (_MDInCParamRSSID,     itemID) ||
+		 MFVarTestMissingVal (_MDInCParamR5ID,      itemID) ||
+		 MFVarTestMissingVal (_MDInCParamCDID,      itemID) ||
+		 MFVarTestMissingVal (_MDInCParamCRID,      itemID) ||
+		 MFVarTestMissingVal (_MDInCParamGLMaxID,   itemID) ||
+		 MFVarTestMissingVal (_MDInCParamZ0gID,     itemID) ||
+		 MFVarTestMissingVal (_MDInLeafAreaIndexID, itemID) ||
+		 MFVarTestMissingVal (_MDInStemAreaIndexID, itemID) ||
+		 MFVarTestMissingVal (_MDInCommon_AtMeanID, itemID) ||
+		 MFVarTestMissingVal (_MDInAtMinID,         itemID) ||
+		 MFVarTestMissingVal (_MDInSolRadID,        itemID) ||
+		 MFVarTestMissingVal (_MDInVPressID,        itemID) ||
+		 MFVarTestMissingVal (_MDInWSpeedID,        itemID)) { MFVarSetMissingVal (_MDOutPetID,itemID); return; }
 
-	dayLen  = MFVarGetFloat (_MDInDayLengthID,     itemID, 0.1);
-	i0hDay  = MFVarGetFloat (_MDInI0HDayID,        itemID,  0.0);
-	albedo  = MFVarGetFloat (_MDInCParamAlbedoID,  itemID,  0.0);
-	height  = MFVarGetFloat (_MDInCParamCHeightID, itemID,  0.0);
-	lWidth  = MFVarGetFloat (_MDInCParamLWidthID,  itemID,  0.0);
-	rss     = MFVarGetFloat (_MDInCParamRSSID,     itemID,  0.0);
-	r5      = MFVarGetFloat (_MDInCParamR5ID,      itemID,  0.0);
-	cd      = MFVarGetFloat (_MDInCParamCDID,      itemID,  0.0);
-	cr      = MFVarGetFloat (_MDInCParamCRID,      itemID,  0.0);
-	glMax   = MFVarGetFloat (_MDInCParamGLMaxID,   itemID,  0.0);
-	z0g     = MFVarGetFloat (_MDInCParamZ0gID,     itemID,  0.0);
-	lai     = MFVarGetFloat (_MDInLeafAreaIndexID, itemID,  0.0);
-	sai     = MFVarGetFloat (_MDInStemAreaIndexID, itemID,  0.0);
-	airT    = MFVarGetFloat (_MDInCommon_AtMeanID,        itemID,  0.0);
-	airTMin = MFVarGetFloat (_MDInAtMinID,         itemID,  0.0);
-	solRad  = MFVarGetFloat (_MDInSolRadID,        itemID,  0.0);
-	vPress  = MFVarGetFloat (_MDInVPressID,        itemID,  0.0);
-	wSpeed  = fabs (MFVarGetFloat (_MDInWSpeedID,  itemID,  0.0));
+	dayLen  = MFVarGetFloat (_MDInDayLengthID,      itemID, 0.1);
+	i0hDay  = MFVarGetFloat (_MDInI0HDayID,         itemID,  0.0);
+	albedo  = MFVarGetFloat (_MDInCParamAlbedoID,   itemID,  0.0);
+	height  = MFVarGetFloat (_MDInCParamCHeightID,  itemID,  0.0);
+	lWidth  = MFVarGetFloat (_MDInCParamLWidthID,   itemID,  0.0);
+	rss     = MFVarGetFloat (_MDInCParamRSSID,      itemID,  0.0);
+	r5      = MFVarGetFloat (_MDInCParamR5ID,       itemID,  0.0);
+	cd      = MFVarGetFloat (_MDInCParamCDID,       itemID,  0.0);
+	cr      = MFVarGetFloat (_MDInCParamCRID,       itemID,  0.0);
+	glMax   = MFVarGetFloat (_MDInCParamGLMaxID,    itemID,  0.0);
+	z0g     = MFVarGetFloat (_MDInCParamZ0gID,      itemID,  0.0);
+	lai     = MFVarGetFloat (_MDInLeafAreaIndexID,  itemID,  0.0);
+	sai     = MFVarGetFloat (_MDInStemAreaIndexID,  itemID,  0.0);
+	airT    = MFVarGetFloat (_MDInCommon_AtMeanID,  itemID,  0.0);
+	airTMin = MFVarGetFloat (_MDInAtMinID,          itemID,  0.0);
+	solRad  = MFVarGetFloat (_MDInSolRadID,         itemID,  0.0);
+	vPress  = MFVarGetFloat (_MDInVPressID,         itemID,  0.0) / 1000.0;
+	wSpeed  = fabs (MFVarGetFloat (_MDInWSpeedID,   itemID,  0.0));
 	if (wSpeed < 0.2) wSpeed = 0.2;
 
 	solNet  = (1.0 - albedo) * solRad / MDConstIGRATE;
@@ -169,10 +169,10 @@ int MDCore_RainPotETSWGdayDef () {
             ((_MDInStemAreaIndexID = MDParam_LCStemAreaIndexDef ())    == CMfailed) ||
             ((_MDInSolRadID        = MDCommon_SolarRadDef ())          == CMfailed) ||
             ((_MDInCommon_AtMeanID = MDCommon_AirTemperatureDef ())    == CMfailed) ||
-			((_MDInAtMinID   = MFVarGetID (MDVarCommon_AirTempMinimum,  "degC", MFInput, MFState, MFBoundary)) == CMfailed) ||
-			((_MDInVPressID  = MFVarGetID (MDVarCore_VaporPressure,     "kPa",  MFInput, MFState, MFBoundary)) == CMfailed) ||
-			((_MDInWSpeedID  = MFVarGetID (MDVarCommon_WindSpeed,       "m/s",  MFInput, MFState, MFBoundary)) == CMfailed) ||
-			((_MDOutPetID    = MFVarGetID (MDVarCore_RainPotEvapotrans, "mm",  MFOutput, MFFlux,  MFBoundary)) == CMfailed) ||
+			((_MDInAtMinID   = MFVarGetID (MDVarCommon_AirTempMinimum,        "degC", MFInput, MFState, MFBoundary)) == CMfailed) ||
+			((_MDInVPressID  = MFVarGetID (MDVarCommon_HumidityVaporPressure, "Pa",   MFInput, MFState, MFBoundary)) == CMfailed) ||
+			((_MDInWSpeedID  = MFVarGetID (MDVarCommon_WindSpeed,             "m/s",  MFInput, MFState, MFBoundary)) == CMfailed) ||
+			((_MDOutPetID    = MFVarGetID (MDVarCore_RainPotEvapotrans,       "mm",   MFOutput, MFFlux,  MFBoundary)) == CMfailed) ||
             (MFModelAddFunction (_MDRainPotETSWGday) == CMfailed)) return (CMfailed);
 	MFDefLeaving  ("Rainfed Potential Evapotranspiration (Shuttleworth - Wallace [day])");
 	return(_MDOutPetID);

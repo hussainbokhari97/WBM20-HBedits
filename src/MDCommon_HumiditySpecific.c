@@ -34,6 +34,11 @@ static void _MDCommon_HumiditySpecific (int itemID) {
 // Output
     float specificHumidity; // Specific humidity in kg/kg
 
+    if (itemID == 282180) {
+        float dt;
+        dt = MFModelGet_dt ();
+    }
+
     airPressure      = MFVarGetFloat (_MDInCommon_AirPressureID,                 itemID, 0.0);
     saturatedVP      = MFVarGetFloat (_MDInCommon_HumiditySaturatedVaporPressID, itemID, 0.0);
     relativeHumidity = MFVarGetFloat (_MDInCommon_HumidityRelativeID,            itemID, 0.0);
@@ -54,12 +59,12 @@ int MDCommon_HumiditySpecificDef () {
     switch (optID) {
         default:
         case MFhelp: MFOptionMessage (MDOptWeather_SpecificHumidity, optStr, MFsourceOptions); return (CMfailed);
-        case MFinput: _MDOutCommon_HumiditySpecificID = MFVarGetID (MDVarCommon_HumiditySpecific, "%", MFInput, MFState, MFBoundary); break;
+        case MFinput: _MDOutCommon_HumiditySpecificID = MFVarGetID (MDVarCommon_HumiditySpecific, "kg/kg", MFInput, MFState, MFBoundary); break;
         case MFcalculate:
             if (((_MDInCommon_HumiditySaturatedVaporPressID  = MDCommon_HumiditySaturatedVaporPressureDef ()) == CMfailed) ||
                 ((_MDInCommon_HumidityRelativeID             = MDCommon_HumidityRelativeDef())                == CMfailed) ||
-                ((_MDInCommon_AirPressureID       = MFVarGetID (MDVarCommon_AirPressure,      "kPa",  MFInput, MFState, MFBoundary)) == CMfailed) ||
-                ((_MDOutCommon_HumiditySpecificID = MFVarGetID (MDVarCommon_HumiditySpecific, "%",    MFOutput, MFState, MFBoundary)) == CMfailed) ||
+                ((_MDInCommon_AirPressureID       = MFVarGetID (MDVarCommon_AirPressure,      "kPa",   MFInput,  MFState, MFBoundary)) == CMfailed) ||
+                ((_MDOutCommon_HumiditySpecificID = MFVarGetID (MDVarCommon_HumiditySpecific, "kg/kg", MFOutput, MFState, MFBoundary)) == CMfailed) ||
                 ((MFModelAddFunction (_MDCommon_HumiditySpecific) == CMfailed))) return (CMfailed);
             break;
     }

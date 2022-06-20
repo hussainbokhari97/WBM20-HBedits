@@ -24,12 +24,17 @@ static int _MDOutCommon_HumidityDewPointTempID = MFUnset;
 
 static void _MDCommon_HumidityDewPointTemp (int itemID) {
 // Input
-    float vaporPressure;  // Vapor pressure in kPa
+    float vaporPressure;  // Vapor pressure in Pa
     float dewPointTemp;   // Dew point temperature in degC
 
+    if (itemID == 282180) {
+        float dt;
+        dt = MFModelGet_dt ();
+    }
+
     vaporPressure = MFVarGetFloat (_MDInCommon_HumidityVaporPressureID,   itemID, 0.0);
-    dewPointTemp  = vaporPressure > 0.611 ? 237.3 * log (vaporPressure / 0.611) / (17.27 - log (vaporPressure / 0.611))  // Over water 
-                                          : 265.5 * log (vaporPressure / 0.611) / (21.87 - log (vaporPressure / 0.611)); // Over ice
+    dewPointTemp  = vaporPressure > 611 ? 237.3 * log (vaporPressure / 611) / (17.27 - log (vaporPressure / 611))  // Over water 
+                                        : 265.5 * log (vaporPressure / 611) / (21.87 - log (vaporPressure / 611)); // Over ice
     MFVarSetFloat(_MDOutCommon_HumidityDewPointTempID, itemID, dewPointTemp);
 }
 

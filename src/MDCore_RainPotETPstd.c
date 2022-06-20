@@ -48,21 +48,21 @@ static void _MDRainPotETPstd (int itemID) {
 // Output
 	float pet;
 
-	if (MFVarTestMissingVal (_MDInDayLengthID,    itemID) ||
-		 MFVarTestMissingVal (_MDInI0HDayID,       itemID) ||
-		 MFVarTestMissingVal (_MDInCParamAlbedoID, itemID) ||
-		 MFVarTestMissingVal (_MDInCommon_AtMeanID,       itemID) ||
-		 MFVarTestMissingVal (_MDInSolRadID,       itemID) ||
-		 MFVarTestMissingVal (_MDInVPressID,       itemID) ||
-		 MFVarTestMissingVal (_MDInWSpeedID,       itemID)) { MFVarSetMissingVal (_MDOutPetID,itemID); return; }
+	if (MFVarTestMissingVal (_MDInDayLengthID,      itemID) ||
+		 MFVarTestMissingVal (_MDInI0HDayID,        itemID) ||
+		 MFVarTestMissingVal (_MDInCParamAlbedoID,  itemID) ||
+		 MFVarTestMissingVal (_MDInCommon_AtMeanID, itemID) ||
+		 MFVarTestMissingVal (_MDInSolRadID,        itemID) ||
+		 MFVarTestMissingVal (_MDInVPressID,        itemID) ||
+		 MFVarTestMissingVal (_MDInWSpeedID,        itemID)) { MFVarSetMissingVal (_MDOutPetID,itemID); return; }
 
-	dayLen  = MFVarGetFloat (_MDInDayLengthID,    itemID, 12.0);
-	i0hDay  = MFVarGetFloat (_MDInI0HDayID,       itemID,  0.0);
-	albedo  = MFVarGetFloat (_MDInCParamAlbedoID, itemID,  0.0);
-	airT    = MFVarGetFloat (_MDInCommon_AtMeanID,       itemID,  0.0);
-	solRad  = MFVarGetFloat (_MDInSolRadID,       itemID,  0.0);
-	vPress  = MFVarGetFloat (_MDInVPressID,       itemID,  0.0);
-	wSpeed  = fabs (MFVarGetFloat (_MDInWSpeedID, itemID,  0.0));
+	dayLen  = MFVarGetFloat (_MDInDayLengthID,      itemID, 12.0);
+	i0hDay  = MFVarGetFloat (_MDInI0HDayID,         itemID,  0.0);
+	albedo  = MFVarGetFloat (_MDInCParamAlbedoID,   itemID,  0.0);
+	airT    = MFVarGetFloat (_MDInCommon_AtMeanID,  itemID,  0.0);
+	solRad  = MFVarGetFloat (_MDInSolRadID,         itemID,  0.0);
+	vPress  = MFVarGetFloat (_MDInVPressID,         itemID,  0.0) / 1000.0;
+	wSpeed  = fabs (MFVarGetFloat (_MDInWSpeedID,   itemID,  0.0));
 	if (wSpeed < 0.2) wSpeed = 0.2;
 
 	solNet = (1.0 - albedo) * solRad / MDConstIGRATE; // net solar with Penman (1948) albedo of 0.25
@@ -94,9 +94,9 @@ int MDCore_RainPotETPstdDef () {
         ((_MDInCParamAlbedoID  = MDParam_LCAlbedoDef ())           == CMfailed) ||
         ((_MDInSolRadID        = MDCommon_SolarRadDef ())          == CMfailed) ||
         ((_MDInCommon_AtMeanID = MDCommon_AirTemperatureDef ())    == CMfailed) ||
-        ((_MDInVPressID  = MFVarGetID (MDVarCore_VaporPressure,     "kPa", MFInput,  MFState, MFBoundary)) == CMfailed) ||
-        ((_MDInWSpeedID  = MFVarGetID (MDVarCommon_WindSpeed,       "m/s", MFInput,  MFState, MFBoundary)) == CMfailed) ||
-        ((_MDOutPetID    = MFVarGetID (MDVarCore_RainPotEvapotrans, "mm",  MFOutput, MFFlux,  MFBoundary)) == CMfailed) ||
+        ((_MDInVPressID  = MFVarGetID (MDVarCommon_HumidityVaporPressure, "Pa",  MFInput,  MFState, MFBoundary)) == CMfailed) ||
+        ((_MDInWSpeedID  = MFVarGetID (MDVarCommon_WindSpeed,             "m/s", MFInput,  MFState, MFBoundary)) == CMfailed) ||
+        ((_MDOutPetID    = MFVarGetID (MDVarCore_RainPotEvapotrans,       "mm",  MFOutput, MFFlux,  MFBoundary)) == CMfailed) ||
         (MFModelAddFunction (_MDRainPotETPstd) == CMfailed)) return (CMfailed);
 	MFDefLeaving  ("Rainfed Potential Evapotranspiration (Penman Standard)");
 	return (_MDOutPetID);
