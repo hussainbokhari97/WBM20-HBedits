@@ -34,11 +34,6 @@ static void _MDCommon_HumiditySpecific (int itemID) {
 // Output
     float specificHumidity; // Specific humidity in kg/kg
 
-    if (itemID == 282180) {
-        float dt;
-        dt = MFModelGet_dt ();
-    }
-
     airPressure      = MFVarGetFloat (_MDInCommon_AirPressureID,                 itemID, 0.0);
     saturatedVP      = MFVarGetFloat (_MDInCommon_HumiditySaturatedVaporPressID, itemID, 0.0);
     relativeHumidity = MFVarGetFloat (_MDInCommon_HumidityRelativeID,            itemID, 0.0);

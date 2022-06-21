@@ -28,11 +28,6 @@ static void _MDCommon_HumidityVaporPressure (int itemID) {
     float airPressure;      // Air pressure in Pa
     float vaporPressure;    // Vapor pressure in Pa
 
-    if (itemID == 282180) {
-        float dt;
-        dt = MFModelGet_dt ();
-    }
-
     specificHumidity = MFVarGetFloat (_MDInCommon_HumiditySpecificID, itemID, 0.0);
     airPressure      = MFVarGetFloat (_MDInCommon_AirPressureID,      itemID, 0.0); // air pressure (kPa)
 
