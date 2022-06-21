@@ -24,12 +24,12 @@ static int _MDInCommon_HumidityVaporPressureID       = MFUnset;
 static int _MDOutCommon_HumidityRelativeID           = MFUnset;
 
 static void _MDCommon_HumidityRelative (int itemID) {
-    float saturatedVP;      // Saturated vapor pressure in kPa
-    float vaporPress;       // Vapor pressure in kPa
+    float saturatedVP;      // Saturated vapor pressure in Pa
+    float vaporPress;       // Vapor pressure in Pa
     float relativehumidity; // Relative humidity in precent
 
     saturatedVP = MFVarGetFloat (_MDInCommon_HumiditySaturatedVaporPressID, itemID, 0.0);
-    vaporPress  = MFVarGetFloat (_MDInCommon_HumidityVaporPressureID,       itemID, 0.0); //pressure (Pa)
+    vaporPress  = MFVarGetFloat (_MDInCommon_HumidityVaporPressureID,       itemID, 0.0);
 
     relativehumidity = vaporPress < saturatedVP ? 100.0 * vaporPress / saturatedVP : 100.0;
     MFVarSetFloat(_MDOutCommon_HumidityRelativeID, itemID, relativehumidity);

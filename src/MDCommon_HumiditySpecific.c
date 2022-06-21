@@ -29,7 +29,7 @@ static int _MDOutCommon_HumiditySpecificID = MFUnset;
 static void _MDCommon_HumiditySpecific (int itemID) {
 // Input
     float airPressure;      // Air pressure in kPa
-    float saturatedVP;      // Saturated vapor pressure in kPa
+    float saturatedVP;      // Saturated vapor pressure in Pa
     float relativeHumidity; // Relative humidity in percent
 // Output
     float specificHumidity; // Specific humidity in kg/kg
