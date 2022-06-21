@@ -27,14 +27,14 @@ static void _MDCommon_GrossRadianceStd (int itemID) {
 	float  grossRad;
 // Local
 	int   hour;
-	double eta,sigma,sinphi,sp,sbb;
+	double eta, sigma, sinphi, sp, sbb;
 
-	day    = MFDateGetDayOfYear ();
+	day   = MFDateGetDayOfYear ();
    lambda = MFModelGetLatitude (itemID) * DTOR;
 
-	sp = 1360.0 * 3600.0 * 24.0 * 0.041841 / 41860.0; // FBM  0.041841 conversion from cal/cm2 to MJ/m2
+	sp = 1360.0; // Solar constant in W/m2
 	grossRad = 0;
-	sigma = -23.4 * cos (2.0 * M_PI * (day + 11.0) / 365.0) * DTOR;
+	sigma = -23.4 * cos (2.0 * M_PI * (day + 11.0) / 365.25) * DTOR;
 	for (hour = 0;hour < 24; hour++) {
 		eta = (hour + 1) * M_PI / 12.0;
 		sinphi = sin (lambda) * sin (sigma) + cos (lambda) * cos (sigma) * cos (eta);
@@ -49,7 +49,7 @@ static void _MDCommon_GrossRadianceOtto (int itemID) {
 	int   day;
 	float lambda;
 // Output
-	float  grossRad;
+	float  grossRad; // W/m2
 // Local
 	int   hour;
 	double eta, sigma,sinphi,sp,sbb,sotd;
@@ -57,7 +57,7 @@ static void _MDCommon_GrossRadianceOtto (int itemID) {
 	day    = MFDateGetDayOfYear ();
    lambda = MFModelGetLatitude (itemID) * DTOR;
 
-	sp = 1360.0 * 3600.0 * 24.0 * 0.041841 / 41860.0; // FBM  0.041841 conversion from cal/cm2 to MJ/m2
+	sp = 1360.0; // Solar constant in W/m2
 	grossRad = 0.0;
 	sigma = -23.4856 * cos (2.0 * M_PI * (day + 11.0) / 365.25) * DTOR;
 	for (hour = 0;hour < 24;hour++) {
@@ -85,14 +85,14 @@ int MDCommon_GrossRadDef () {
 	switch (optID) {
 		default:      MFOptionMessage (MDVarCore_GrossRadiance, optStr, options); return (CMfailed);
 		case MDhelp:  MFOptionMessage (MDVarCore_GrossRadiance, optStr, options);
-		case MDinput: _MDOutCommon_GrossRadID = MFVarGetID (MDVarCore_GrossRadiance, "MJ/m^2", MFInput, MFFlux, MFBoundary); break;
+		case MDinput: _MDOutCommon_GrossRadID = MFVarGetID (MDVarCore_GrossRadiance, "W/m^2", MFInput, MFFlux, MFBoundary); break;
 		case MDstandard:
 			if (((optStr = MFOptionGet (MDParGrossRadTAU)) != (char *) NULL) && (sscanf (optStr,"%f",&par) == 1)) _MDGrossRadStdTAU = par;
-			if (((_MDOutCommon_GrossRadID    = MFVarGetID (MDVarCore_GrossRadiance, "MJ/m^2", MFOutput, MFFlux, MFBoundary)) == CMfailed) ||
+			if (((_MDOutCommon_GrossRadID    = MFVarGetID (MDVarCore_GrossRadiance, "W/m^2", MFOutput, MFFlux, MFBoundary)) == CMfailed) ||
                 (MFModelAddFunction(_MDCommon_GrossRadianceStd) == CMfailed)) return (CMfailed);
 			break;
 		case MDOtto:
-			if (((_MDOutCommon_GrossRadID    = MFVarGetID (MDVarCore_GrossRadiance, "MJ/m^2", MFOutput, MFFlux, MFBoundary)) == CMfailed) ||
+			if (((_MDOutCommon_GrossRadID    = MFVarGetID (MDVarCore_GrossRadiance, "W/m^2", MFOutput, MFFlux, MFBoundary)) == CMfailed) ||
                 (MFModelAddFunction(_MDCommon_GrossRadianceOtto) == CMfailed)) return (CMfailed);
 			break;
 	}

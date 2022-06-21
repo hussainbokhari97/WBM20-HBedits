@@ -107,23 +107,23 @@ int MDCommon_SolarRadI0HDayDef () {
 	return (_MDOutCommon_SolarRadI0HDayID);
 }
 
-static int _MDInputID, _MDCommon_GrossRadID;
+static int _MDInCommon_CloudCoverID, _MDInCommon_GrossRadID;
 
 static int _MDOutCommon_SolarRadID = MFUnset;
 
 static void _MDSolarRadiationCloud (int itemID) {
 // Input
-	float cloud;
+	float clearSky; // Clear sky radiation in W/m2
+	float cloud;    // Cloud cover in percent
 // Output
-	float solarRad;
+	float solarRad; // Solar radiation W/m2
 // Local
 
-	solarRad = MFVarGetFloat (_MDCommon_GrossRadID, itemID, 0.0);
-	cloud    = MFVarGetFloat (_MDInputID,    itemID, 0.0) ;
-	if (fabs(cloud) > 100.0) printf ("cloud cover item %i  %f VarID %i \n",itemID, cloud, _MDInputID);
-	cloud = cloud / 100.0;
+	clearSky = MFVarGetFloat (_MDInCommon_GrossRadID,   itemID, 0.0);
+	cloud    = MFVarGetFloat (_MDInCommon_CloudCoverID, itemID, 0.0);
+	cloud = cloud < 100.0 ? cloud / 100.0 : 1.0;
 		 
-	solarRad = solarRad * (0.803 - (0.340 * cloud) - (0.458 * (float) pow ((double) cloud,(double) 2.0)));
+	solarRad = clearSky * (0.803 - (0.340 * cloud) - (0.458 * (float) pow ((double) cloud,(double) 2.0)));
     MFVarSetFloat (_MDOutCommon_SolarRadID,  itemID, solarRad);
 }
 
@@ -134,8 +134,8 @@ static void _MDSolarRadiationSun (int itemID) {
 	float solarRad;
 // Local
 
-	solarRad = MFVarGetFloat (_MDCommon_GrossRadID, itemID,  0.0);
-	sunShine = MFVarGetFloat (_MDInputID,    itemID, 50.0) / 100.0;
+	solarRad = MFVarGetFloat (_MDInCommon_GrossRadID, itemID,  0.0);
+	sunShine = MFVarGetFloat (_MDInCommon_CloudCoverID,    itemID, 50.0) / 100.0;
 
 	solarRad = solarRad * (0.251 + 0.509 * sunShine);
 	MFVarSetFloat (_MDOutCommon_SolarRadID,  itemID, solarRad);
@@ -154,19 +154,18 @@ int MDCommon_SolarRadDef () {
 	if ((optStr = MFOptionGet (MDVarCore_SolarRadiation)) != (char *) NULL) optID = CMoptLookup (options, optStr, true);
 	switch (optID) {
 		default:      MFOptionMessage (MDVarCore_SolarRadiation, optStr, options); return (CMfailed);
-		case MDhelp:  MFOptionMessage (MDVarCore_SolarRadiation, optStr, options);
-		case MDinput: _MDOutCommon_SolarRadID = MFVarGetID (MDVarCore_SolarRadiation, "MJ/m^2", MFInput, MFState, MFBoundary); break;
+		case MDhelp:  MFOptionMessage (MDVarCore_SolarRadiation, optStr, options); break;
+		case MDinput: _MDOutCommon_SolarRadID = MFVarGetID (MDVarCore_SolarRadiation, "W/m^2", MFInput, MFState, MFBoundary); break;
 		case MDcloud:
-		//	printf ("Option: Cloud!!!");
-			if (((_MDCommon_GrossRadID     = MDCommon_GrossRadDef ())  == CMfailed) ||
-                ((_MDInputID               = MDCommon_CloudCoverDef()) == CMfailed) ||
-                ((_MDOutCommon_SolarRadID  = MFVarGetID (MDVarCore_SolarRadiation, "MJ/m^2", MFOutput,  MFState, MFBoundary)) == CMfailed) ||
+			if (((_MDInCommon_GrossRadID   = MDCommon_GrossRadDef ())  == CMfailed) ||
+                ((_MDInCommon_CloudCoverID = MDCommon_CloudCoverDef()) == CMfailed) ||
+                ((_MDOutCommon_SolarRadID  = MFVarGetID (MDVarCore_SolarRadiation, "W/m^2", MFOutput,  MFState, MFBoundary)) == CMfailed) ||
                 (MFModelAddFunction (_MDSolarRadiationCloud) == CMfailed)) return (CMfailed);
 			break;
 		case MDsun:
-			if (((_MDCommon_GrossRadID     = MDCommon_GrossRadDef()) == CMfailed) ||
-                ((_MDInputID               = MFVarGetID (MDVarCore_SunShine,       "%",      MFInput,  MFState, MFBoundary)) == CMfailed) ||
-                ((_MDOutCommon_SolarRadID  = MFVarGetID (MDVarCore_SolarRadiation, "MJ/m^2", MFOutput, MFState, MFBoundary)) == CMfailed) ||
+			if (((_MDInCommon_GrossRadID   = MDCommon_GrossRadDef()) == CMfailed) ||
+                ((_MDInCommon_CloudCoverID = MFVarGetID (MDVarCore_SunShine,       "%",     MFInput,  MFState, MFBoundary)) == CMfailed) ||
+                ((_MDOutCommon_SolarRadID  = MFVarGetID (MDVarCore_SolarRadiation, "W/m^2", MFOutput, MFState, MFBoundary)) == CMfailed) ||
                 (MFModelAddFunction (_MDSolarRadiationSun) == CMfailed)) return (CMfailed);
 			break;
 	}

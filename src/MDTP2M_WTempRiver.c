@@ -47,13 +47,13 @@ static int _MDOutTP2M_WTempRiverID             = MFUnset;
 
 static void _MDWTempRiver (int itemID) {
 // Input
-    float Tair;
-    float dew_point;
- 	float solarRad; //MJ/m2/d - CHECK UNITS
- 	float windSpeed;
-    float RO_Vol;
-    float Q;
-   	float Q_incoming; // already includes local runoff
+    float Tair;         // Air temperature in degC
+    float dew_point;    // Dewpoint temperature in degC
+ 	float solarRad;     // Solar radiation in W/m2
+ 	float windSpeed;    // Winds speed in m/s
+    float RO_Vol;       // RO volume in m3
+    float Q;            // Outflowing discharge in m3/s 
+   	float Q_incoming;   // Incoming discharge including local runoff in m3/s
    	float channelWidth;
    	float waterStorage;
  	float waterStorageChange;
@@ -92,11 +92,11 @@ static void _MDWTempRiver (int itemID) {
 
     Tair               = MFVarGetFloat (_MDInCommon_AirTemperatureID,     itemID, 0.0);
     dew_point          = MFVarGetFloat (_MDInCommon_HumidityDewPointID,   itemID, 0.0);
- 	solarRad           = MFVarGetFloat (_MDInCommon_SolarRadID,           itemID, 0.0); //MJ/m2/d - CHECK UNITS
+ 	solarRad           = MFVarGetFloat (_MDInCommon_SolarRadID,           itemID, 0.0);
  	windSpeed          = MFVarGetFloat (_MDInCommon_WindSpeedID,          itemID, 0.0);
     RO_Vol             = MFVarGetFloat (_MDInCore_RunoffVolumeID,         itemID, 0.0);
     Q                  = MFVarGetFloat (_MDInRouting_DischargeID,         itemID, 0.0);
-   	Q_incoming         = MFVarGetFloat (_MDInRouting_DischargeIncomingID, itemID, 0.0); // already includes local runoff
+   	Q_incoming         = MFVarGetFloat (_MDInRouting_DischargeIncomingID, itemID, 0.0);
    	channelWidth       = MFVarGetFloat (_MDInRouting_RiverWidthID,        itemID, 0.0);
    	waterStorage       = MFVarGetFloat (_MDInRouting_RiverStorageID,      itemID, 0.0);
  	waterStorageChange = MFVarGetFloat (_MDInRouting_RiverStorageChgID,   itemID, 0.0);
@@ -189,8 +189,8 @@ static void _MDWTempRiver (int itemID) {
             for (x = 0; x < 4; x++) {
 	            Tm = (dew_point + initial_riverT) / 2; // mean of rivertemp initial and dew point
 	            beta = 0.35 + (0.015 * Tm) + (0.0012 * pow(Tm, 2.0)); //beta
-	            kay = (4.5 + (0.05 * initial_riverT) + (beta * wind_f) + (0.47 * wind_f)) * dt; // K in daily J
-	            equil2 = dew_point + solarRad * 1e6 / kay; // solarRad is in MJ/day
+	            kay = (4.5 + (0.05 * initial_riverT) + (beta * wind_f) + (0.47 * wind_f)); // K in W/m2/degC
+	            equil2 = dew_point + solarRad / kay; // Solar radiation is in W/m2
 	            initial_riverT = equil2;
             }
 
