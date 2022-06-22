@@ -39,26 +39,27 @@ static void _MDDischLevel3Muskingum (int itemID) {
 	float inDischPrevious; // Upstream discharge at the previous time step [m3/s]
 	float storageChg;      // River Storage Change [m3]
 	float storage;         // River Storage [m3]
+	float dt = MFModelGet_dt ();
 	
 	C0 = MFVarGetFloat (_MDInRouting_MuskingumC0ID, itemID, 1.0);
 	C1 = MFVarGetFloat (_MDInRouting_MuskingumC1ID, itemID, 0.0);
 	C2 = MFVarGetFloat (_MDInRouting_MuskingumC2ID, itemID, 0.0);
 
 	runoff          = MFVarGetFloat (_MDInCore_RunoffVolumeID,     itemID, 0.0);
- 	inDischPrevious = MFVarGetFloat (_MDOutRouting_Discharge0ID,   itemID, 0.0);
 	inDischCurrent  = MFVarGetFloat (_MDInRouting_DischargeID,     itemID, 0.0) + runoff;
+ 	inDischPrevious = MFVarGetFloat (_MDOutRouting_Discharge0ID,   itemID, 0.0);
 	outDisch        = MFVarGetFloat (_MDOutRouting_Discharge1ID,   itemID, 0.0);
 	storage         = MFVarGetFloat (_MDOutRouting_RiverStorageID, itemID, 0.0);
 
 	outDisch    = C0 * inDischCurrent + C1 * inDischPrevious + C2 * outDisch;
 	outDisch    = outDisch > 0.0 ? outDisch : inDischCurrent; // negative C1 and C2 could cause negative discharge so falling back to accumulation
 
-	storageChg  = (inDischCurrent - outDisch) * MFModelGet_dt ();
+	storageChg  = (inDischCurrent - outDisch) * dt;
 	if (storage + storageChg > 0.0) storage += storageChg;
 	else {
-		storageChg = 0.0 - storage;
+		storageChg = inDischCurrent * dt > storage ? 0.0 - storage : inDischCurrent * dt - storage;
 		storage    = 0.0;
-		outDisch   = inDischCurrent - storageChg / MFModelGet_dt ();
+		outDisch   = inDischCurrent - storageChg / dt;
 	}
 
 	MFVarSetFloat (_MDOutRouting_Discharge0ID,   itemID, inDischCurrent);
