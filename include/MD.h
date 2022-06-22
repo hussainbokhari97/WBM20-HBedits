@@ -378,16 +378,7 @@ extern "C" {
 #define MDVarTP2M_WTempRunoff                   "RunoffTemperature"
 #define MDVarTP2M_WTempSurfRunoff               "SurfaceROTemperature"
 #define MDVarTP2M_WTempRiver                    "RiverTemperature"
-#define MDVarTP2M_WTLocalIn_QxT                 "QxT_LocalIn"
-#define MDVarTP2M_Removal_QxT                   "QxT_Removal"
-#define MDVarTP2M_Flux_QxT                      "QxT_Flux"
-#define MDVarTP2M_Storage_QxT                   "QxT_Storage"
-#define MDVarTP2M_DeltaStorage_QxT              "QxT_DeltaStorage"
-#define MDVarTP2M_WTempDeltaT_QxT               "QxT_deltaT"
-#define MDVarTP2M_FluxMixing_QxT                "QxT_FluxMixing"
-#define MDVarTP2M_StorageMixing_QxT             "QxT_StorageMixing"
-#define MDVarTP2M_DeltaStorageMixing_QxT        "QxT_DeltaStorageMixing"
-#define MDVarTP2M_WTempMixing_QxT               "QxT_WaterTempMixing"
+#define MDVarTP2M_HeatFlux                      "HeatFlux"
 
 // Varying Parameters
 #define MDVarParam_Albedo                       "Albedo"

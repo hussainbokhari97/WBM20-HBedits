@@ -14,17 +14,17 @@ bfekete@gc.cuny.edu
 #include <MD.h>
 
 // Input
-static int _MDInMuskingumC0ID   = MFUnset;
-static int _MDInMuskingumC1ID   = MFUnset;
-static int _MDInMuskingumC2ID   = MFUnset;
-static int _MDInAux_RunoffVolumeID  = MFUnset;
-static int _MDInRouting_DischargeID     = MFUnset;
+static int _MDInCore_RunoffVolumeID   = MFUnset;
+static int _MDInRouting_MuskingumC0ID = MFUnset;
+static int _MDInRouting_MuskingumC1ID = MFUnset;
+static int _MDInRouting_MuskingumC2ID = MFUnset;
+static int _MDInRouting_DischargeID   = MFUnset;
 // Output
-static int _MDOutDischAux0ID    = MFUnset;
-static int _MDOutDischAux1ID    = MFUnset;
+static int _MDOutRouting_Discharge0ID   = MFUnset;
+static int _MDOutRouting_Discharge1ID   = MFUnset;
 static int _MDOutRouting_DischLevel3ID  = MFUnset;
 static int _MDOutRouting_RiverStorChgID = MFUnset;
-static int _MDOutAux_RiverStorageID = MFUnset;
+static int _MDOutRouting_RiverStorageID = MFUnset;
 
 static void _MDDischLevel3Muskingum (int itemID) {
 // Input
@@ -40,15 +40,15 @@ static void _MDDischLevel3Muskingum (int itemID) {
 	float storageChg;      // River Storage Change [m3]
 	float storage;         // River Storage [m3]
 	
-	C0 = MFVarGetFloat (_MDInMuskingumC0ID,   itemID, 1.0);
-	C1 = MFVarGetFloat (_MDInMuskingumC1ID,   itemID, 0.0);
-	C2 = MFVarGetFloat (_MDInMuskingumC2ID,   itemID, 0.0);
+	C0 = MFVarGetFloat (_MDInRouting_MuskingumC0ID, itemID, 1.0);
+	C1 = MFVarGetFloat (_MDInRouting_MuskingumC1ID, itemID, 0.0);
+	C2 = MFVarGetFloat (_MDInRouting_MuskingumC2ID, itemID, 0.0);
 
-	runoff          = MFVarGetFloat (_MDInAux_RunoffVolumeID,  itemID, 0.0);
- 	inDischPrevious = MFVarGetFloat (_MDOutDischAux0ID,        itemID, 0.0);
-	inDischCurrent  = MFVarGetFloat (_MDInRouting_DischargeID, itemID, 0.0) + runoff;
-	outDisch        = MFVarGetFloat (_MDOutDischAux1ID,        itemID, 0.0);
-	storage         = MFVarGetFloat (_MDOutAux_RiverStorageID, itemID, 0.0);
+	runoff          = MFVarGetFloat (_MDInCore_RunoffVolumeID,     itemID, 0.0);
+ 	inDischPrevious = MFVarGetFloat (_MDOutRouting_Discharge0ID,   itemID, 0.0);
+	inDischCurrent  = MFVarGetFloat (_MDInRouting_DischargeID,     itemID, 0.0) + runoff;
+	outDisch        = MFVarGetFloat (_MDOutRouting_Discharge1ID,   itemID, 0.0);
+	storage         = MFVarGetFloat (_MDOutRouting_RiverStorageID, itemID, 0.0);
 
 	outDisch    = C0 * inDischCurrent + C1 * inDischPrevious + C2 * outDisch;
 	outDisch    = outDisch > 0.0 ? outDisch : inDischCurrent; // negative C1 and C2 could cause negative discharge so falling back to accumulation
@@ -61,11 +61,11 @@ static void _MDDischLevel3Muskingum (int itemID) {
 		outDisch   = inDischCurrent - storageChg / MFModelGet_dt ();
 	}
 
-	MFVarSetFloat (_MDOutDischAux0ID,            itemID, inDischCurrent);
-	MFVarSetFloat (_MDOutDischAux1ID,            itemID, outDisch);
+	MFVarSetFloat (_MDOutRouting_Discharge0ID,   itemID, inDischCurrent);
+	MFVarSetFloat (_MDOutRouting_Discharge1ID,   itemID, outDisch);
 	MFVarSetFloat (_MDOutRouting_DischLevel3ID,  itemID, outDisch);
 	MFVarSetFloat (_MDOutRouting_RiverStorChgID, itemID, storageChg);
-	MFVarSetFloat (_MDOutAux_RiverStorageID,     itemID, storage);
+	MFVarSetFloat (_MDOutRouting_RiverStorageID, itemID, storage);
 }
 
 int MDRouting_DischargeInChannelMuskingumDef () {
@@ -74,15 +74,15 @@ int MDRouting_DischargeInChannelMuskingumDef () {
 
 	MFDefEntering ("Discharge Routing - Muskingum");
 
-	if (((_MDInAux_RunoffVolumeID      = MDCore_RunoffVolumeDef()) == CMfailed) ||
-        ((_MDInMuskingumC0ID           = MDRouting_DischargeInChannelMuskingumCoeffDef()) == CMfailed) ||
-        ((_MDInMuskingumC1ID           = MFVarGetID (MDVarRouting_MuskingumC1,     MFNoUnit, MFInput,  MFState, MFBoundary)) == CMfailed) ||
-        ((_MDInMuskingumC2ID           = MFVarGetID (MDVarRouting_MuskingumC2,     MFNoUnit, MFInput,  MFState, MFBoundary)) == CMfailed) ||
+	if (((_MDInCore_RunoffVolumeID     = MDCore_RunoffVolumeDef()) == CMfailed) ||
+        ((_MDInRouting_MuskingumC0ID   = MDRouting_DischargeInChannelMuskingumCoeffDef()) == CMfailed) ||
+        ((_MDInRouting_MuskingumC1ID   = MFVarGetID (MDVarRouting_MuskingumC1,     MFNoUnit, MFInput,  MFState, MFBoundary)) == CMfailed) ||
+        ((_MDInRouting_MuskingumC2ID   = MFVarGetID (MDVarRouting_MuskingumC2,     MFNoUnit, MFInput,  MFState, MFBoundary)) == CMfailed) ||
         ((_MDInRouting_DischargeID     = MFVarGetID (MDVarRouting_Discharge,       "m3/s",   MFInput,  MFState, MFInitial))  == CMfailed) ||
-        ((_MDOutDischAux0ID            = MFVarGetID (MDVarRouting_Discharge0,      "m3/s",   MFOutput, MFState, MFInitial))  == CMfailed) ||
-        ((_MDOutDischAux1ID            = MFVarGetID (MDVarRouting_Discharge1,      "m3/s",   MFOutput, MFState, MFInitial))  == CMfailed) ||
+        ((_MDOutRouting_Discharge0ID   = MFVarGetID (MDVarRouting_Discharge0,      "m3/s",   MFOutput, MFState, MFInitial))  == CMfailed) ||
+        ((_MDOutRouting_Discharge1ID   = MFVarGetID (MDVarRouting_Discharge1,      "m3/s",   MFOutput, MFState, MFInitial))  == CMfailed) ||
         ((_MDOutRouting_RiverStorChgID = MFVarGetID (MDVarRouting_RiverStorageChg, "m3",     MFOutput, MFFlux,  MFBoundary)) == CMfailed) ||
-        ((_MDOutAux_RiverStorageID     = MFVarGetID (MDVarRouting_RiverStorage,    "m3",     MFOutput, MFState, MFInitial))  == CMfailed) ||
+        ((_MDOutRouting_RiverStorageID = MFVarGetID (MDVarRouting_RiverStorage,    "m3",     MFOutput, MFState, MFInitial))  == CMfailed) ||
         ((_MDOutRouting_DischLevel3ID  = MFVarGetID ("__DischLevel3",              "m3/s",   MFOutput, MFState, MFBoundary)) == CMfailed) ||
         (MFModelAddFunction(_MDDischLevel3Muskingum) == CMfailed)) return (CMfailed);
 

@@ -119,13 +119,13 @@ int MDAux_AccumGrdWatChgDef() {
 
 
 //Input;
-static int _MDInAux_RunoffVolumeID  = MFUnset;
+static int _MDInCore_RunoffVolumeID  = MFUnset;
 //Output
 static int _MDOutAux_AccCore_RunoffID    = MFUnset;
 
 static void _MDAux_AccumRunoff (int itemID) {
 	MFVarSetFloat(_MDOutAux_AccCore_RunoffID, itemID, MFVarGetFloat(_MDOutAux_AccCore_RunoffID,    itemID, 0.0) +
-	                                         MFVarGetFloat (_MDInAux_RunoffVolumeID, itemID, 0.0));
+	                                         MFVarGetFloat (_MDInCore_RunoffVolumeID, itemID, 0.0));
 }
 
 int MDAux_AccumRunoffDef() {
@@ -133,7 +133,7 @@ int MDAux_AccumRunoffDef() {
 	if (_MDOutAux_AccCore_RunoffID != MFUnset) return (_MDOutAux_AccCore_RunoffID);
 
 	MFDefEntering ("Accumulate Runoff");
-	if (((_MDInAux_RunoffVolumeID  = MDCore_RunoffVolumeDef()) == CMfailed) ||
+	if (((_MDInCore_RunoffVolumeID  = MDCore_RunoffVolumeDef()) == CMfailed) ||
         ((_MDOutAux_AccCore_RunoffID    = MFVarGetID (MDVarAux_AccRunoff, "m3/s", MFRoute, MFState, MFBoundary)) == CMfailed) ||
         (MFModelAddFunction(_MDAux_AccumRunoff) == CMfailed)) return (CMfailed);
 
