@@ -22,7 +22,6 @@ static int _MDInSnowPackChgID               = MFUnset;
 static int _MDInSoilMoistChgID              = MFUnset;
 static int _MDInAux_GrdWatChgID             = MFUnset;
 static int _MDInCore_RunoffID               = MFUnset;
-static int _MDInRouting_DischargeID         = MFUnset;
 
 static int _MDInIrrEvapotranspID            = MFUnset;
 static int _MDInIrrSoilMoistChgID           = MFUnset;
@@ -89,9 +88,6 @@ static void _MDWaterBalance(int itemID) {
 		MFVarSetFloat (_MDOutIrrUptakeBalanceID, itemID, balance);
 	}
 	balance = precip + irrUptakeRiver + irrUptakeExcess - (etp + runoff + grdWaterChg + snowPackChg + soilMoistChg + smallResStorageChg);
-	if (fabs (balance) > 0.01 )
-	//	printf ("TIEM %i WaterBalance! %f precip %f Demand %f\n", itemID ,balance,precip,irrGrossDemand);
-
 	MFVarSetFloat (_MDOutWaterBalanceID, itemID , balance);
 }
 
@@ -102,11 +98,10 @@ int MDCore_WaterBalanceDef() {
 	MFDefEntering ("WaterBalance");
 	if ((MDAux_AccumBalanceDef() == CMfailed) ||
         ((_MDInCommon_PrecipID     = MDCommon_PrecipitationDef ())    == CMfailed) ||
-        ((_MDInRouting_DischargeID = MDRouting_DischargeDef ())       == CMfailed) ||
+        ((_MDInEvaptrsID           = MDCore_EvapotranspirationDef ()) == CMfailed) ||
         ((_MDInSnowPackChgID       = MDCore_SnowPackChgDef ())        == CMfailed) ||
         ((_MDInSoilMoistChgID      = MDCore_SoilMoistChgDef ())       == CMfailed) ||
         ((_MDInCore_RunoffID       = MDCore_RunoffDef ())             == CMfailed) ||
-        ((_MDInEvaptrsID           = MDCore_EvapotranspirationDef ()) == CMfailed) ||
         ((_MDInAux_GrdWatChgID     = MFVarGetID (MDVarCore_GroundWaterChange, "mm", MFInput, MFFlux, MFBoundary)) == CMfailed) ||
         ((_MDOutWaterBalanceID     = MFVarGetID (MDVarCore_WaterBalance, "mm", MFOutput, MFFlux, MFBoundary)) == CMfailed) ||
         (MFModelAddFunction(_MDWaterBalance) == CMfailed))

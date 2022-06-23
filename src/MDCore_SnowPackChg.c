@@ -16,54 +16,29 @@ bfekete@gc.cuny.edu
 #include <MD.h>
 
 // Input
-static int _MDInCommon_AtMeanID    = MFUnset;
-static int _MDInCommon_PrecipID    = MFUnset;
-static int _MDInWinterOnsetID = MFUnset;
+static int _MDInCommon_AtMeanID   = MFUnset;
+static int _MDInCommon_PrecipID   = MFUnset;
 
 // Output
-static int _MDOutSnowPackID = MFUnset;
-static int _MDOutSPackChgID = MFUnset;
-static int _MDOutSnowMeltID = MFUnset;
-static int _MDOutSnowFallID = MFUnset;
-static int _MDOutSnowDensityID = MFUnset;
-static int _MDOutSnowDepthID = MFUnset;
-static int _MDCalculateSoilTempID = MFUnset;
-static float _MDSnowMeltThreshold = 1.0;
-static float _MDFallThreshold = -1.0;
+static int _MDOutSnowPackID       = MFUnset;
+static int _MDOutSPackChgID       = MFUnset;
+static int _MDOutSnowMeltID       = MFUnset;
+static int _MDOutSnowFallID       = MFUnset;
+
+static float _MDSnowMeltThreshold =  1.0;
+static float _MDFallThreshold     = -1.0;
 
 static void _MDSPackChg (int itemID) {
 // Input
 	float airT;
 	float precip;
-	float winterOnsetDoY;
-	float initialDensity = 150;
-	float sDensitySlope = 3;
-	if( _MDCalculateSoilTempID==1)winterOnsetDoY = MFVarGetFloat(_MDInWinterOnsetID, itemID,1.0);
-
-	// Local
+// Output
 	float sPack;
-	float sPackChg = 0.0;
-	float sDensity=0.0;
-	float sDepth = 0.0;
-	int snowAge=0;
-	float densityOfWater =1000;
-	if (MFDateGetDayOfYear()  - winterOnsetDoY > 0){
-	snowAge = MFDateGetDayOfYear() - winterOnsetDoY;
-	}else{
-		snowAge = 365 - winterOnsetDoY + MFDateGetDayOfYear();
-	}
+	float sMelt = 0.0;
 	
-	sPack  = MFVarGetFloat (_MDOutSnowPackID, itemID, 0.0);
-	if (MFVarTestMissingVal (_MDInCommon_AtMeanID,itemID) || MFVarTestMissingVal (_MDInCommon_PrecipID, itemID)) {
-		MFVarSetFloat (_MDOutSnowFallID, itemID, 0.0);
-		MFVarSetFloat (_MDOutSnowMeltID, itemID, 0.0);
-		MFVarSetFloat (_MDOutSnowPackID, itemID, sPack);	
-		MFVarSetFloat (_MDOutSPackChgID, itemID, 0.0);
-		return; 
-	}
-
-	airT   = MFVarGetFloat (_MDInCommon_AtMeanID,    itemID, 0.0);
-	precip = MFVarGetFloat (_MDInCommon_PrecipID,    itemID, 0.0);
+	sPack  = MFVarGetFloat (_MDOutSnowPackID,     itemID, 0.0);
+	airT   = MFVarGetFloat (_MDInCommon_AtMeanID, itemID, 0.0);
+	precip = MFVarGetFloat (_MDInCommon_PrecipID, itemID, 0.0);
 
 	if (airT < _MDFallThreshold) {  /* Accumulating snow pack */
 		MFVarSetFloat (_MDOutSnowFallID, itemID, precip);
@@ -72,12 +47,12 @@ static void _MDSPackChg (int itemID) {
 		MFVarSetFloat (_MDOutSPackChgID, itemID, precip);
 	}
 	else if (airT > _MDSnowMeltThreshold) { /* Melting snow pack */
-		sPackChg = 2.63 + 2.55 * airT + 0.0912 * airT * precip;
-		sPackChg = - (sPack < sPackChg ? sPack : sPackChg);
+		sMelt = 2.63 + 2.55 * airT + 0.0912 * airT * precip;
+		sMelt = sMelt < sPack ? sMelt : sPack;
 		MFVarSetFloat (_MDOutSnowFallID, itemID, 0.0);
-		MFVarSetFloat (_MDOutSnowMeltID, itemID, fabs(sPackChg));
-		MFVarSetFloat (_MDOutSPackChgID, itemID, sPackChg);
-		MFVarSetFloat (_MDOutSnowPackID, itemID, sPack + sPackChg);
+		MFVarSetFloat (_MDOutSnowMeltID, itemID,  sMelt);
+		MFVarSetFloat (_MDOutSnowPackID, itemID,  sPack - sMelt);
+		MFVarSetFloat (_MDOutSPackChgID, itemID, -sMelt);
 	}
 	else { /* No change when air temperature is in [-1.0,1.0] range */
 		MFVarSetFloat (_MDOutSnowFallID, itemID, 0.0);
@@ -85,12 +60,6 @@ static void _MDSPackChg (int itemID) {
 		MFVarSetFloat (_MDOutSnowPackID, itemID, sPack);	
 		MFVarSetFloat (_MDOutSPackChgID, itemID, 0.0);
 	}
-
-		sDensity = (initialDensity + (snowAge * sDensitySlope));
-		if (sPack > 0.0 ) sDepth = sPack  * densityOfWater / sDensity; //in mm
-
-		MFVarSetFloat(_MDOutSnowDensityID,itemID,sDensity);  
-		MFVarSetFloat(_MDOutSnowDepthID,itemID, sDepth); 
 }
 
 int MDCore_SnowPackChgDef () {
@@ -108,14 +77,12 @@ int MDCore_SnowPackChgDef () {
 		if (strcmp(optStr,MFhelpStr) == 0) CMmsgPrint (CMmsgInfo,"%s = %f", MDParSnowFallThreshold, _MDFallThreshold);
 		_MDFallThreshold = sscanf (optStr,"%f",&par) == 1 ? par : _MDFallThreshold;
 	}
-	if (((_MDInCommon_PrecipID       = MDCommon_PrecipitationDef ())  == CMfailed) ||
-        ((_MDInCommon_AtMeanID       = MDCommon_AirTemperatureDef ()) == CMfailed) ||
-        ((_MDOutSnowFallID    = MFVarGetID (MDVarCommon_SnowFall,     "mm", MFOutput, MFFlux,  MFBoundary)) == CMfailed) ||
-        ((_MDOutSnowMeltID    = MFVarGetID (MDVarCore_SnowMelt,       "mm", MFOutput, MFFlux,  MFBoundary)) == CMfailed) ||
-        ((_MDOutSnowDensityID = MFVarGetID (MDVarCommon_SnowDensity,  "mm", MFOutput, MFState, MFBoundary)) == CMfailed) ||
-        ((_MDOutSnowDepthID   = MFVarGetID (MDVarCommon_SnowDepth,    "mm", MFOutput, MFState, MFBoundary)) == CMfailed) ||
-        ((_MDOutSnowPackID    = MFVarGetID (MDVarCore_SnowPack,       "mm", MFOutput, MFState, MFInitial))  == CMfailed) ||
-        ((_MDOutSPackChgID    = MFVarGetID (MDVarCore_SnowPackChange, "mm", MFOutput, MFFlux,  MFBoundary)) == CMfailed) ||
+	if (((_MDInCommon_PrecipID = MDCommon_PrecipitationDef ())  == CMfailed) ||
+        ((_MDInCommon_AtMeanID = MDCommon_AirTemperatureDef ()) == CMfailed) ||
+        ((_MDOutSnowFallID     = MFVarGetID (MDVarCommon_SnowFall,     "mm", MFOutput, MFFlux,  MFBoundary)) == CMfailed) ||
+        ((_MDOutSnowMeltID     = MFVarGetID (MDVarCore_SnowMelt,       "mm", MFOutput, MFFlux,  MFBoundary)) == CMfailed) ||
+        ((_MDOutSnowPackID     = MFVarGetID (MDVarCore_SnowPack,       "mm", MFOutput, MFState, MFInitial))  == CMfailed) ||
+        ((_MDOutSPackChgID     = MFVarGetID (MDVarCore_SnowPackChange, "mm", MFOutput, MFFlux,  MFBoundary)) == CMfailed) ||
         (MFModelAddFunction (_MDSPackChg) == CMfailed)) return (CMfailed);
 	MFDefLeaving ("Snow Pack Change");
 	return (_MDOutSPackChgID);

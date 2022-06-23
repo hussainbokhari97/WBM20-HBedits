@@ -13,7 +13,7 @@ bfekete@gc.cuny.edu
 #include <MF.h>
 #include <MD.h>
 
-static int _MDInSPackChgID      = MFUnset;
+static int _MDInSnowPackChgID      = MFUnset;
 static int _MDInPetID           = MFUnset;
 static int _MDInCommon_PrecipID = MFUnset;
 static int _MDInCParamCHeightID = MFUnset;
@@ -46,7 +46,7 @@ static void _MDRainIntercept (int itemID) {
 		sai      = MFVarGetFloat (_MDInStemAreaIndexID, itemID, 0.0);
 		c = MDConstInterceptCI * (lai + sai) / 2.0;
 		if (c > 0.0) {
-			sPackChg = MFVarGetFloat (_MDInSPackChgID,      itemID, 0.0);
+			sPackChg = MFVarGetFloat (_MDInSnowPackChgID,      itemID, 0.0);
 			height   = MFVarGetFloat (_MDInCParamCHeightID, itemID, 0.0);
 			if (sPackChg > 0.0) precip = precip - sPackChg;
 			epi = pet * (height < MDConstInterceptCH ? 1.0 + height / MDConstInterceptCH : 2.0);
@@ -73,7 +73,7 @@ int MDCore_RainInterceptDef () {
 		case MFinput: _MDOutInterceptID = MFVarGetID (MDVarCore_RainInterception, "mm", MFInput, MFFlux, MFBoundary); break;
 		case MFcalculate:
 			if (((_MDInCommon_PrecipID = MDCommon_PrecipitationDef()) == CMfailed) ||
-                ((_MDInSPackChgID      = MDCore_SnowPackChgDef()) == CMfailed) ||
+                ((_MDInSnowPackChgID      = MDCore_SnowPackChgDef()) == CMfailed) ||
                 ((_MDInLeafAreaIndexID = MDParam_LeafAreaIndexDef()) == CMfailed) ||
                 ((_MDInStemAreaIndexID = MDParam_LCStemAreaIndexDef()) == CMfailed) ||
                 ((_MDInPetID           = MDCore_RainPotETDef()) == CMfailed) ||

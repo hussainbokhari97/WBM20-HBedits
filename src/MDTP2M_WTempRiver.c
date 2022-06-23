@@ -62,7 +62,7 @@ static void _MDWTempRiver (int itemID) {
    	runoffTemp      = MFVarGetFloat (_MDInTP2M_WTempRunoffID,          itemID, 0.0);
     heatFlux        = MFVarGetFloat (_MDInTP2M_HeatFluxID,             itemID, 0.0);
 
-    if ((discharge > 0.000001) && (discharge + waterStorageChg / dt - runoffVolume > 0.000001) && (heatFlux > 0.000001)) {
+    if ((discharge > 0.001) && (discharge + waterStorageChg / dt - runoffVolume > 0.0)) { // 1 l/s minimum discharge is a sensible limit  FBM 2022-06-23
         float wind_f;
         float Tm;
         float beta;
@@ -83,7 +83,7 @@ static void _MDWTempRiver (int itemID) {
 	        equilTemp = dewpointTemp + solarRad / kay; // Solar radiation is in W/m2;
         }
         channelLength = MFModelGetLength(itemID) * 1000; // converting from km to m
-        riverTemperature = MDMaximum (equilTemp + (riverTemperature - equilTemp) * exp(-kay * channelLength * channelWidth / (4181.3 * discharge * dt)),0.0);
+        riverTemperature = equilTemp + (riverTemperature - equilTemp) * exp(-kay * channelLength * channelWidth / (4181.3 * discharge * dt));
    	} else riverTemperature = equilTemp = runoffTemp;
 
     heatFlux = riverTemperature * discharge;
