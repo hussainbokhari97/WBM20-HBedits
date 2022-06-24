@@ -84,6 +84,7 @@ static void _MDWTempRiver (int itemID) {
         }
         channelLength = MFModelGetLength(itemID) * 1000; // converting from km to m
         riverTemperature = equilTemp + (riverTemperature - equilTemp) * exp(-kay * channelLength * channelWidth / (4181.3 * discharge * dt));
+        riverTemperature = riverTemperature > 0.0 ? riverTemperature : 0.0;
    	} else riverTemperature = equilTemp = runoffTemp;
 
     heatFlux = riverTemperature * discharge;
