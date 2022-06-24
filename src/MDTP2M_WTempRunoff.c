@@ -36,11 +36,11 @@ static void _MDWTempRunoff (int itemID) {
 	surfRunoffT = MFVarGetFloat (_MDInWTempSurfRunoffID, itemID, 0.0);
 	baseFlowT   = MFVarGetFloat (_MDInWTempGrdWaterID,   itemID, 0.0);
 
-	surfaceRO = MDMaximum (0.0, surfaceRO);
-	baseFlow  = MDMaximum (0.0, baseFlow);
-
-	tempRo = surfaceRO + baseFlow > 0.0 ?
-	         ((surfaceRO * surfRunoffT) + (baseFlow * baseFlowT)) / (surfaceRO + baseFlow) : surfRunoffT;
+	surfaceRO = MDMaximum (surfaceRO, 0.0);
+	baseFlow  = MDMaximum (baseFlow,  0.0);
+	if (surfaceRO + baseFlow > 0.0)
+		tempRo = ((surfaceRO * surfRunoffT) + (baseFlow * baseFlowT)) / (surfaceRO + baseFlow);
+	else surfRunoffT;
 	MFVarSetFloat(_MDOutWTempRunoffID,itemID,tempRo);
 }
 
