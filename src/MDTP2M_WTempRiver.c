@@ -83,14 +83,15 @@ static void _MDWTempRiver (int itemID) {
 	            equilTemp = dewpointTemp + solarRad / kay; // Solar radiation is in W/m2;
             }
             channelLength = MFModelGetLength(itemID);
-            riverTemperature = equilTemp + (riverTemperature - equilTemp) * exp(-kay * channelLength * channelWidth / (4181.3 * discharge * dt));
+            equilTemp += (riverTemperature - equilTemp) * exp(-kay * channelLength * channelWidth / (4181.3 * discharge * dt));
+            riverTemperature = riverTemperature > dewpointTemp ? MDMinimum (riverTemperature, equilTemp) : MDMaximum (dewpointTemp, equilTemp);
         }
         riverTemperature = MDMaximum (riverTemperature, 0.0);
    	} else riverTemperature = equilTemp = runoffTemp;
 
     heatFlux = riverTemperature * discharge;
     MFVarSetFloat(_MDOutTP2M_Equil_Temp,   itemID, equilTemp);
-    MFVarSetFloat(_MDInTP2M_HeatFluxID,    itemID, heatFlux); // Route
+    MFVarSetFloat(_MDInTP2M_HeatFluxID,    itemID, heatFlux);  // Route
     MFVarSetFloat(_MDOutTP2M_WTempRiverID, itemID, riverTemperature);
 }
 
