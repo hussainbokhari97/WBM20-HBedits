@@ -48,7 +48,6 @@ static void _MDWTempRiver (int itemID) {
 // Output
     float riverTemperature;
 // Local
-    float channelLength;
     float equilTemp;
     float dt = MFModelGet_dt ();
 
@@ -62,32 +61,36 @@ static void _MDWTempRiver (int itemID) {
    	runoffTemp      = MFVarGetFloat (_MDInTP2M_WTempRunoffID,          itemID, 0.0);
     heatFlux        = MFVarGetFloat (_MDInTP2M_HeatFluxID,             itemID, 0.0);
 
-    if ((discharge > 0.001) && (discharge + waterStorageChg / dt - runoffVolume > 0.0)) { // 1 l/s minimum discharge is a sensible limit  FBM 2022-06-23
+    if ((discharge > 0.0) && (discharge + waterStorageChg / dt - runoffVolume > 0.0) && (discharge - runoffVolume + waterStorageChg / dt)) {
         riverTemperature = heatFlux / (discharge - runoffVolume + waterStorageChg / dt);
-        heatFlux += runoffVolume * runoffTemp;
+        heatFlux        += runoffVolume * runoffTemp;
         riverTemperature = heatFlux / (discharge + waterStorageChg / dt);
         /// Temperature Processing using Dingman 1972 
         ////////// NEW EQUILIBRIUM TEMP MODEL ///// Edinger et al. 1974: Heat Exchange and Transport in the Environment /////
         equilTemp = riverTemperature;
         if (dewpointTemp > 0.0) {
-            float wind_f;
-            float Tm;
+            float windFunc;
+            float meanTemp;
+            float channelLength;
             float beta;
             float kay;
             int x;
-            wind_f = 9.2+(0.46*pow(windSpeed,2)); // wind function
+
+            channelLength = MFModelGetLength(itemID);
+            windFunc = 9.2 + 0.46 * pow (windSpeed,2); // wind function
             for (x = 0; x < 4; x++) {
-	            Tm   = (dewpointTemp + equilTemp) / 2; // mean of rivertemp initial and dew point
-	            beta = 0.35 + (0.015 * Tm) + (0.0012 * pow(Tm, 2.0)); //beta
-	            kay  = (4.5 + (0.05 * equilTemp) + (beta * wind_f) + (0.47 * wind_f)); // K in W/m2/degC
+	            meanTemp  = (dewpointTemp + equilTemp) / 2; // mean of rivertemp initial and dew point
+	            beta      = 0.35 + 0.015 * meanTemp + 0.0012 * pow (meanTemp, 2.0); //beta
+	            kay       = 4.50 + 0.050 * equilTemp + (beta + 0.47) * windFunc; // K in W/m2/degC
 	            equilTemp = dewpointTemp + solarRad / kay; // Solar radiation is in W/m2;
             }
-            channelLength = MFModelGetLength(itemID);
-            equilTemp += (riverTemperature - equilTemp) * exp(-kay * channelLength * channelWidth / (4181.3 * discharge * dt));
-            riverTemperature = riverTemperature > dewpointTemp ? MDMinimum (riverTemperature, equilTemp) : MDMaximum (dewpointTemp, equilTemp);
+            equilTemp += (riverTemperature - equilTemp) * exp (-kay * channelLength * channelWidth / (4181.3 * discharge * dt));
+            riverTemperature = riverTemperature > dewpointTemp ? MDMinimum (riverTemperature, equilTemp)
+                                                               : MDMaximum (dewpointTemp,     equilTemp);
         }
         riverTemperature = MDMaximum (riverTemperature, 0.0);
-   	} else riverTemperature = equilTemp = runoffTemp;
+   	} else
+        riverTemperature = equilTemp = runoffTemp;
 
     heatFlux = riverTemperature * discharge;
     MFVarSetFloat(_MDOutTP2M_Equil_Temp,   itemID, equilTemp);
