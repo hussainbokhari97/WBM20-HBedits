@@ -28,38 +28,31 @@ static int _MDOutRouting_RiverStorageID = MFUnset;
 
 static void _MDDischLevel3Muskingum (int itemID) {
 // Input
-	float C0;              // Muskingum C0 coefficient (current inflow)
-	float C1;              // Muskingum C1 coefficient (previous inflow)
-	float C2;              // MUskingum C2 coefficient (previous outflow) 
-	float runoff;          // Runoff [mm/dt]
+	float C0     = MFVarGetFloat (_MDInRouting_MuskingumC0ID, itemID, 1.0); // Muskingum C0 coefficient (current inflow)
+	float C1     = MFVarGetFloat (_MDInRouting_MuskingumC1ID, itemID, 0.0); // Muskingum C1 coefficient (previous inflow)
+	float C2     = MFVarGetFloat (_MDInRouting_MuskingumC2ID, itemID, 0.0); // MUskingum C2 coefficient (previous outflow) 
+	float runoff = MFVarGetFloat (_MDInCore_RunoffVolumeID,   itemID, 0.0); // Runoff [mm/dt]
+// Initial
+	float inDischPrevious = MFVarGetFloat (_MDOutRouting_Discharge0ID,   itemID, 0.0); // Upstream discharge at the previous time step [m3/s]
+	float outDisch        = MFVarGetFloat (_MDOutRouting_Discharge1ID,   itemID, 0.0); // Downstream discharge [m3/s]
+	float storage         = MFVarGetFloat (_MDOutRouting_RiverStorageID, itemID, 0.0); // River Storage [m3]
+// Route
+	float inDischCurrent  = MFVarGetFloat (_MDInRouting_DischargeID,     itemID, 0.0); // Upstream discharge at the current time step [m3/s]
 // Output
-	float inDischCurrent;  // Upstream discharge at the current time step [m3/s]
-	float outDisch;        // Downstream discharge [m3/s]
-// Local
-	float inDischPrevious; // Upstream discharge at the previous time step [m3/s]
 	float storageChg;      // River Storage Change [m3]
-	float storage;         // River Storage [m3]
+// Local
 	float dt = MFModelGet_dt ();
 	
-	C0 = MFVarGetFloat (_MDInRouting_MuskingumC0ID, itemID, 1.0);
-	C1 = MFVarGetFloat (_MDInRouting_MuskingumC1ID, itemID, 0.0);
-	C2 = MFVarGetFloat (_MDInRouting_MuskingumC2ID, itemID, 0.0);
-
-	runoff          = MFVarGetFloat (_MDInCore_RunoffVolumeID,     itemID, 0.0);
-	inDischCurrent  = MFVarGetFloat (_MDInRouting_DischargeID,     itemID, 0.0) + runoff;
- 	inDischPrevious = MFVarGetFloat (_MDOutRouting_Discharge0ID,   itemID, 0.0);
-	outDisch        = MFVarGetFloat (_MDOutRouting_Discharge1ID,   itemID, 0.0);
-	storage         = MFVarGetFloat (_MDOutRouting_RiverStorageID, itemID, 0.0);
-
-	outDisch    = C0 * inDischCurrent + C1 * inDischPrevious + C2 * outDisch;
-	outDisch    = outDisch > 0.0 ? outDisch : 0.0; // negative C1 and C2 could cause negative discharge
+	inDischCurrent += runoff;
+	// negative C1 and C2 could cause negative discharge
+	outDisch = MDMaximum (C0 * inDischCurrent + C1 * inDischPrevious + C2 * outDisch, 0.0);
 
 	storageChg  = (inDischCurrent - outDisch) * dt;
 	if (storage + storageChg > 0.0) storage += storageChg;
 	else {
 		storageChg = 0.0 - storage;
 		storage    = 0.0;
-		outDisch   = inDischCurrent - storageChg / dt;
+		outDisch   = inDischCurrent > storageChg / dt ? inDischCurrent - storageChg / dt : 0.0;
 	}
 
 	MFVarSetFloat (_MDOutRouting_Discharge0ID,   itemID, inDischCurrent);

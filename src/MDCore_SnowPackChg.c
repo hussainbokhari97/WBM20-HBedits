@@ -30,15 +30,12 @@ static float _MDFallThreshold     = -1.0;
 
 static void _MDSPackChg (int itemID) {
 // Input
-	float airT;
-	float precip;
+	float airT   = MFVarGetFloat (_MDInCommon_AtMeanID, itemID, 0.0);
+	float precip = MFVarGetFloat (_MDInCommon_PrecipID, itemID, 0.0);
+// Initial
+	float sPack  = MFVarGetFloat (_MDOutSnowPackID,     itemID, 0.0);
 // Output
-	float sPack;
 	float sMelt = 0.0;
-	
-	sPack  = MFVarGetFloat (_MDOutSnowPackID,     itemID, 0.0);
-	airT   = MFVarGetFloat (_MDInCommon_AtMeanID, itemID, 0.0);
-	precip = MFVarGetFloat (_MDInCommon_PrecipID, itemID, 0.0);
 
 	if (airT < _MDFallThreshold) {  /* Accumulating snow pack */
 		MFVarSetFloat (_MDOutSnowFallID, itemID, precip);

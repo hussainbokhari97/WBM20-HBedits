@@ -21,18 +21,17 @@ static int _MDOutParam_AlbedoID   = MFUnset;
 
 static void _MDParam_Albedo (int itemID) {
 // Input
-	int   cover;
-	float snowPack;
+	int   cover    = MFVarGetInt   (_MDInCommon_CoverID,    itemID,   7); // defaulting missing value to water.
+	float snowPack = MFVarGetFloat (_MDInCommon_SnowPackID, itemID, 0.0);
 // Local
 	static float albedo []     = { 0.14, 0.18, 0.18, 0.20, 0.20, 0.22, 0.26, 0.10 };
 	static float albedoSnow [] = { 0.14, 0.23, 0.35, 0.50, 0.50, 0.50, 0.50, 0.50 };
-
-	cover    = MFVarGetInt   (_MDInCommon_CoverID,    itemID,   7); // defaulting missing value to water.
+	
 	if ((cover < 0) || (cover >= (int) (sizeof (albedo) / sizeof (albedo [0])))) {
 		CMmsgPrint (CMmsgWarning,"Warning: Invalid cover [%d] in: %s:%d\n",cover,__FILE__,__LINE__);
 		return;
 	}
-	snowPack = MFVarGetFloat (_MDInCommon_SnowPackID, itemID, 0.0);
+	
 	MFVarSetFloat (_MDOutParam_AlbedoID,itemID,snowPack > 0.0 ? albedoSnow[cover] : albedo[cover]);	
 }
 

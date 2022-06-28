@@ -18,19 +18,14 @@ static int _MDInCommon_AtMeanID        = MFUnset;
 static int _MDInParam_LPMaxID          = MFUnset;
 static int _MDOutParam_LeafAreaIndexID = MFUnset;
 
-static void _MDParam_LeafAreaIndex (int itemID) {
-// projected leaf area index (lai) pulled out from cover dependent PET functions
+static void _MDParam_LeafAreaIndex (int itemID) { // projected leaf area index (lai) pulled out from cover dependent PET functions
 // Input
-	int   cover;  
-	float lpMax;  // maximum projected leaf area index
-	float airT;   // air temperature [degree C]
+	int   cover = MFVarGetInt   (_MDInCommon_CoverID,  itemID, 7); 
+	float lpMax = MFVarGetFloat (_MDInParam_LPMaxID,   itemID, 0.0); // maximum projected leaf area index
+	float airT  = MFVarGetFloat (_MDInCommon_AtMeanID, itemID, 0.0);
 // Local
 	float lai;
 
-	cover = MFVarGetInt   (_MDInCommon_CoverID,  itemID, 7);
-	airT  = MFVarGetFloat (_MDInCommon_AtMeanID, itemID, 0.0);
-	lpMax = MFVarGetFloat (_MDInParam_LPMaxID,   itemID, 0.0);
-	
 	if (cover == 0) lai = lpMax;
 	else if (airT > 8.0) lai = lpMax;
 	else lai = 0.0;
@@ -68,16 +63,10 @@ static int _MDOutStemAreaIndexID = MFUnset;
 static void _MDStemAreaIndex (int itemID) {
 // Projected Stem area index (sai) pulled out from McNaugthon and Black PET function
 // Input
- 	float lpMax;   // maximum projected leaf area index
-	float cHeight; // canopy height [m]
+ 	float lpMax   = MFVarGetFloat (_MDInParam_LPMaxID,   itemID, 0.0); // maximum projected leaf area index
+	float cHeight = MFVarGetFloat (_MDInCParamCHeightID, itemID, 0.0); // canopy height [m]
 // Local
 	float sai;
-
-	if (MFVarTestMissingVal (_MDInParam_LPMaxID,   itemID) ||
-		MFVarTestMissingVal (_MDInCParamCHeightID, itemID)) { MFVarSetMissingVal (_MDOutStemAreaIndexID,itemID); return; }
-
-	lpMax   = MFVarGetFloat (_MDInParam_LPMaxID,   itemID, 0.0);
-	cHeight = MFVarGetFloat (_MDInCParamCHeightID, itemID, 0.0);
 
 	sai = lpMax > MDConstLPC ? MDConstCS * cHeight : (lpMax / MDConstLPC) * MDConstCS * cHeight;
 	MFVarSetFloat (_MDOutStemAreaIndexID,itemID,sai);

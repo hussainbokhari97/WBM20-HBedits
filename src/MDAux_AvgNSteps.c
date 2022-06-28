@@ -17,9 +17,7 @@ bfekete@gc.cuny.edu
 static int _MDOutAux_AvgNStepsID = MFUnset;
 
 static void _MDAux_AvgNSteps (int itemID) {
-	int nStep;
-	
-	nStep = MFVarGetInt (_MDOutAux_AvgNStepsID, itemID, 0);
+	int nStep = MFVarGetInt (_MDOutAux_AvgNStepsID, itemID, 0);
 	MFVarSetInt (_MDOutAux_AvgNStepsID, itemID, nStep + 1);
 }
 

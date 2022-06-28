@@ -28,15 +28,11 @@ static int _MDOutCommon_HumiditySpecificID = MFUnset;
 
 static void _MDCommon_HumiditySpecific (int itemID) {
 // Input
-    float airPressure;      // Air pressure in kPa
-    float saturatedVP;      // Saturated vapor pressure in Pa
-    float relativeHumidity; // Relative humidity in percent
+    float airPressure      = MFVarGetFloat (_MDInCommon_AirPressureID,                 itemID, 0.0); // Air pressure in kPa
+    float saturatedVP      = MFVarGetFloat (_MDInCommon_HumiditySaturatedVaporPressID, itemID, 0.0); // Saturated vapor pressure in Pa
+    float relativeHumidity = MFVarGetFloat (_MDInCommon_HumidityRelativeID,            itemID, 0.0); // Relative humidity in percent
 // Output
     float specificHumidity; // Specific humidity in kg/kg
-
-    airPressure      = MFVarGetFloat (_MDInCommon_AirPressureID,                 itemID, 0.0);
-    saturatedVP      = MFVarGetFloat (_MDInCommon_HumiditySaturatedVaporPressID, itemID, 0.0);
-    relativeHumidity = MFVarGetFloat (_MDInCommon_HumidityRelativeID,            itemID, 0.0);
 
     specificHumidity  = 0.622 * relativeHumidity / 100.0 * saturatedVP / (airPressure - 0.378 * relativeHumidity / 100.0 * saturatedVP);
     // 0.378 comes from if specific humidity is defined as density of water vapor over density of moist air

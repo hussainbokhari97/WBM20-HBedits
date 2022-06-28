@@ -25,8 +25,8 @@ static int _MDOutCommon_CloudCoverID = MFUnset;
 
 static void _MDCommon_CloudCover(int itemID) {             // should it be InCloudCover?
 // Input
-    float grossRad;    // Gross/Clear Sky radiation W/m2
-    float solarRad;    // Solar radiation W/m2
+    float grossRad = MFVarGetFloat(_MDInCommon_GrossRadID, itemID, 0.0); // Gross/Clear Sky radiation W/m2
+    float solarRad = MFVarGetFloat(_MDInCommon_SolarRadID, itemID, 0.0); // Solar radiation W/m2
 // Output
     float cloudCover;
 // Local
@@ -34,9 +34,6 @@ static void _MDCommon_CloudCover(int itemID) {             // should it be InClo
     float a;
     float b;
     float c;
-
-    grossRad = MFVarGetFloat(_MDInCommon_GrossRadID, itemID, 0.0); // W/m2
-    solarRad = MFVarGetFloat(_MDInCommon_SolarRadID, itemID, 0.0); // W/m2
 
     LHS = solarRad / grossRad;
     a = 0.458;

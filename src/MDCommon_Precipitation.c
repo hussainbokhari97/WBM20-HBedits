@@ -22,38 +22,24 @@ static int _MDOutCommon_PrecipitationID         = MFUnset;
 
 static void _MDPrecipDownscale (int itemID) {
 // Input 
-	float precipDaily, precipMonthly, precipRef;
+	float precipDaily   = MFVarGetFloat (_MDInCommon_PrecipitationDailyID,     itemID, 0.0); // Daily precipitation in mm/dt
+	float precipMonthly = MFVarGetFloat (_MDInCommon_PrecipitationMonthlyID,   itemID, 0.0); // Monthly precipitation in mm/dt
+	float precipRef     = MFVarGetFloat (_MDInCommon_PrecipitationReferenceID, itemID, 0.0); // Monthly reference precipitation in mm/dt
 // Output 
 	float precip;
-// Local
-	int nDays;
-	
-	nDays = MFDateGetMonthLength ();
-	precipDaily   = MFVarGetFloat (_MDInCommon_PrecipitationDailyID,     itemID, 0.0);
-	precipMonthly = MFVarGetFloat (_MDInCommon_PrecipitationMonthlyID,   itemID, 0.0);
-	precipRef     = MFVarGetFloat (_MDInCommon_PrecipitationReferenceID, itemID, 0.0);
 
-	precip = precipMonthly > 0.0 ? precipDaily * precipRef / (precipMonthly) : 0.0;
+	precip = (precipMonthly > 0.0) && (precipRef > 0.0) ? precipDaily * precipRef / (precipMonthly) : 0.0;
 	MFVarSetFloat (_MDOutCommon_PrecipitationID, itemID, precip);
 }
 
 static void _MDPrecipFraction (int itemID) {
-// Input 
-	float precipIn;
-	float precipFrac;
-// Output 
-	float precipOut; 
-// Local 
+// Model
 	int nDays    = MFDateGetMonthLength ();
-
-	if (MFVarTestMissingVal (_MDInCommon_PrecipitationMonthlyID,  itemID) ||
-	    MFVarTestMissingVal (_MDInCommon_PrecipitationFractionID, itemID)) {
-		MFVarSetMissingVal  (_MDOutCommon_PrecipitationID, itemID);
-		return;
-	}
-
-	precipIn   = MFVarGetFloat (_MDInCommon_PrecipitationMonthlyID,  itemID, 0.0);
-	precipFrac = MFVarGetFloat (_MDInCommon_PrecipitationFractionID, itemID, 1.0 / nDays);
+// Input 
+	float precipIn   = MFVarGetFloat (_MDInCommon_PrecipitationMonthlyID,  itemID, 0.0);
+	float precipFrac = MFVarGetFloat (_MDInCommon_PrecipitationFractionID, itemID, 1.0 / nDays);
+// Output 
+	float precipOut;
 
 	precipOut = precipFrac * precipIn *  nDays;
 	if (precipOut < 0.0){ CMmsgPrint (CMmsgUsrError, "Precip negative! itemID=%d precipIn=%f precipFrac =%fprecipFrac", itemID, precipIn, precipFrac);}
@@ -77,18 +63,14 @@ bool MDEvent (int nSteps,int nEvents,int step) {
 }
 
 static void _MDPrecipWetDays (int itemID) {
+// Model
+	int day   = MFDateGetCurrentDay ();
+	int nDays = MFDateGetMonthLength ();
 // Input 
-	float precipIn;
-	int  wetDays;
+	float precipIn = MFVarGetFloat (_MDInCommon_PrecipitationMonthlyID, itemID,  0.0);
+	int  wetDays   = MFVarGetInt   (_MDInCommon_PrecipitationWetDaysID, itemID, 31.0);
 // Output 
 	float precipOut; 
-// Local 
-	int day, nDays; 
-
-	day      = MFDateGetCurrentDay ();
-	nDays    = MFDateGetMonthLength ();
-	precipIn = MFVarGetFloat (_MDInCommon_PrecipitationMonthlyID, itemID,  0.0);
-	wetDays  = MFVarGetInt   (_MDInCommon_PrecipitationWetDaysID, itemID, 31.0);
 
 	precipOut = MDEvent (nDays,wetDays,day) ? precipIn * (float) nDays / (float) wetDays : 0.0;
 

@@ -14,25 +14,18 @@ bfekete@gc.cuny.edu
 #include <MD.h>
 
 static int _MDInCommon_AtMeanID = MFUnset;
-static int _MDInSolRadID = MFUnset;
-static int _MDOutPetID   = MFUnset;
+static int _MDInSolRadID        = MFUnset;
+static int _MDOutPetID          = MFUnset;
 
-static void _MDRainPotETTurc (int itemID) {
-/* Turc (1961) PE in mm for day */
+static void _MDRainPotETTurc (int itemID) { // Turc (1961) PE in mm for day 
 // Input
-	float airT;    // air temperatur [degree C]
-	float solRad;  // daily solar radiation on horizontal [MJ/m2]
+	float airT   = MFVarGetFloat (_MDInCommon_AtMeanID, itemID, 0.0); // air temperatur [degree C]
+	float solRad = MFVarGetFloat (_MDInSolRadID,        itemID, 0.0); // daily solar radiation on horizontal [MJ/m2]
 // Output
 	float pet;
-	
-	if ((MFVarTestMissingVal (_MDInCommon_AtMeanID, itemID)) ||
-		 (MFVarTestMissingVal (_MDInSolRadID, itemID))) { MFVarSetMissingVal (_MDOutPetID,itemID);  return; }
-
-	airT   = MFVarGetFloat (_MDInCommon_AtMeanID, itemID, 0.0);
-	solRad = MFVarGetFloat (_MDInSolRadID, itemID, 0.0);
 
 	pet = airT > 0.0 ? 0.313 * airT * (solRad + 2.1) / (airT + 15) : 0.0;
-   MFVarSetFloat (_MDOutPetID,itemID,pet);
+	MFVarSetFloat (_MDOutPetID,itemID,pet);
 }
 
 int MDCore_RainPotETTurcDef () {

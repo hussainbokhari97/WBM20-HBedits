@@ -26,16 +26,13 @@ static int _MDOutRelSoilMoistID     = MFUnset;
 
 static void _MDSoilMoistChg (int itemID) {	
 // Input
-	float sMoist;        // Non-irrigated soil moisture [mm/dt]
-	float sMoistChg;     // Non-irrigated soil moisture change [mm/dt]
-	float soilAvailWaterCap; // Available water capacity [mm]
+	float sMoist            = MFVarGetFloat (_MDInRainSoilMoistID,     itemID, 0.0); // Non-irrigated soil moisture [mm/dt]
+	float sMoistChg         = MFVarGetFloat (_MDInRainSoilMoistChgID,  itemID, 0.0); // Non-irrigated soil moisture change [mm/dt]
+	float soilAvailWaterCap = MFVarGetFloat (_MDInSoilAvailWaterCapID, itemID, 0.0); // Available water capacity [mm]
 	
-	sMoist    = MFVarGetFloat (_MDInRainSoilMoistID,     itemID, 0.0)
-	          + (_MDInIrrSoilMoistID    != MFUnset ? MFVarGetFloat (_MDInIrrSoilMoistID,    itemID, 0.0) : 0.0);
-	sMoistChg = MFVarGetFloat (_MDInRainSoilMoistChgID,  itemID, 0.0)
-	          + (_MDInIrrSoilMoistChgID != MFUnset ? MFVarGetFloat (_MDInIrrSoilMoistChgID, itemID, 0.0) : 0.0);
-	soilAvailWaterCap = MFVarGetFloat (_MDInSoilAvailWaterCapID, itemID, 0.0);
- //   printf("soilAvailWaterCap = %f\n", soilAvailWaterCap);
+	if (_MDInIrrSoilMoistID    != MFUnset) sMoist    += MFVarGetFloat (_MDInIrrSoilMoistID,    itemID, 0.0);
+	if (_MDInIrrSoilMoistChgID != MFUnset) sMoistChg += MFVarGetFloat (_MDInIrrSoilMoistChgID, itemID, 0.0);
+
 	MFVarSetFloat (_MDOutSoilMoistID,    itemID, sMoist);
 	MFVarSetFloat (_MDOutSoilMoistChgID, itemID, sMoistChg);
 	MFVarSetFloat (_MDOutRelSoilMoistID, itemID, CMmathEqualValues (soilAvailWaterCap, 0.0) ? 0.0 : sMoist / soilAvailWaterCap);

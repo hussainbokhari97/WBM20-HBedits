@@ -13,19 +13,16 @@ bfekete@gc.cuny.edu
 #include <MF.h>
 #include <MD.h>
 
-static int _MDInAux_AccumRunoffID = MFUnset;
-static int _MDAux_InAvgNStepsID   = MFUnset;
+static int _MDInAux_AccumRunoffID    = MFUnset;
+static int _MDAux_InAvgNStepsID      = MFUnset;
 
-static int _MDOutAux_MeanDischargeID     = MFUnset;
+static int _MDOutAux_MeanDischargeID = MFUnset;
 
 static void _MDAux_MeanDischarge (int itemID) {
-	int   nSteps;
-	float accumDisch;
-	float dischMean;
+	int   nSteps     = MFVarGetInt   (_MDAux_InAvgNStepsID,      itemID,   0);
+	float accumDisch = MFVarGetFloat (_MDInAux_AccumRunoffID,    itemID, 0.0);
+	float dischMean  = MFVarGetFloat (_MDOutAux_MeanDischargeID, itemID, 0.0);
 
-	accumDisch = MFVarGetFloat (_MDInAux_AccumRunoffID,    itemID, 0.0);
-	nSteps     = MFVarGetInt   (_MDAux_InAvgNStepsID,      itemID,   0);
-	dischMean  = MFVarGetFloat (_MDOutAux_MeanDischargeID, itemID, 0.0);
 	dischMean  = (float) (((double) dischMean * (double) nSteps + accumDisch) / ((double) (nSteps + 1)));
 	MFVarSetFloat (_MDOutAux_MeanDischargeID, itemID, dischMean);
 }

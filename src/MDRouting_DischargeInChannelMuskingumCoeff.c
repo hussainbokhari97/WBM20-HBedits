@@ -26,12 +26,15 @@ static int _MDOutMuskingumC2ID       = MFUnset;
 static int _MDOutCourantID           = MFUnset;
 
 static void _MDDischRouteMuskingumCoeff (int itemID) {
+// Model
+	float dL    = MFModelGetLength (itemID); // Cell length [m]
+	float dt    = MFModelGet_dt ();          // time step length [s]
 // Input
-	float yMean;            // Average depth at mean discharge [m]
-	float wMean;            // River width at mean discharge [m]
-	float vMean;            // Mean velocity
-	float beta;             // Riverbed shape exponent []
-	float slope;            // Riverbed slope [m/km]
+	float yMean = MFVarGetFloat (_MDInRiverAvgDepthMeanID,  itemID, 0.0); // Average depth at mean discharge [m]
+	float wMean = MFVarGetFloat (_MDInRiverWidthMeanID,     itemID, 0.0); // River width at mean discharge [m]
+	float vMean = MFVarGetFloat (_MDInRiverVelocityMeanID,  itemID, 0.0); // Mean velocity
+	float beta  = MFVarGetFloat (_MDInRiverShapeExponentID, itemID, 0.0); // Riverbed shape exponent []
+	float slope = MFVarGetFloat (_MDInRiverSlopeID,         itemID, 0.0) / 1000.0; // Riverbed slope [m/km]
 // Output
 	float C0;               // Muskingum C0 coefficient (current inflow)
 	float C1;               // Muskingum C1 coefficient (previous inflow)
@@ -40,35 +43,21 @@ static void _MDDischRouteMuskingumCoeff (int itemID) {
 	float xi;               // Flood-wave/flow velocity ratio
 	float C;                // Cell Courant number;
 	float D;                // Cell Reynolds number;
-	float dt;               // time step length [s]
-	float dL;               // Cell length [m]
-	
-	dL        = MFModelGetLength (itemID);
-	yMean     = MFVarGetFloat (_MDInRiverAvgDepthMeanID,  itemID, 0.0);
-	wMean     = MFVarGetFloat (_MDInRiverWidthMeanID,     itemID, 0.0);
-	vMean     = MFVarGetFloat (_MDInRiverVelocityMeanID,  itemID, 0.0);
-	beta      = MFVarGetFloat (_MDInRiverShapeExponentID, itemID, 0.0);
-	slope     = MFVarGetFloat (_MDInRiverSlopeID,         itemID, 0.0) / 1000.0;
 
-	if ((dL    <= 0.0) || (slope <= 0.0) || (yMean <= 0.0) || (wMean <= 0.0) || (vMean <= 0.0) || (beta  <= 0.0)) { 
-	    // Falling back to flow-accumulation
-		C0 = 1.0;
-		C1 = C2 = C = 0.0;
-	}
-	else {
-		dt = MFModelGet_dt (); 
-
+	if ((dL > 10.0) && (yMean > 0.1) && (wMean > 0.5) && (vMean > 0.001) || (beta > 0.0)) { // TODO arbitrary thresholds
+		if (slope < 0.00001) slope = 0.00001; 
 		xi = 1 + beta * (2.0 / 3.0) / (beta + 1);
 		C = xi * vMean * dt / dL;
 		D = yMean / (dL * slope * xi);
-
 		C0 = (-1 + C + D) / (1 + C + D);
 		C1 = ( 1 + C - D) / (1 + C + D);
 		C2 = ( 1 - C + D) / (1 + C + D);
-
 		// According to Pounce C1 and C2 can be negative, but negative values appear to cause negative discharge
-		// if ((C0 < 0.0) || (C1 < 0.0) || (C2 < 0.0)) { C0 = 1.0; C1 = 0; C2 = 0; }
 		if (C0 < 0.0) { C0 = 1.0; C1 = 0; C2 = 0; }
+	}
+	else {// Falling back to flow-accumulation
+		C0 = 1.0;
+		C1 = C2 = C = 0.0;
 	}
 	MFVarSetFloat (_MDOutMuskingumC0ID, itemID, C0);
 	MFVarSetFloat (_MDOutMuskingumC1ID, itemID, C1);

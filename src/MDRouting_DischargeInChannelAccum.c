@@ -23,13 +23,10 @@ static int _MDOutRouting_RiverStorageID = MFUnset;
 
 static void _MDDischLevel3Accumulate (int itemID) {
 // Input
-	float runoff;     // Local runoff volume [m3/s]
-	float discharge;  // Discharge from upstream [m3/s]
+	float runoff    = MFVarGetFloat(_MDInCore_RunoffVolumeID, itemID, 0.0); // Local runoff volume [m3/s]
+	float discharge = MFVarGetFloat(_MDInRouting_DischargeID, itemID, 0.0); // Discharge from upstream [m3/s]
 
-	runoff    = MFVarGetFloat(_MDInCore_RunoffVolumeID, itemID, 0.0);
-	discharge = MFVarGetFloat(_MDInRouting_DischargeID,    itemID, 0.0);
-
-	MFVarSetFloat (_MDOutRouting_DischLevel3ID, itemID, discharge + runoff);
+	MFVarSetFloat (_MDOutRouting_DischLevel3ID,  itemID, discharge + runoff);
 	MFVarSetFloat (_MDOutRouting_RiverStorChgID, itemID, 0.0);
 	MFVarSetFloat (_MDOutRouting_RiverStorageID, itemID, 0.0);
 }

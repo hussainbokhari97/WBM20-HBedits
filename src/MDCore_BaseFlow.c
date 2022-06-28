@@ -33,15 +33,11 @@ static float _MDGroundWatBETA = 0.016666667;
 
 static void _MDCore_BaseFlow (int itemID) {
 // Input
-	float irrDemand;               // Irrigation demand [mm/dt]
-	float irrReturnFlow;           // Irrigational return flow [mm/dt]
-    float irrRunoff;               // Irrigational runoff [mm/dt]
-/// Output
-	float grdWater;                // Groundwater size   [mm]
 	float grdWaterRecharge;        // Groundwater recharge [mm/dt]
+// Initial
+	float grdWater;                // Groundwater size   [mm]
+// Output
 	float baseFlow;                // Base flow from groundwater [mm/dt]
-	float irrUptakeGrdWater = 0.0; // Irrigational water uptake from shallow groundwater [mm/dt]
-	float irrUptakeExt      = 0.0; // Unmet irrigational water demand [mm/dt]
 // Local
 	float grdWater0;
                      
@@ -50,10 +46,13 @@ static void _MDCore_BaseFlow (int itemID) {
 
 	if ((_MDInIrrigation_GrossDemandID != MFUnset) &&
 	    (_MDInIrrigation_ReturnFlowID  != MFUnset)) {
-
-		irrReturnFlow = MFVarGetFloat (_MDInIrrigation_ReturnFlowID,  itemID, 0.0);
-        irrRunoff     = MFVarGetFloat (_MDInIrrigation_RunoffID,      itemID, 0.0);
-		irrDemand     = MFVarGetFloat (_MDInIrrigation_GrossDemandID, itemID, 0.0);
+	// Input
+		float irrDemand     = MFVarGetFloat (_MDInIrrigation_GrossDemandID, itemID, 0.0); // Irrigation demand [mm/dt]
+		float irrReturnFlow = MFVarGetFloat (_MDInIrrigation_ReturnFlowID,  itemID, 0.0); // Irrigational return flow [mm/dt]
+    	float irrRunoff     = MFVarGetFloat (_MDInIrrigation_RunoffID,      itemID, 0.0); // Irrigational runoff [mm/dt]
+	// Output
+		float irrUptakeGrdWater = 0.0; // Irrigational water uptake from shallow groundwater [mm/dt]
+		float irrUptakeExt      = 0.0; // Unmet irrigational water demand [mm/dt]
 
 		grdWater         += irrReturnFlow + irrRunoff;
 		grdWaterRecharge += irrReturnFlow + irrRunoff;

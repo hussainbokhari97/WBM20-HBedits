@@ -20,19 +20,15 @@ static int _MDOutPetID          = MFUnset;
 static void _MDIrrRefEvapotransHamon (int itemID) {
 // Hamon (1963) PE in mm for day
 // Input
-	float dayLen;  // daylength in fraction of day
-	float airT;		// air temperatur [degree C]
-// Local
-	float rhoSat;	// saturated vapor density [kg/m3]
+	float dayLen = MFVarGetFloat (_MDInDayLengthID,     itemID, 12.0); // daylength in fraction of day
+	float airT   = MFVarGetFloat (_MDInCommon_AtMeanID, itemID,  0.0); // air temperatur [degree C]
 // Output
 	float pet;
-
-	dayLen = MFVarGetFloat (_MDInDayLengthID, itemID, 12.0);
-	airT   = MFVarGetFloat (_MDInCommon_AtMeanID,    itemID,  0.0);
+// Local
+	float rhoSat;	// saturated vapor density [kg/m3]
 
 	rhoSat = 2.167 * MDPETlibVPressSat (airT) / (airT + 273.15);
 	pet = 165.1 * 2.0 * dayLen * rhoSat; // 2 * DAYLEN = daylength as fraction of 12 hours
-//	if (pet ==0) printf ("PET Null ? pet %f rhoSat %f dayLen %f \n", pet, rhoSat, dayLen); 
 	MFVarSetFloat (_MDOutPetID,itemID,pet);
 }
 

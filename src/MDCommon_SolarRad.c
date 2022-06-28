@@ -40,20 +40,17 @@ static float _MDSRadH (float lat,int doy,float dec) {
 
 static int _MDOutCommon_SolarRadDayLengthID = MFUnset;
 
-static void _MDCommon_SolarRadDayLength (int itemID) {
-/* daylength fraction of day */
+static void _MDCommon_SolarRadDayLength (int itemID) { // daylength fraction of day
+// Model
+	int doy   = MFDateGetDayOfYear (); // day of the year
+	float lat = MFModelGetLatitude (itemID) / 180.0 * M_PI;; // latitude in radians
+
 // Input
-	int doy;   // day of the year
-	float lat; // latitude in decimal radians
-// Local
-	float dec;
 // Output
 	float dayLength;
+// Local
+	float dec;
 
-	doy = MFDateGetDayOfYear ();
-	lat = MFModelGetLatitude (itemID) / 180.0 * M_PI;
-
-	
    dec = _MDSRadDEC (doy);
 
    if (fabs ((double) lat) > M_PI_2) lat = (M_PI_2 - (double) 0.01) * (lat > 0.0 ? 1.0 : -1.0);
@@ -74,27 +71,24 @@ int MDCommon_SolarRadDayLengthDef () {
 
 static int _MDOutCommon_SolarRadI0HDayID = MFUnset;
 
-static void _MDSRadI0HDay (int itemID) {
-/* daily potential solar radiation from Sellers (1965) */
+static void _MDSRadI0HDay (int itemID) { // daily potential solar radiation from Sellers (1965)
+// Model
+	int   doy = MFDateGetDayOfYear (); // day of the year
+	float lat = MFModelGetLatitude (itemID) / 180.0 * M_PI; // latitude in decimal degrees converted to radian
 // Input
-	int   doy; // day of the year
-	float lat; // latitude in decimal degrees
-// Local
-	float isc, dec, h;
 // Output
 	float i0hDay;
-
-	doy = MFDateGetDayOfYear ();
-	lat = MFModelGetLatitude (itemID) / 180.0 * M_PI;
+// Local
+	float isc, dec, h;
 
 	isc = _MDSRadISC (doy);
-   dec = _MDSRadDEC (doy);
+	dec = _MDSRadDEC (doy);
 
-   if (fabs ((double) lat) > M_PI_2) lat = (M_PI_2 - (double) 0.01) * (lat > 0.0 ? 1.0 : -1.0);
+	if (fabs ((double) lat) > M_PI_2) lat = (M_PI_2 - (double) 0.01) * (lat > 0.0 ? 1.0 : -1.0);
 	h = _MDSRadH (lat,doy,dec);
 
 	i0hDay =	0.000001 * isc * (86400.0 / M_PI) *  (h * sin(lat) * sin(dec) + cos(lat) * cos(dec) * sin(h));
-   MFVarSetFloat (_MDOutCommon_SolarRadI0HDayID,itemID,i0hDay);
+	MFVarSetFloat (_MDOutCommon_SolarRadI0HDayID,itemID,i0hDay);
 }
 
 int MDCommon_SolarRadI0HDayDef () {
@@ -107,35 +101,32 @@ int MDCommon_SolarRadI0HDayDef () {
 	return (_MDOutCommon_SolarRadI0HDayID);
 }
 
-static int _MDInCommon_CloudCoverID, _MDInCommon_GrossRadID;
+static int _MDInCommon_CloudCoverID;
+static int _MDInCommon_GrossRadID;
 
 static int _MDOutCommon_SolarRadID = MFUnset;
 
 static void _MDSolarRadiationCloud (int itemID) {
 // Input
-	float clearSky; // Clear sky radiation in W/m2
-	float cloud;    // Cloud cover in percent
+	float cloud    = MFVarGetFloat (_MDInCommon_CloudCoverID, itemID, 0.0); // Cloud cover in percent
+	float clearSky = MFVarGetFloat (_MDInCommon_GrossRadID,   itemID, 0.0); // Clear sky radiation in W/m2
 // Output
 	float solarRad; // Solar radiation W/m2
 // Local
-
-	clearSky = MFVarGetFloat (_MDInCommon_GrossRadID,   itemID, 0.0);
-	cloud    = MFVarGetFloat (_MDInCommon_CloudCoverID, itemID, 0.0);
-	cloud = cloud < 100.0 ? cloud / 100.0 : 1.0;
-		 
+ 
+ 	cloud = cloud < 100.0 ? cloud / 100.0 : 1.0;
 	solarRad = clearSky * (0.803 - (0.340 * cloud) - (0.458 * (float) pow ((double) cloud,(double) 2.0)));
     MFVarSetFloat (_MDOutCommon_SolarRadID,  itemID, solarRad);
 }
 
+static int _MDInCommon_SunShineID;
+
 static void _MDSolarRadiationSun (int itemID) {
 // Input
-	float sunShine;
+	float sunShine = MFVarGetFloat (_MDInCommon_SunShineID, itemID, 50.0) / 100.0; // Percent of sunny day
+	float clearSky = MFVarGetFloat (_MDInCommon_GrossRadID,   itemID,  0.0); // Clear sky/gross radiation W/m2 averaged over the day
 // Output
-	float solarRad;
-// Local
-
-	solarRad = MFVarGetFloat (_MDInCommon_GrossRadID, itemID,  0.0);
-	sunShine = MFVarGetFloat (_MDInCommon_CloudCoverID,    itemID, 50.0) / 100.0;
+	float solarRad; // Solar radiation W/m2 averaged over the day
 
 	solarRad = solarRad * (0.251 + 0.509 * sunShine);
 	MFVarSetFloat (_MDOutCommon_SolarRadID,  itemID, solarRad);
@@ -164,7 +155,7 @@ int MDCommon_SolarRadDef () {
 			break;
 		case MDsun:
 			if (((_MDInCommon_GrossRadID   = MDCommon_GrossRadDef()) == CMfailed) ||
-                ((_MDInCommon_CloudCoverID = MFVarGetID (MDVarCore_SunShine,       "%",     MFInput,  MFState, MFBoundary)) == CMfailed) ||
+                ((_MDInCommon_SunShineID   = MFVarGetID (MDVarCore_SunShine,       "%",     MFInput,  MFState, MFBoundary)) == CMfailed) ||
                 ((_MDOutCommon_SolarRadID  = MFVarGetID (MDVarCore_SolarRadiation, "W/m^2", MFOutput, MFState, MFBoundary)) == CMfailed) ||
                 (MFModelAddFunction (_MDSolarRadiationSun) == CMfailed)) return (CMfailed);
 			break;

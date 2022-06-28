@@ -21,16 +21,13 @@ static int _MDOutCommon_GrossRadID = MFUnset;
 
 static void _MDCommon_GrossRadianceStd (int itemID) {
 // Input
-	int   day;
-	float lambda;
+	int   day    = MFDateGetDayOfYear ();
+	float lambda = MFModelGetLatitude (itemID) * DTOR;
 // Output
 	float  grossRad;
 // Local
 	int   hour;
 	double eta, sigma, sinphi, sp, sbb;
-
-	day   = MFDateGetDayOfYear ();
-   lambda = MFModelGetLatitude (itemID) * DTOR;
 
 	sp = 1360.0; // Solar constant in W/m2
 	grossRad = 0;
@@ -46,16 +43,13 @@ static void _MDCommon_GrossRadianceStd (int itemID) {
 
 static void _MDCommon_GrossRadianceOtto (int itemID) {
 // Input
-	int   day;
-	float lambda;
+	int   day    = MFDateGetDayOfYear ();
+	float lambda = MFModelGetLatitude (itemID) * DTOR;
 // Output
 	float  grossRad; // W/m2
 // Local
 	int   hour;
 	double eta, sigma,sinphi,sp,sbb,sotd;
-
-	day    = MFDateGetDayOfYear ();
-   lambda = MFModelGetLatitude (itemID) * DTOR;
 
 	sp = 1360.0; // Solar constant in W/m2
 	grossRad = 0.0;

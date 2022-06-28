@@ -14,28 +14,30 @@ bfekete@gc.cuny.edu
 #include <MF.h>
 #include <MD.h>
 
-static int _MDInDayLengthID    = MFUnset;
-static int _MDInI0HDayID       = MFUnset;
-static int _MDInCParamAlbedoID = MFUnset;
-
-static int _MDInCommon_AtMeanID       = MFUnset;
-static int _MDInSolRadID       = MFUnset;
-static int _MDInVPressID       = MFUnset;
-static int _MDInWSpeedID       = MFUnset;
-static int _MDOutPetID         = MFUnset;
-
-static void _MDRainPotETPstd (int itemID) {
-// Penman (1948) PE in mm for day also given by Chidley and Pike (1970)
 // Input
- 	float dayLen; // daylength in fraction of day
-	float i0hDay; // daily potential insolation on horizontal [MJ/m2]
-	float albedo; // albedo 
-	float airT;   // air temperatur [degree C]
-	float solRad; // daily solar radiation on horizontal [MJ/m2]
- 	float vPress; // daily average vapor pressure [kPa]
-	float wSpeed; // average wind speed for the day [m/s]
-	float sHeat = 0.0; // average subsurface heat storage for day [W/m2]
+static int _MDInDayLengthID     = MFUnset;
+static int _MDInI0HDayID        = MFUnset;
+static int _MDInCParamAlbedoID  = MFUnset;
+static int _MDInCommon_AtMeanID = MFUnset;
+static int _MDInSolRadID        = MFUnset;
+static int _MDInVPressID        = MFUnset;
+static int _MDInWSpeedID        = MFUnset;
+// Output
+static int _MDOutPetID          = MFUnset;
+
+static void _MDRainPotETPstd (int itemID) { // Penman (1948) PE in mm for day also given by Chidley and Pike (1970)
+// Input
+ 	float dayLen  = MFVarGetFloat (_MDInDayLengthID,      itemID, 12.0); // daylength in fraction of day
+	float i0hDay  = MFVarGetFloat (_MDInI0HDayID,         itemID,  0.0); // daily potential insolation on horizontal [MJ/m2]
+	float albedo  = MFVarGetFloat (_MDInCParamAlbedoID,   itemID,  0.0); // albedo 
+	float airT    = MFVarGetFloat (_MDInCommon_AtMeanID,  itemID,  0.0); // air temperatur [degree C]
+	float solRad  = MFVarGetFloat (_MDInSolRadID,         itemID,  0.0); // daily solar radiation on horizontal [MJ/m2]
+ 	float vPress  = MFVarGetFloat (_MDInVPressID,         itemID,  0.0) / 1000.0; // daily average vapor pressure [kPa]
+	float wSpeed  = fabs (MFVarGetFloat (_MDInWSpeedID,   itemID,  0.0)); // average wind speed for the day [m/s]
+// Output
+	float pet;
 // Local
+	float sHeat = 0.0; // average subsurface heat storage for day [W/m2]
 	float solNet; // average net solar radiation for day [W/m2]
 	float novern; // sunshine duration fraction of daylength
 	float effem;  // effective emissivity from clear sky
@@ -45,24 +47,7 @@ static void _MDRainPotETPstd (int itemID) {
 	float fu;     // Penman wind function, [mm d-1 kPa-1]
 	float es;     // vapor pressure at airT [kPa]
 	float delta;  // dEsat/dTair [kPa/K]
-// Output
-	float pet;
-
-	if (MFVarTestMissingVal (_MDInDayLengthID,      itemID) ||
-		 MFVarTestMissingVal (_MDInI0HDayID,        itemID) ||
-		 MFVarTestMissingVal (_MDInCParamAlbedoID,  itemID) ||
-		 MFVarTestMissingVal (_MDInCommon_AtMeanID, itemID) ||
-		 MFVarTestMissingVal (_MDInSolRadID,        itemID) ||
-		 MFVarTestMissingVal (_MDInVPressID,        itemID) ||
-		 MFVarTestMissingVal (_MDInWSpeedID,        itemID)) { MFVarSetMissingVal (_MDOutPetID,itemID); return; }
-
-	dayLen  = MFVarGetFloat (_MDInDayLengthID,      itemID, 12.0);
-	i0hDay  = MFVarGetFloat (_MDInI0HDayID,         itemID,  0.0);
-	albedo  = MFVarGetFloat (_MDInCParamAlbedoID,   itemID,  0.0);
-	airT    = MFVarGetFloat (_MDInCommon_AtMeanID,  itemID,  0.0);
-	solRad  = MFVarGetFloat (_MDInSolRadID,         itemID,  0.0);
-	vPress  = MFVarGetFloat (_MDInVPressID,         itemID,  0.0) / 1000.0;
-	wSpeed  = fabs (MFVarGetFloat (_MDInWSpeedID,   itemID,  0.0));
+	
 	if (wSpeed < 0.2) wSpeed = 0.2;
 
 	solNet = (1.0 - albedo) * solRad / MDConstIGRATE; // net solar with Penman (1948) albedo of 0.25

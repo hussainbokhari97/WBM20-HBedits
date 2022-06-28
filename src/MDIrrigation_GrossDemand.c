@@ -216,7 +216,7 @@ static void _MDIrrGrossDemand (int itemID) {
 
 	irrAreaFrac = MFVarGetFloat (_MDInIrrigation_AreaFracID, itemID, 0.0);
 	
-	if (0.0 < irrAreaFrac) {
+	if (irrAreaFrac > 0.0) {
         irrCropETP = irrNetDemand = irrGrossDemand = irrRunoff = irrReturnFlow = irrSMoist = irrSMoistChg = sumOfCropFractions = 0.0;
 		for (cropID = 0; cropID < _MDNumberOfIrrCrops; ++cropID) {
 			cropFraction [cropID] = MFVarGetFloat (_MDInCropFractionIDs [cropID],itemID, 0.0);

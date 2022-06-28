@@ -25,23 +25,17 @@ static int _MDInWTempGrdWaterID   = MFUnset;
 static int _MDOutWTempRunoffID          = MFUnset;
 
 static void _MDWTempRunoff (int itemID) {
-	float surfRunoffT;
-	float baseFlowT;
-	float surfaceRO;
-	float baseFlow;
+// Input
+	float surfaceRO   = MFVarGetFloat (_MDInSurfCore_RunoffID, itemID, 0.0);
+	float baseFlow    = MFVarGetFloat (_MDInBaseFlowID,        itemID, 0.0);
+	float surfRunoffT = MFVarGetFloat (_MDInWTempSurfRunoffID, itemID, 0.0);
+	float baseFlowT   = MFVarGetFloat (_MDInWTempGrdWaterID,   itemID, 0.0);
+// Output
 	float runoffTemp;
-
-	surfaceRO   = MFVarGetFloat (_MDInSurfCore_RunoffID, itemID, 0.0);
-	baseFlow    = MFVarGetFloat (_MDInBaseFlowID,        itemID, 0.0);
-	surfRunoffT = MFVarGetFloat (_MDInWTempSurfRunoffID, itemID, 0.0);
-	baseFlowT   = MFVarGetFloat (_MDInWTempGrdWaterID,   itemID, 0.0);
 
 	surfaceRO = MDMaximum (surfaceRO, 0.0);
 	baseFlow  = MDMaximum (baseFlow,  0.0);
-	if (surfaceRO + baseFlow > 0.001)
-		runoffTemp = ((surfRunoffT * surfaceRO) + (baseFlowT * baseFlow)) / (surfaceRO + baseFlow);
-	else
-		runoffTemp = surfRunoffT;
+	runoffTemp =  surfaceRO + baseFlow > 0.0 ? (surfRunoffT * surfaceRO + baseFlowT * baseFlow) / (surfaceRO + baseFlow) : surfRunoffT;
 	MFVarSetFloat(_MDOutWTempRunoffID,itemID,runoffTemp);
 }
 

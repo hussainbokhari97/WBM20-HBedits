@@ -21,10 +21,9 @@ static int _MDOutEvapotranspID    = MFUnset;
 
 static void _MDEvapotransp (int itemID) {	
 // Input
-	float et=0;    // Evapotranspiration [mm/dt]
+	float et = MFVarGetFloat (_MDInRainEvapotranspID, itemID, 0.0); // Evapotranspiration [mm/dt]
 	
-	et = MFVarGetFloat (_MDInRainEvapotranspID, itemID, 0.0)
-	   + (_MDInIrrEvapotranspID != MFUnset ? MFVarGetFloat (_MDInIrrEvapotranspID, itemID, 0.0) : 0.0);
+	if (_MDInIrrEvapotranspID != MFUnset) et += MFVarGetFloat (_MDInIrrEvapotranspID, itemID, 0.0);
 	MFVarSetFloat (_MDOutEvapotranspID,  itemID, et);
 }
 

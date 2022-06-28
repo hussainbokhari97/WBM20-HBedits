@@ -22,9 +22,7 @@ static int _MDInDataAssim_DischObservedID = MFUnset;
 static int _MDOutRouting_DischargeID      = MFUnset;
 
 static void _MDRouting_Discharge (int itemID) {
-	float discharge; // Discharge [m3/s]
-
-	discharge = MFVarGetFloat (_MDInRouting_DischargeID,   itemID, 0.0);
+	float discharge = MFVarGetFloat (_MDInRouting_DischargeID,   itemID, 0.0); // Discharge [m3/s]
 
 	if (_MDInDataAssim_DischObservedID != MFUnset)
 		 discharge = MFVarGetFloat (_MDInDataAssim_DischObservedID, itemID, discharge);

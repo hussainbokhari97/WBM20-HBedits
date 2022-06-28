@@ -17,22 +17,15 @@ static int _MDInCommon_AtMeanID = MFUnset;
 static int _MDInSolRadID = MFUnset;
 static int _MDOutPetID   = MFUnset;
 
-static void _MDRainPotETJensen (int itemID) {
-// Jensen-Haise (1963) PE in mm for day
+static void _MDRainPotETJensen (int itemID) { // Jensen-Haise (1963) PE in mm for day
 // Input
-	float airT;		// air temperatur [degree C]
-	float solRad;  // daily solar radiation on horizontal [MJ/m2]
+	float airT   = MFVarGetFloat (_MDInCommon_AtMeanID, itemID, 0.0); // air temperatur [degree C]
+	float solRad = MFVarGetFloat (_MDInSolRadID, itemID, 0.0);        // daily solar radiation on horizontal [MJ/m2/day] TODO wrong unit!!!!
 // Output 
 	float pet;
-	
-	if ((MFVarTestMissingVal (_MDInCommon_AtMeanID, itemID)) ||
-		 (MFVarTestMissingVal (_MDInSolRadID, itemID))) { MFVarSetMissingVal (_MDOutPetID,itemID);  return; }
-
-	airT   = MFVarGetFloat (_MDInCommon_AtMeanID, itemID, 0.0);
-	solRad = MFVarGetFloat (_MDInSolRadID, itemID, 0.0);
 
 	pet = 0.41 * (0.025 * airT + .078) * solRad;
-   MFVarSetFloat (_MDOutPetID,itemID,pet);
+	MFVarSetFloat (_MDOutPetID,itemID,pet);
 }
 
 int MDCore_RainPotETJensenDef () {

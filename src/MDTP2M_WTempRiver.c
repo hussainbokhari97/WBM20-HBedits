@@ -34,38 +34,34 @@ static int _MDOutTP2M_WTempRiverID         = MFUnset;
 
 
 static void _MDWTempRiver (int itemID) {
+// Model
+    float dt   = MFModelGet_dt ();
+    float area = MFModelGetArea (itemID);
 // Input
-    float dewpointTemp; // Dewpoint temperature in degC
- 	float solarRad;     // Solar radiation in W/m2 averaged over the day
- 	float windSpeed;    // Winds speed in m/s
-    float runoffVolume; // RO volume in m3/s
-    float discharge0;   // Outflowing discharge in m3/s 
-    float discharge;    // Outflowing discharge in m3/s 
-   	float channelWidth; // River width in m
-   	float runoffTemp;   // Runoff temperature degC
+    float discharge0 = MFVarGetFloat (_MDInRouting_Discharge0ID, itemID, 0.0); // Outflowing discharge in m3/s 
+    float discharge  = MFVarGetFloat (_MDInRouting_DischargeID,  itemID, 0.0); // Outflowing discharge in m3/s 
+   	float runoffTemp = MFVarGetFloat (_MDInTP2M_WTempRunoffID,   itemID, 0.0); // Runoff temperature degC
 // Routed
-    float heatFlux;     // Heat flux degC * m3/s
+    float heatFlux   = MFVarGetFloat (_MDInTP2M_HeatFluxID,      itemID, 0.0); // Heat flux degC * m3/s
 // Output
-    float riverTemp;    // River temprature in degC
-// Local
-    float equilTemp;    // Equlibrium temperature in degC
-    float dt = MFModelGet_dt ();
+    float riverTemp; // River temprature in degC
+    float equilTemp; // Equlibrium temperature in degC
 
-    dewpointTemp    = MFVarGetFloat (_MDInCommon_HumidityDewPointID,   itemID, 0.0);
- 	solarRad        = MFVarGetFloat (_MDInCommon_SolarRadID,           itemID, 0.0);
- 	windSpeed       = MFVarGetFloat (_MDInCommon_WindSpeedID,          itemID, 0.0);
-    runoffVolume    = MFVarGetFloat (_MDInCore_RunoffVolumeID,         itemID, 0.0);
-    discharge0      = MFVarGetFloat (_MDInRouting_Discharge0ID,        itemID, 0.0);
-    discharge       = MFVarGetFloat (_MDInRouting_DischargeID,         itemID, 0.0);
-   	channelWidth    = MFVarGetFloat (_MDInRouting_RiverWidthID,        itemID, 0.0);
-   	runoffTemp      = MFVarGetFloat (_MDInTP2M_WTempRunoffID,          itemID, 0.0);
-    heatFlux        = MFVarGetFloat (_MDInTP2M_HeatFluxID,             itemID, 0.0);
+    // Near zero river flows can lead to exploding temperature values.
+    if ((discharge0 > area * dt * 0.0001) && (discharge > area * dt * 0.0001)) { 
+        // Input
+        float dewpointTemp = MFVarGetFloat (_MDInCommon_HumidityDewPointID, itemID, 0.0); // Dewpoint temperature in degC
+        float runoffVolume = MFVarGetFloat (_MDInCore_RunoffVolumeID,       itemID, 0.0); // RO volume in m3/s
 
-    if ((discharge0 > 0.001) && (discharge > 0.001)) {
         heatFlux += runoffTemp * runoffVolume;
         riverTemp = equilTemp = heatFlux / discharge0;
         // EQUILIBRIUM TEMP MODEL - Edinger et al. 1974: Heat Exchange and Transport in the Environment
         if (dewpointTemp > 0.0) {
+            // Input
+     	    float solarRad     = MFVarGetFloat (_MDInCommon_SolarRadID,    itemID, 0.0); // Solar radiation in W/m2 averaged over the day
+        	float windSpeed    = MFVarGetFloat (_MDInCommon_WindSpeedID,   itemID, 0.0); // Winds speed in m/s
+           	float channelWidth = MFVarGetFloat (_MDInRouting_RiverWidthID, itemID, 0.0); // River width in m
+            // Local
             int i;
             float windFunc;
             float meanTemp;
@@ -80,12 +76,9 @@ static void _MDWTempRiver (int itemID) {
 	            kay       = 4.50 + 0.050 * equilTemp + (beta + 0.47) * windFunc; // K in W/m2/degC
 	            equilTemp = dewpointTemp + solarRad / kay; // Solar radiation is in W/m2;
             }
-            equilTemp += (riverTemp - equilTemp) * exp (-kay * channelLength * channelWidth / (4181.3 * discharge * dt));
-            riverTemp  = equilTemp;
-            riverTemp  = riverTemp > dewpointTemp ? MDMinimum (riverTemp, equilTemp) : MDMaximum (dewpointTemp, equilTemp);
+            riverTemp = equilTemp + (riverTemp - equilTemp) * exp (-kay * channelLength * channelWidth / (4181.3 * discharge * dt));
         }
-   	} else
-        riverTemp = equilTemp = runoffTemp;
+    } else  riverTemp = equilTemp = runoffTemp;
 
     heatFlux = riverTemp * discharge;
     MFVarSetFloat(_MDOutTP2M_Equil_Temp,   itemID, equilTemp);

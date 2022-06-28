@@ -19,9 +19,6 @@ static int _MDInCroplandPctID = MFUnset;
 static int _MDInSAGEVegID;
 
 static void _MDLCSAGEVegToCover (int itemID) {
-	if (MFVarTestMissingVal (_MDInCroplandPctID, itemID) |
-		 MFVarTestMissingVal (_MDInSAGEVegID,     itemID)) { MFVarSetMissingVal (_MDOutCoverID, itemID); return; }
-
 	switch (MFVarGetInt (_MDInSAGEVegID,itemID, 15)) {
 		case  1: MFVarSetInt (_MDOutCoverID,itemID, 8); break;
 		case  2:

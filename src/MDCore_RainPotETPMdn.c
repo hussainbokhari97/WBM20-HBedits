@@ -34,27 +34,28 @@ static int _MDInVPressID        = MFUnset;
 static int _MDInWSpeedID        = MFUnset;
 static int _MDOutPetID          = MFUnset;
 
-static void _MDRainPotETPMdn (int itemID) {
-// day-night Penman-Monteith PE in mm for day
+static void _MDRainPotETPMdn (int itemID) { // day-night Penman-Monteith PE in mm for day
 // Input
-	float dayLen;  // daylength in fraction of day
- 	float i0hDay;  //  daily potential insolation on horizontal [MJ/m2]
-	float albedo;  // albedo 
-	float height;  // canopy height [m]
-	float r5;      // solar radiation at which conductance is halved [W/m2]
-	float cd;      // vpd at which conductance is halved [kPa]
-	float cr;      // light extinction coefficient for projected LAI
-	float glMax;   // maximum leaf surface conductance for all sides of leaf [m/s]
-	float z0g;     // z0g       - ground surface roughness [m]
- 	float lai;     // projected leaf area index
-	float sai;     // projected stem area index
-	float airT;    // air temperatur [degree C]
-	float airTMin; // daily minimum air temperature [degree C] 
-	float airTMax; // daily maximum air temperature [degree C] 
-	float solRad;  // daily solar radiation on horizontal [MJ/m2]
-	float vPress;  // daily average vapor pressure [kPa]
-	float wSpeed;  // average wind speed for the day [m/s] 
+	float dayLen  = MFVarGetFloat (_MDInDayLengthID,     itemID, 0.0); // daylength in fraction of day
+ 	float i0hDay  = MFVarGetFloat (_MDInI0HDayID,        itemID, 0.0); // daily potential insolation on horizontal [MJ/m2/day]
+	float albedo  = MFVarGetFloat (_MDInCParamAlbedoID,  itemID, 0.0); // albedo 
+	float height  = MFVarGetFloat (_MDInCParamCHeightID, itemID, 0.0); // canopy height [m]
+	float r5      = MFVarGetFloat (_MDInCParamR5ID,      itemID, 0.0); // solar radiation at which conductance is halved [W/m2]
+	float cd      = MFVarGetFloat (_MDInCParamCDID,      itemID, 0.0); // vpd at which conductance is halved [kPa]
+	float cr      = MFVarGetFloat (_MDInCParamCRID,      itemID, 0.0); // light extinction coefficient for projected LAI
+	float glMax   = MFVarGetFloat (_MDInCParamGLMaxID,   itemID, 0.0); // maximum leaf surface conductance for all sides of leaf [m/s]
+	float z0g     = MFVarGetFloat (_MDInCParamZ0gID,     itemID, 0.0); // z0g - ground surface roughness [m]
+ 	float lai     = MFVarGetFloat (_MDInLeafAreaIndexID, itemID, 0.0); // projected leaf area index
+	float sai     = MFVarGetFloat (_MDInStemAreaIndexID, itemID, 0.0); // projected stem area index
+	float airT    = MFVarGetFloat (_MDInCommon_AtMeanID, itemID, 0.0); // air temperatur [degree C]
+	float airTMin = MFVarGetFloat (_MDInAtMinID,         itemID, 0.0); // daily minimum air temperature [degree C] 
+	float airTMax = MFVarGetFloat (_MDInAtMaxID,         itemID, 0.0); // daily maximum air temperature [degree C] 
+	float solRad  = MFVarGetFloat (_MDInSolRadID,        itemID, 0.0); // daily solar radiation on horizontal [MJ/m2]
+	float vPress  = MFVarGetFloat (_MDInVPressID,        itemID, 0.0) / 1000.0; // daily average vapor pressure [kPa]
+	float wSpeed  = fabs (MFVarGetFloat (_MDInWSpeedID,  itemID, 0.0)); // average wind speed for the day [m/s] 
 	float sHeat = 0.0; // average subsurface heat storage for day [W/m2]
+// Output
+	float pet;
 // Local_MDOutPetID
 	float solNet;  // average net solar radiation for daytime [W/m2]
 	float airTDtm, airTNtm; // air temperature for daytime and nighttime [degC]
@@ -70,48 +71,11 @@ static void _MDRainPotETPMdn (int itemID) {
 	float ra;		//	aerodynamic resistance [s/ma]
  	float rc;		// canopy resistance [s/m]
 	float led, len;// daytime and nighttime latent heat [W/m2]
-// Output
-	float pet;
 
-	if (MFVarTestMissingVal (_MDInDayLengthID,      itemID) ||
-		 MFVarTestMissingVal (_MDInI0HDayID,        itemID) ||
-		 MFVarTestMissingVal (_MDInCParamAlbedoID,  itemID) ||
-		 MFVarTestMissingVal (_MDInCParamCHeightID, itemID) ||
-		 MFVarTestMissingVal (_MDInCParamR5ID,      itemID) ||
-		 MFVarTestMissingVal (_MDInCParamCDID,      itemID) ||
-		 MFVarTestMissingVal (_MDInCParamCRID,      itemID) ||
-		 MFVarTestMissingVal (_MDInCParamGLMaxID,   itemID) ||
-		 MFVarTestMissingVal (_MDInCParamZ0gID,     itemID) ||
-		 MFVarTestMissingVal (_MDInLeafAreaIndexID, itemID) ||
-		 MFVarTestMissingVal (_MDInStemAreaIndexID, itemID) ||
-		 MFVarTestMissingVal (_MDInCommon_AtMeanID, itemID) ||
-		 MFVarTestMissingVal (_MDInAtMinID,         itemID) ||
-		 MFVarTestMissingVal (_MDInAtMaxID,         itemID) ||
-		 MFVarTestMissingVal (_MDInSolRadID,        itemID) ||
-		 MFVarTestMissingVal (_MDInVPressID,        itemID) ||
-		 MFVarTestMissingVal (_MDInWSpeedID,        itemID)) { MFVarSetMissingVal (_MDOutPetID,itemID); return; }
-
-	dayLen  = MFVarGetFloat (_MDInDayLengthID,     itemID, 0.0);
-	i0hDay  = MFVarGetFloat (_MDInI0HDayID,        itemID, 0.0);
-	albedo  = MFVarGetFloat (_MDInCParamAlbedoID,  itemID, 0.0);
-	height  = MFVarGetFloat (_MDInCParamCHeightID, itemID, 0.0);
-	r5      = MFVarGetFloat (_MDInCParamR5ID,      itemID, 0.0);
-	cd      = MFVarGetFloat (_MDInCParamCDID,      itemID, 0.0);
-	cr      = MFVarGetFloat (_MDInCParamCRID,      itemID, 0.0);
-	glMax   = MFVarGetFloat (_MDInCParamGLMaxID,   itemID, 0.0);
-	z0g     = MFVarGetFloat (_MDInCParamZ0gID,     itemID, 0.0);
-	lai     = MFVarGetFloat (_MDInLeafAreaIndexID, itemID, 0.0);
-	sai     = MFVarGetFloat (_MDInStemAreaIndexID, itemID, 0.0);
-	airT    = MFVarGetFloat (_MDInCommon_AtMeanID, itemID, 0.0);
-	airTMin = MFVarGetFloat (_MDInAtMinID,         itemID, 0.0);
-	airTMax = MFVarGetFloat (_MDInAtMaxID,         itemID, 0.0);
-	solRad  = MFVarGetFloat (_MDInSolRadID,        itemID, 0.0);
-	vPress  = MFVarGetFloat (_MDInVPressID,        itemID, 0.0) / 1000.0;
-	wSpeed  = fabs (MFVarGetFloat (_MDInWSpeedID,  itemID, 0.0));
 	if (wSpeed < 0.2) wSpeed = 0.2;
 
-// daytime
-	if (dayLen > 0) {
+ // daytime
+	if (dayLen > 0.0) {
 		solNet  = (1.0 - albedo) * solRad / (MDConstIGRATE * dayLen);
 
 		airTDtm = airT + ((airTMax - airTMin) / (2 * M_PI * dayLen)) * sin (M_PI * dayLen);
@@ -155,7 +119,7 @@ static void _MDRainPotETPMdn (int itemID) {
 	else len = 0.0;
 
 	pet = MDConstEtoM * MDConstIGRATE * (dayLen * led + (1.0 - dayLen) * len);
-   MFVarSetFloat (_MDOutPetID,itemID,pet);
+	MFVarSetFloat (_MDOutPetID,itemID,pet);
 }
 
 int MDCore_RainPotETPMdnDef () {

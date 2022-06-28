@@ -27,11 +27,11 @@ static int _MDOutRiverWidthID           = MFUnset;
 
 static void _MDRiverWidth (int itemID) {
 // Input
-	float discharge; // Discharge [m3/s]
-	float shapeExp;  // Riverbed shape exponent
-	float avgDepth;  // Average depth at mean discharge [m]
-	float avgWidth;  // Average width at mean discharge [m]
-	float velocity;  // Flow velocity [m/s]
+	float discharge = MFVarGetFloat (_MDInRouting_DischargeID,      itemID, 0.0); // Discharge [m3/s]
+	float shapeExp  = MFVarGetFloat (_MDInRiverbedShapeExponentID,  itemID, 0.0); // Riverbed shape exponent
+	float avgDepth  = MFVarGetFloat (_MDInRiverbedAvgDepthMeanID,   itemID, 0.0); // Average depth at mean discharge [m]
+	float avgWidth  = MFVarGetFloat (_MDInRiverbedWidthMeanID,      itemID, 0.0); // Average width at mean discharge [m]
+	float velocity  = MFVarGetFloat (_MDInRiverbedVelocityMeanID,   itemID, 0.0); // Flow velocity [m/s]
 // Output
 	float depth;     // Flow depth at current discharge [m]
 	float width;     // Flow width at current discharge [m]
@@ -39,25 +39,13 @@ static void _MDRiverWidth (int itemID) {
 	float alpha;     // Shape coefficient
 	float area;      // Cross-section area [m2]
 
-	discharge = MFVarGetFloat (_MDInRouting_DischargeID,      itemID, 0.0);
-	shapeExp  = MFVarGetFloat (_MDInRiverbedShapeExponentID,  itemID, 0.0);
-	avgDepth  = MFVarGetFloat (_MDInRiverbedAvgDepthMeanID,   itemID, 0.0);
-	avgWidth  = MFVarGetFloat (_MDInRiverbedWidthMeanID,      itemID, 0.0);
-	velocity  = MFVarGetFloat (_MDInRiverbedVelocityMeanID,   itemID, 0.0);
-
-	if (CMmathEqualValues (discharge, 0.0) ||
-	    CMmathEqualValues (avgDepth,  0.0) ||
-	    CMmathEqualValues (avgWidth,  0.0) ||
-	    CMmathEqualValues (velocity,  0.0)) {
-		width = depth = 0.0;
-	}
-	else	{
+	if ((discharge > 0.0) && (avgDepth > 0.0) && (avgWidth > 0.0) && (velocity > 0.0)) {
 		alpha = avgDepth / pow (avgWidth, shapeExp);
-
 		area  = discharge / velocity;
 		width = pow (((shapeExp + 1.0) * area) / (shapeExp * alpha), 1.0 / (shapeExp + 1));
 		depth = alpha * pow (width, shapeExp);
 	}
+	else width = depth = 0.0;
 	MFVarSetFloat (_MDOutRiverDepthID,   itemID, depth);
 	MFVarSetFloat (_MDOutRiverWidthID,   itemID, width);
 }

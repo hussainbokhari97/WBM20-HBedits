@@ -18,11 +18,9 @@ static int _MDInAux_AccumRunoffID       = MFUnset;
 static int _MDOutAux_MaximumDischargeID = MFUnset;
 
 static void _MDAux_MaximumDischarge (int itemID) {
-	float accumDisch;
-	float discharge;
+	float discharge  = MFVarGetFloat (_MDOutAux_MaximumDischargeID, itemID, 0.0);
+	float accumDisch = MFVarGetFloat (_MDInAux_AccumRunoffID,       itemID, 0.0);
 
-	accumDisch = MFVarGetFloat (_MDInAux_AccumRunoffID,       itemID, 0.0);
-	discharge  = MFVarGetFloat (_MDOutAux_MaximumDischargeID, itemID, 0.0);
 	discharge  = discharge > accumDisch ? discharge : accumDisch;
 	MFVarSetFloat (_MDOutAux_MaximumDischargeID, itemID, discharge);
 }

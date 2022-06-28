@@ -34,11 +34,14 @@ static int _MDInCommon_HumidityRelativeID = MFUnset;
 static int _MDOutWetBulbTempID = MFUnset;
 
 static void _MDWetBulbTemp(int itemID) {
-    float relativehumidity;
-    float airtemp;
-    float specifichumidity;
-    float airpressure;
+// Input
+    float relativehumidity = MFVarGetFloat(_MDInCommon_HumidityRelativeID, itemID, 0.0); // Relative humidity in percent
+    float airtemp          = MFVarGetFloat(_MDInCommon_AirTemperatureID,   itemID, 0.0); // Air temperature in degCe
+    float specifichumidity = MFVarGetFloat(_MDInCommon_HumiditySpecificID, itemID, 0.0) * 1000; // Converting specific humidity in kg/kg to g/kg
+    float airpressure      = MFVarGetFloat(_MDInCommon_AirPressureID,      itemID, 0.0) / 100;  // Converting air pressure in Pa to HPa
+// Output
     float wetbulbtemp;
+// Local
     float eps = 0.1; //threshold value for iteration 
     float cp = 1005; //specific heat of air (J/(kg*K)
     float e; //e (HPa)
@@ -64,11 +67,6 @@ static void _MDWetBulbTemp(int itemID) {
     float pl6;
     int x;
     float esw; //Sat. vapor press. (hPa) at Twn
-
-    relativehumidity = MFVarGetFloat(_MDInCommon_HumidityRelativeID, itemID, 0.0);
-    airtemp          = MFVarGetFloat(_MDInCommon_AirTemperatureID,   itemID, 0.0);
-    airpressure      = MFVarGetFloat(_MDInCommon_AirPressureID,      itemID, 0.0) / 100; //pressure (HPa)
-    specifichumidity = MFVarGetFloat(_MDInCommon_HumiditySpecificID, itemID, 0.0) * 1000; //specific humidity (g/kg) took out *1000 jan27 2017 (divide by 100 for NCEP)
 
     e  = (specifichumidity * airpressure) / 622; //e (HPa)
     es = 6.112 * exp(17.27 * (airtemp / (237.3 + airtemp))); //Sat. vapor press. (hPa) 

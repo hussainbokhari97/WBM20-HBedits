@@ -22,12 +22,11 @@ static int _MDOutCore_RunoffID    = MFUnset;
 
 static void _MDRunoff (int itemID) {
 // Input
-	float baseFlow;
-	float surfaceRO;
+	float baseFlow  = MFVarGetFloat (_MDInBaseFlowID,        itemID, 0.0);
+	float surfaceRO = MFVarGetFloat (_MDInSurfCore_RunoffID, itemID, 0.0);
+// Output
 	float runoff;
 
-	baseFlow  = MFVarGetFloat (_MDInBaseFlowID,        itemID, 0.0);
-	surfaceRO = MFVarGetFloat (_MDInSurfCore_RunoffID, itemID, 0.0);
 	runoff = baseFlow + surfaceRO;
 	if (_MDInRunoffCorrID != MFUnset) runoff *= MFVarGetFloat (_MDInRunoffCorrID, itemID, 1.0);
 	MFVarSetFloat (_MDOutCore_RunoffID, itemID, runoff);

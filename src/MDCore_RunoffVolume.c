@@ -20,9 +20,8 @@ static int _MDOutCore_RunoffVolumeID = MFUnset;
 
 static void _MDRunoffVolume (int itemID) {
 // Input
-	float runoff;
+	float runoff = MFVarGetFloat (_MDInCore_RunoffID, itemID, 0.0) * MFModelGetArea (itemID) / (MFModelGet_dt () * 1000.0);
 
-	runoff = MFVarGetFloat (_MDInCore_RunoffID, itemID, 0.0) * MFModelGetArea (itemID) / (MFModelGet_dt () * 1000.0);
 	MFVarSetFloat (_MDOutCore_RunoffVolumeID, itemID, runoff);
 }
  

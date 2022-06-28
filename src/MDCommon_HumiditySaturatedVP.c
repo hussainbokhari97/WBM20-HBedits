@@ -23,10 +23,11 @@ static int _MDInCommon_AirTemperatureID    = MFUnset;
 static int _MDOutCommon_HumiditySaturatedVaporPressID = MFUnset;
 
 static void _MDCommon_HumiditySaturatedVaporPressure (int itemID) {
-    float airTemp;     // Air temperature in degC
+// Input
+    float airTemp = MFVarGetFloat (_MDInCommon_AirTemperatureID,  itemID, 0.0); // Air temperature in degC
+// Output
     float saturatedVP; // Saturated vapor pressure in Pa
-
-    airTemp     = MFVarGetFloat (_MDInCommon_AirTemperatureID,  itemID, 0.0);
+        
     saturatedVP = airTemp > 0.0 ? 611 * exp (17.27 * airTemp / (airTemp + 237.3))  // Over water
                                 : 611 * exp (21.87 * airTemp / (airTemp + 265.5)); // Over ice
     MFVarSetFloat(_MDOutCommon_HumiditySaturatedVaporPressID, itemID, saturatedVP);
