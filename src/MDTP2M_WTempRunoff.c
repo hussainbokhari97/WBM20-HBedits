@@ -29,7 +29,7 @@ static void _MDWTempRunoff (int itemID) {
 	float baseFlowT;
 	float surfaceRO;
 	float baseFlow;
-	float tempRo;
+	float runoffTemp;
 
 	surfaceRO   = MFVarGetFloat (_MDInSurfCore_RunoffID, itemID, 0.0);
 	baseFlow    = MFVarGetFloat (_MDInBaseFlowID,        itemID, 0.0);
@@ -39,9 +39,10 @@ static void _MDWTempRunoff (int itemID) {
 	surfaceRO = MDMaximum (surfaceRO, 0.0);
 	baseFlow  = MDMaximum (baseFlow,  0.0);
 	if (surfaceRO + baseFlow > 0.0)
-		tempRo = ((surfaceRO * surfRunoffT) + (baseFlow * baseFlowT)) / (surfaceRO + baseFlow);
-	else surfRunoffT;
-	MFVarSetFloat(_MDOutWTempRunoffID,itemID,tempRo);
+		runoffTemp = ((surfaceRO * surfRunoffT) + (baseFlow * baseFlowT)) / (surfaceRO + baseFlow);
+	else
+		runoffTemp = surfRunoffT;
+	MFVarSetFloat(_MDOutWTempRunoffID,itemID,runoffTemp);
 }
 
 enum { MDhelp, MDinput, MDcalculate, MDsurface };
