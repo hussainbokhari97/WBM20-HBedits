@@ -83,8 +83,8 @@ int MDCommon_GrossRadDef () {
 	MFDefEntering ("Gross Radiance");
 	if ((optStr = MFOptionGet (MDVarCore_GrossRadiance)) != (char *) NULL) optID = CMoptLookup (options, optStr, true);
 	switch (optID) {
-		default:      MFOptionMessage (MDVarCore_GrossRadiance, optStr, options); return (CMfailed);
-		case MDhelp:  MFOptionMessage (MDVarCore_GrossRadiance, optStr, options);
+		default:
+		case MDhelp:  MFOptionMessage (MDVarCore_GrossRadiance, optStr, options); return (CMfailed);
 		case MDinput: _MDOutCommon_GrossRadID = MFVarGetID (MDVarCore_GrossRadiance, "W/m^2", MFInput, MFFlux, MFBoundary); break;
 		case MDstandard:
 			if (((optStr = MFOptionGet (MDParGrossRadTAU)) != (char *) NULL) && (sscanf (optStr,"%f",&par) == 1)) _MDGrossRadStdTAU = par;

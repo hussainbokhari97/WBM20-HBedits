@@ -44,8 +44,8 @@ int MDRouting_DischargeDef() {
 	MFDefEntering ("Discharge");
 	if ((optStr = MFOptionGet (MDOptConfig_Discharge)) != (char *) NULL) optID = CMoptLookup (options,optStr,true);
 	switch (optID) {
-		default:      MFOptionMessage (MDOptConfig_Discharge, optStr, options); return (CMfailed);
-		case MDhelp:  MFOptionMessage (MDOptConfig_Discharge, optStr, options); break;
+		default:
+		case MDhelp:  MFOptionMessage (MDOptConfig_Discharge, optStr, options); return (CMfailed);
 		case MDinput: _MDOutRouting_DischargeID = MFVarGetID (MDVarRouting_Discharge, "m3/s", MFInput, MFState, MFInitial); break;
 		case MDcalculate:
 			if (((_MDOutRouting_DischargeID = MFVarGetID (MDVarRouting_Discharge, "m3/s", MFRoute, MFState, MFInitial)) == CMfailed) ||

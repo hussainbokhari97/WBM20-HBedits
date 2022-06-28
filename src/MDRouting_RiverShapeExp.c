@@ -71,8 +71,8 @@ int MDRouting_RiverShapeExponentDef () {
 	MFDefEntering ("River Shape Exponent");
 	if ((optStr = MFOptionGet (MDOptRouting_Riverbed)) != (char *) NULL) optID = CMoptLookup (options,optStr,true);
 	switch (optID) {
-		default:      MFOptionMessage (MDOptRouting_Riverbed, optStr, options); return (CMfailed);
-		case MDhelp:  MFOptionMessage (MDOptRouting_Riverbed, optStr, options);
+		default:
+		case MDhelp:  MFOptionMessage (MDOptRouting_Riverbed, optStr, options); return (CMfailed);
 		case MDinput:
 			if (((_MDOutRiverAvgDepthMeanID  = MFVarGetID (MDVarRouting_RiverAvgDepthMean, "m", MFInput, MFState, MFBoundary)) == CMfailed) ||
                 ((_MDOutRiverWidthMeanID     = MFVarGetID (MDVarRouting_RiverWidthMean, "m", MFInput, MFState, MFBoundary)) == CMfailed) ||

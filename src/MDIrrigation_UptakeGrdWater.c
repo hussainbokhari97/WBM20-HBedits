@@ -15,8 +15,6 @@ dominik.wisser@unh.edu
 
 static int _MDOutCommon_IrrUptakeGrdWaterID = MFUnset;
 
-enum { MDhelp, MDoff, MDon };
-
 int MDIrrigation_UptakeGrdWaterDef () {
 	int optID = MFoff;
 	const char *optStr;

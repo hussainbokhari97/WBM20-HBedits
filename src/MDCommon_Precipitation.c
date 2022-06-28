@@ -107,8 +107,8 @@ int MDCommon_PrecipitationDef () {
 	MFDefEntering ("Precipitation");
 	if ((optStr = MFOptionGet (MDVarCommon_Precipitation)) != (char *) NULL) optID = CMoptLookup (options,optStr,true);
 	switch (optID) {
-		default:      MFOptionMessage (MDVarCommon_Precipitation, optStr, options); return (CMfailed);
-		case MDhelp:  MFOptionMessage (MDVarCommon_Precipitation, optStr, options);
+		default:
+		case MDhelp:  MFOptionMessage (MDVarCommon_Precipitation, optStr, options); return (CMfailed);
 		case MDinput: _MDOutCommon_PrecipitationID = MFVarGetID (MDVarCommon_Precipitation, "mm", MFInput, MFFlux, MFBoundary); break;
 		case MDdownscale:
 			if (((_MDInCommon_PrecipitationMonthlyID   = MFVarGetID (MDVarCommon_PrecipitationMonthly,   "mm", MFInput,  MFFlux,  MFBoundary)) == CMfailed) ||

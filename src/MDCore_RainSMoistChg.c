@@ -111,3 +111,5 @@ int MDCore_RainSMoistChgDef () {
 	MFDefLeaving ("Rainfed Soil Moisture");
 	return (_MDOutSMoistChgID);
 }
+
+int MDCore_RainEvapotranspirationDef () { MDCore_RainSMoistChgDef (); return (_MDOutEvaptrsID); }

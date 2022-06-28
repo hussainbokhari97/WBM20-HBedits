@@ -16,7 +16,6 @@ bfekete@gc.cuny.edu
 // Input
 static int _MDInRainEvapotranspID = MFUnset;
 static int _MDInIrrEvapotranspID  = MFUnset;
-static int _MDInSmallResEvapoID   = MFUnset;
 // Output
 static int _MDOutEvapotranspID    = MFUnset;
 
@@ -24,39 +23,32 @@ static void _MDEvapotransp (int itemID) {
 // Input
 	float et=0;    // Evapotranspiration [mm/dt]
 	
-	et = MFVarGetFloat (_MDInRainEvapotranspID,     itemID, 0.0)
-	   + (_MDInIrrEvapotranspID != MFUnset ? MFVarGetFloat (_MDInIrrEvapotranspID, itemID, 0.0) : 0.0)
-	   + (_MDInSmallResEvapoID  != MFUnset ? MFVarGetFloat (_MDInSmallResEvapoID,  itemID, 0.0) : 0.0);
-//	if (itemID==104)printf ("ETP hier %f irrET %f\n",et,MFVarGetFloat (_MDInIrrEvapotranspID, itemID, 0.0) );
+	et = MFVarGetFloat (_MDInRainEvapotranspID, itemID, 0.0)
+	   + (_MDInIrrEvapotranspID != MFUnset ? MFVarGetFloat (_MDInIrrEvapotranspID, itemID, 0.0) : 0.0);
 	MFVarSetFloat (_MDOutEvapotranspID,  itemID, et);
 }
 
 int MDCore_EvapotranspirationDef () {
-	int optID = MFnone, ret;
+	int optID = MFcalculate, ret;
 	const char *optStr;
 
 	if (_MDOutEvapotranspID != MFUnset) return (_MDOutEvapotranspID);
 
 	MFDefEntering ("Evapotranspiration");
-	if ((optStr = MFOptionGet (MDOptConfig_Irrigation)) != (char *) NULL) optID = CMoptLookup (MFcalcOptions, optStr, true);
+	if ((optStr = MFOptionGet (MDVarCore_Evapotranspiration)) != (char *) NULL) optID = CMoptLookup (MFsourceOptions, optStr, true);
 	switch (optID) {
-		case MFhelp:
-		case MFnone:  
-		case MFinput: break;
-		case MFcalculate: 
-			if ((_MDInIrrEvapotranspID = MFVarGetID (MDVarIrrigation_Evapotranspiration, "mm", MFInput, MFFlux, MFBoundary)) == CMfailed) return (CMfailed);
-			if ((ret = MDReservoir_FarmPondReleaseDef ()) != MFUnset) {
-				if ((ret == CMfailed) ||
-					((_MDInSmallResEvapoID  = MFVarGetID (MDVarReservoir_FarmPondEvaporation, "mm", MFInput, MFFlux, MFBoundary)) == CMfailed))
-					return (CMfailed);
-			}
+		default:
+		case MFhelp: MFOptionMessage (MDVarCore_Evapotranspiration, optStr, MFsourceOptions); return (CMfailed);
+		case MFinput:
+			if ((_MDOutEvapotranspID     = MFVarGetID (MDVarCore_Evapotranspiration, "mm", MFInput, MFFlux, MFBoundary))  == CMfailed) return (CMfailed);
 			break;
-		default: return (CMfailed);
+		case MFcalculate:
+			if (((_MDInRainEvapotranspID = MDCore_RainEvapotranspirationDef ())   == CMfailed) ||
+				((_MDInIrrEvapotranspID  = MDIrrigation_EvapotranspirationDef ()) == CMfailed) ||
+		        ((_MDOutEvapotranspID    = MFVarGetID (MDVarCore_Evapotranspiration, "mm", MFOutput, MFFlux, MFBoundary)) == CMfailed) ||
+			    (MFModelAddFunction (_MDEvapotransp) == CMfailed)) return (CMfailed);
+			break;
 	}
- 
-	if (((_MDInRainEvapotranspID = MFVarGetID (MDVarCore_RainEvapotranspiration, "mm", MFInput,  MFFlux, MFBoundary)) == CMfailed) ||
-		((_MDOutEvapotranspID    = MFVarGetID (MDVarCore_Evapotranspiration,     "mm", MFOutput, MFFlux, MFBoundary)) == CMfailed) ||
-		(MFModelAddFunction (_MDEvapotransp) == CMfailed)) return (CMfailed);
 	MFDefLeaving ("Evapotranspiration");
 	return (_MDOutEvapotranspID);
 }

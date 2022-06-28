@@ -27,7 +27,6 @@ static int _MDInReliefID              = MFUnset;
 static int _MDInAirTempAcc_timeID     = MFUnset;
 static int _MDInTimeStepsID           = MFUnset;
 static int _MDInIceCoverID            = MFUnset;
-static int _MDInSmallResCapacityID    = MFUnset;
 static int _MDInBQART_LithologyID     = MFUnset;
 static int _MDInBQART_GNPID           = MFUnset;
 static int _MDInPopulationID          = MFUnset;
@@ -71,8 +70,7 @@ static void _MDSedimentFlux (int itemID) {
 	float A, R;
 	float Ag;
 	float tmp,TupSlop,PixSize_km2;
-	float ResCapacity, ResCapacityAcc, TeQacc ,deltaTau,upStreamResCapacity,LargeResCapacity,SmallRecCapacity;
-//	float SmallRecCapacity;
+	float ResCapacity, ResCapacityAcc, TeQacc ,deltaTau,upStreamResCapacity,LargeResCapacity;
 	float PopulationAcc,PopuDesity, MeanGNP,GNPAreaAcc;
 	static float dailyRand, yearlyRand;
 //	static int tmpTimeStep,tempTimeStep;
@@ -136,11 +134,9 @@ static void _MDSedimentFlux (int itemID) {
 		ResCapacity = 0.0;
 		ResCapacityAcc = 0.0;
 		//TeQacc = 0.0;
-		SmallRecCapacity = MFVarGetFloat (_MDInSmallResCapacityID, itemID, 0.0)/(pow(1000,3)); //convert from m3 to km3
-		if (SmallRecCapacity < 0) SmallRecCapacity = 0.00;
 		LargeResCapacity = MFVarGetFloat (_MDInResCapacityID,	   itemID, 0.0);
 		if (LargeResCapacity < 0.0001) LargeResCapacity = 0.0000000;
-		ResCapacity = SmallRecCapacity + LargeResCapacity;
+		ResCapacity = LargeResCapacity;
 		//ResCapacity = LargeResCapacity;
 		if (ResCapacity < 0) ResCapacity = 0.00;
 	
@@ -278,7 +274,6 @@ int MDSediment_FluxOLDDef() {
 	MFDefEntering ("SedimentFlux");
 	
 	if (((_MDInDischargeID 		     = MDRouting_DischargeDef ())          == CMfailed) ||
-		((_MDInSmallResCapacityID    = MDReservoir_FarmPondCapacityDef ()) == CMfailed) ||
 	    ((_MDInDischMeanID 		     = MDAux_MeanDischargeDef ())          == CMfailed) ||
 	    ((_MDInAirTempID             = MDCommon_AirTemperatureDef ())      == CMfailed) ||
 	    ((_MDInAirTempAcc_timeID     = MFVarGetID (MDVarSediment_AirTemperatureAcc_time,    "degC",     MFInput,  MFState, MFInitial))  == CMfailed) ||

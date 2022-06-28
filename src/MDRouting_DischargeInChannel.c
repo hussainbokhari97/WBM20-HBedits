@@ -27,8 +27,8 @@ int MDRouting_DischargeInChannelDef() {
 	MFDefEntering ("Discharge - In channel");
 	if ((optStr = MFOptionGet (MDOptConfig_Routing)) != (char *) NULL) optID = CMoptLookup (options,optStr,true);
 	switch (optID) {
-		default: MFOptionMessage (MDOptConfig_Routing, optStr, options); return (CMfailed);
-		case MDhelp:       MFOptionMessage (MDOptConfig_Routing, optStr, options);
+		default:
+		case MDhelp:       MFOptionMessage (MDOptConfig_Routing, optStr, options); return (CMfailed);
 		case MDmuskingum:  _MDDischLevel3ID = MDRouting_DischargeInChannelMuskingumDef();  break;
 		case MDaccumulate: _MDDischLevel3ID = MDRouting_DischargeInChannelAccumulateDef(); break;
 		case MDcascade:    _MDDischLevel3ID = MDRouting_DischargeInChannelCascadeDef();    break;

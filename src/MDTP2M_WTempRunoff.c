@@ -56,8 +56,8 @@ int MDTP2M_WTempRunoffDef () {
 	MFDefEntering ("Runoff temperature");
     if ((optStr = MFOptionGet (MDVarTP2M_WTempRunoff)) != (char *) NULL) optID = CMoptLookup (options, optStr, true);
 	switch (optID) {
-		default:      MFOptionMessage (MDVarTP2M_WTempRunoff, optStr, options); return (CMfailed);
-		case MDhelp:  MFOptionMessage (MDVarTP2M_WTempRunoff, optStr, options);
+		default:
+		case MDhelp:  MFOptionMessage (MDVarTP2M_WTempRunoff, optStr, options); return (CMfailed);
 		case MDinput: _MDOutWTempRunoffID = MFVarGetID (MDVarTP2M_WTempRunoff, "degC", MFInput, MFState, MFBoundary); break;
 		case MDcalculate:
 			if (((_MDInSurfCore_RunoffID = MDCore_RainSurfRunoffDef())  == CMfailed) ||

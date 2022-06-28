@@ -406,5 +406,6 @@ int MDIrrigation_GrossDemandDef () {
 	return (_MDOutIrrGrossDemandID);
 }
 
-int MDIrrigation_ReturnFlowDef () { MDIrrigation_GrossDemandDef (); return (_MDOutIrrReturnFlowID); }
-int MDIrrigation_RunoffDef ()     { MDIrrigation_GrossDemandDef (); return (_MDOutIrrRunoffID); }
+int MDIrrigation_EvapotranspirationDef () { MDIrrigation_GrossDemandDef (); return (_MDOutIrrEvapotranspID); }
+int MDIrrigation_ReturnFlowDef ()         { MDIrrigation_GrossDemandDef (); return (_MDOutIrrReturnFlowID); }
+int MDIrrigation_RunoffDef ()             { MDIrrigation_GrossDemandDef (); return (_MDOutIrrRunoffID); }

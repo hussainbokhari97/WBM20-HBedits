@@ -167,13 +167,6 @@ extern "C" {
 #define MDVarIrrigation_RicePondingDepth        "RicePondingDepth"
 
 // Reservoir variables
-#define MDVarReservoir_FarmPondStorageFrac      "SmallReservoirStorageFraction"
-#define MDVarReservoir_FarmPondSmallResCapacity "SmallReservoirCapacity"
-#define MDVarReservoir_FarmPondRelease          "SmallReservoirRelease"
-#define MDVarReservoir_FarmPondStorage          "SmallReservoirStorage"
-#define MDVarReservoir_FarmPondStorageChange    "SmallReservoirStorageChange"
-#define MDVarReservoir_FarmPontUptake           "SmallReservoirUptake"
-#define MDVarReservoir_FarmPondEvaporation      "SmallReservoirEvaporation"
 #define MDVarReservoir_Capacity                 "ReservoirCapacity"
 #define MDVarReservoir_Inflow                   "ReservoirInflow"
 #define MDVarReservoir_NatInflow                "ReservoirNatInflow"
@@ -454,6 +447,7 @@ int MDCommon_WetDaysDef ();
 
 int MDCore_BaseFlowDef ();
 int MDCore_EvapotranspirationDef ();
+int MDCore_RainEvapotranspirationDef ();
 int MDCore_RainInfiltrationDef ();
 int MDCore_RainInterceptDef ();
 int MDCore_RainPotETDef ();
@@ -479,6 +473,7 @@ int MDCore_SurfRunoffDef ();
 int MDCore_WaterBalanceDef ();
 
 int MDIrrigation_IrrAreaDef ();
+int MDIrrigation_EvapotranspirationDef ();
 int MDIrrigation_GrossDemandDef ();
 int MDIrrigation_ReferenceETDef ();
 int MDIrrigation_ReferenceETFAODef ();
@@ -521,8 +516,6 @@ int MDReservoir_TargetLowFlowDef ();
 int MDReservoir_TargetHighFlowDef ();
 int MDReservoir_ExtractableReleaseDef ();
 int MDReservoir_UptakeDef    ();
-int MDReservoir_FarmPondReleaseDef  ();
-int MDReservoir_FarmPondCapacityDef ();
 
 int MDSediment_BQARTpreprocessDef ();
 int MDSediment_BedloadFluxDef ();

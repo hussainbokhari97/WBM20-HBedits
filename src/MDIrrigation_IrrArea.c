@@ -62,11 +62,11 @@ int MDIrrigation_IrrAreaDef () {
 	if ((optStr = MFOptionGet (MDOptIrrigation_AreaMap)) != (char *) NULL) optID = CMoptLookup (options, optStr, true);
 
 	switch (optID) {
-        default:      MFOptionMessage (MDOptIrrigation_AreaMap, optStr, options); return (CMfailed);
-		case MDhelp:  MFOptionMessage (MDOptIrrigation_AreaMap, optStr, options);
-        case MDfao:
-            if ((_MDOutIrrigatedAreaFracID = MFVarGetID (MDVarIrrigation_AreaFraction, MFNoUnit, MFInput, MFState, MFBoundary)) == CMfailed) return (CMfailed);
-            break;
+        default:
+		case MDhelp:  MFOptionMessage (MDOptIrrigation_AreaMap, optStr, options); return (CMfailed);
+      case MDfao:
+      	if ((_MDOutIrrigatedAreaFracID = MFVarGetID (MDVarIrrigation_AreaFraction, MFNoUnit, MFInput, MFState, MFBoundary)) == CMfailed) return (CMfailed);
+			break;
 		case MDiwmi:
 		    if (((_MDInIrrAreaFracSeason1ID = MFVarGetID (MDVarIrrigation_AreaFractionSeason1, MFNoUnit, MFInput,  MFState, MFBoundary)) == CMfailed) ||
                 ((_MDInIrrAreaFracSeason2ID = MFVarGetID (MDVarIrrigation_AreaFractionSeason2, MFNoUnit, MFInput,  MFState, MFBoundary)) == CMfailed) ||

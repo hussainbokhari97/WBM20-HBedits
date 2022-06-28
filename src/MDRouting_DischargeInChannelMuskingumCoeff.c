@@ -88,8 +88,8 @@ int MDRouting_DischargeInChannelMuskingumCoeffDef () {
 	MFDefEntering ("Muskingum Coefficients");
 	if ((optStr = MFOptionGet (MDOptRouting_Muskingum)) != (char *) NULL) optID = CMoptLookup (options, optStr, true);
 	switch (optID) {
-		default:      MFOptionMessage (MDOptRouting_Muskingum, optStr, options); return (CMfailed);
-		case MDhelp:  MFOptionMessage (MDOptRouting_Muskingum, optStr, options);
+		default:
+		case MDhelp:  MFOptionMessage (MDOptRouting_Muskingum, optStr, options); return (CMfailed);
 		case MDinput:
 			if (((_MDOutMuskingumC0ID = MFVarGetID (MDVarRouting_MuskingumC0, MFNoUnit, MFInput, MFState, MFBoundary)) == CMfailed) ||
                 ((_MDOutMuskingumC1ID = MFVarGetID (MDVarRouting_MuskingumC1, MFNoUnit, MFInput, MFState, MFBoundary)) == CMfailed) ||

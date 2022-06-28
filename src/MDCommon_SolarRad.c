@@ -153,8 +153,8 @@ int MDCommon_SolarRadDef () {
 	MFDefEntering ("Solar Radiation");
 	if ((optStr = MFOptionGet (MDVarCore_SolarRadiation)) != (char *) NULL) optID = CMoptLookup (options, optStr, true);
 	switch (optID) {
-		default:      MFOptionMessage (MDVarCore_SolarRadiation, optStr, options); return (CMfailed);
-		case MDhelp:  MFOptionMessage (MDVarCore_SolarRadiation, optStr, options); break;
+		default:
+		case MDhelp:  MFOptionMessage (MDVarCore_SolarRadiation, optStr, options); return (CMfailed);
 		case MDinput: _MDOutCommon_SolarRadID = MFVarGetID (MDVarCore_SolarRadiation, "W/m^2", MFInput, MFState, MFBoundary); break;
 		case MDcloud:
 			if (((_MDInCommon_GrossRadID   = MDCommon_GrossRadDef ())  == CMfailed) ||

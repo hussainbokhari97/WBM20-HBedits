@@ -61,8 +61,8 @@ int MDCommon_WetDaysDef ()
 	MFDefEntering ("Wet Days");
 	if ((optStr = MFOptionGet (MDVarCommon_WetDays)) != (char *) NULL) optID = CMoptLookup (options,optStr,true);
 	switch (optID) {
-		default:      MFOptionMessage (MDVarCommon_WetDays, optStr, options); return (CMfailed);
-		case MDhelp:  MFOptionMessage (MDVarCommon_WetDays, optStr, options);
+		default:
+		case MDhelp:  MFOptionMessage (MDVarCommon_WetDays, optStr, options); return (CMfailed);
 		case MDinput: _MDOutCommon_WetDaysID = MFVarGetID (MDVarCommon_WetDays, MFNoUnit, MFInput, MFState, MFBoundary); break;
 		case MDlbg:
 			if (((_MDInCommon_PrecipID      = MFVarGetID (MDVarCommon_PrecipMonthly, "mm",     MFInput,  MFFlux,  MFBoundary)) == CMfailed) ||

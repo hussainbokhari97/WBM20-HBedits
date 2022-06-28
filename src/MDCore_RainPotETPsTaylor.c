@@ -13,14 +13,14 @@ bfekete@gc.cuny.edu
 #include <MF.h>
 #include <MD.h>
 
-static int _MDInDayLengthID    = MFUnset;
-static int _MDInI0HDayID       = MFUnset;
-static int _MDInCParamAlbedoID = MFUnset;
+static int _MDInDayLengthID     = MFUnset;
+static int _MDInI0HDayID        = MFUnset;
+static int _MDInCParamAlbedoID  = MFUnset;
 
-static int _MDInCommon_AtMeanID       = MFUnset;
-static int _MDInSolRadID       = MFUnset;
-static int _MDInVPressID       = MFUnset;
-static int _MDOutPetID         = MFUnset;
+static int _MDInCommon_AtMeanID = MFUnset;
+static int _MDInSolRadID        = MFUnset;
+static int _MDInVPressID        = MFUnset;
+static int _MDOutPetID          = MFUnset;
 
 static void _MDRainPotETPsTaylor (int itemID) {
 // Priestley and Taylor (1972) PE in mm for day

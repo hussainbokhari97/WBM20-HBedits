@@ -20,7 +20,6 @@ static int _NDInRouting_SoilMoistureID       = MFUnset;
 static int _MDInIrrigation_GrossDemandID     = MFUnset;
 static int _MDInIrrigation_ReturnFlowID      = MFUnset;
 static int _MDInIrrigation_RunoffID          = MFUnset;
-static int _MDInReservoir_FarmPondReleaseID  = MFUnset;
 
 // Output
 static int _MDOutCore_GrdWatID               = MFUnset;
@@ -59,7 +58,6 @@ static void _MDCore_BaseFlow (int itemID) {
 		grdWater         += irrReturnFlow + irrRunoff;
 		grdWaterRecharge += irrReturnFlow + irrRunoff;
 
-		if (_MDInReservoir_FarmPondReleaseID != MFUnset) irrDemand = irrDemand - MFVarGetFloat(_MDInReservoir_FarmPondReleaseID,itemID,0.0);
 		if (_MDOutCore_IrrUptakeGrdWaterID   != MFUnset) {
 			if (irrDemand < grdWater) { // Irrigation demand is satisfied from groundwater storage 
 				irrUptakeGrdWater = irrDemand;
@@ -96,8 +94,7 @@ int MDCore_BaseFlowDef () {
 		_MDGroundWatBETA = sscanf (optStr,"%f",&par) == 1 ? par : _MDGroundWatBETA;
 	}
 	if ( _MDInIrrigation_GrossDemandID != MFUnset) {
-		if (((_MDInReservoir_FarmPondReleaseID       = MDReservoir_FarmPondReleaseDef ()) == CMfailed) ||
-            ((_MDInIrrigation_ReturnFlowID           = MDIrrigation_ReturnFlowDef ())     == CMfailed) ||
+		if (((_MDInIrrigation_ReturnFlowID           = MDIrrigation_ReturnFlowDef ())     == CMfailed) ||
             ((_MDInIrrigation_RunoffID               = MDIrrigation_RunoffDef ())         == CMfailed) ||
             ((_MDOutCore_IrrUptakeGrdWaterID         = MDIrrigation_UptakeGrdWaterDef ()) == CMfailed) ||
             ((_MDOutCore_Irrigation_UptakeExternalID = MFVarGetID (MDVarIrrigation_UptakeExternal, "mm", MFOutput, MFFlux, MFBoundary)) == CMfailed))

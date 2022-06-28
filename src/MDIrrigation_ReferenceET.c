@@ -29,8 +29,8 @@ int MDIrrigation_ReferenceETDef () {
 	if (MDCore_SnowPackChgDef() == CMfailed) return (CMfailed);
 
 	switch (optID) {
-		default:      MFOptionMessage (MDOptIrrigation_ReferenceET, optStr, options); return (CMfailed);
-		case MDhelp:  MFOptionMessage (MDOptIrrigation_ReferenceET, optStr, options);
+		default:
+		case MDhelp:  MFOptionMessage (MDOptIrrigation_ReferenceET, optStr, options); return (CMfailed);
 		case MDinput: _MDOutIrrRefEvapotransID = MFVarGetID (MDVarIrrigation_RefEvapotrans, "mm", MFInput, MFFlux, false); break;
 		case MDhamon: _MDOutIrrRefEvapotransID = MDIrrigation_Reference_ETHamonDef(); break;
 		case MDfao:   _MDOutIrrRefEvapotransID = MDIrrigation_ReferenceETFAODef(); break;

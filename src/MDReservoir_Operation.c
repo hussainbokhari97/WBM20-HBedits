@@ -196,8 +196,8 @@ int MDReservoir_OperationDef () {
 	MFDefEntering ("Reservoirs");
 	if ((optStr = MFOptionGet (MDVarReservoir_Release)) != (char *) NULL) optID = CMoptLookup (options, optStr, true);
  	switch (optID) {
-		default:     MFOptionMessage (MDVarReservoir_Release, optStr, options); return (CMfailed);
-		case MDhelp: MFOptionMessage (MDVarReservoir_Release, optStr, options);
+		default:
+		case MDhelp: MFOptionMessage (MDVarReservoir_Release, optStr, options); return (CMfailed);
 		case MDwisser:
 			if (((_MDInRouting_DischargeID      = MDRouting_DischargeInChannelDef()) == CMfailed) ||
 				((_MDInResUptakeID              = MDReservoir_UptakeDef ())          == CMfailed) ||

@@ -27,8 +27,8 @@ int MDCore_RainPotETDef () {
 	MFDefEntering ("Rainfed Potential Evapotranspiration");
 	if ((optStr = MFOptionGet (MDVarCore_RainPotEvapotrans)) != (char *) NULL) optID = CMoptLookup (options,optStr,true);
 	switch (optID) {
-		default:      MFOptionMessage (MDVarCore_RainPotEvapotrans, optStr, options); return (CMfailed);
-		case MDhelp:  MFOptionMessage (MDVarCore_RainPotEvapotrans, optStr, options);
+		default:
+		case MDhelp:  MFOptionMessage (MDVarCore_RainPotEvapotrans, optStr, options); return (CMfailed);
 		case MDinput: _MDPotETID = MFVarGetID (MDVarCore_RainPotEvapotrans, "mm", MFInput, MFFlux, false); break;
 		case MDHamon:    _MDPotETID = MDCore_RainPotETHamonDef ();    break;
 		case MDJensen:   _MDPotETID = MDCore_RainPotETJensenDef ();   break;

@@ -104,8 +104,8 @@ int MDParam_LandCoverMappingDef () {
 	MFDefEntering ("Landcover");
 	if ((optStr = MFOptionGet (MDVarCore_LandCoverWBM)) != (char *) NULL) optID = CMoptLookup (options,optStr,true);
 	switch (optID) {
-		default:      MFOptionMessage (MDVarCore_LandCoverWBM, optStr, options); return (CMfailed);
-		case MDhelp:  MFOptionMessage (MDVarCore_LandCoverWBM, optStr, options);
+		default:
+		case MDhelp:  MFOptionMessage (MDVarCore_LandCoverWBM, optStr, options); return (CMfailed);
 		case MDinput: _MDOutCoverID = MFVarGetID (MDVarCore_LandCoverWBM, MFNoUnit, MFInput, MFState, MFBoundary); break;
 		case MDLCSAGEVeg:
 			  if (((_MDInSAGEVegID  = MFVarGetID (MDVarCore_LandCoverSAGE, MFNoUnit, MFInput, MFState, MFBoundary)) == CMfailed) ||
