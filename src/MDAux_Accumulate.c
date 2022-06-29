@@ -176,9 +176,10 @@ static int _MDInCore_RiverStorageChgID    = MFUnset;
 static int _MDOutAux_AccRiverStorageChgID = MFUnset;
 
 static void _MDAux_AccumRiverStorageChg (int itemID) {
+	float dt = MFModelGet_dt ();
 	float accum, value;
 
-	value = MFVarGetFloat (_MDInCore_RiverStorageChgID,    itemID, 0.0);
+	value = MFVarGetFloat (_MDInCore_RiverStorageChgID,    itemID, 0.0) / dt;
 	accum = MFVarGetFloat (_MDOutAux_AccRiverStorageChgID, itemID, 0.0);
 
 	MFVarSetFloat(_MDOutAux_AccRiverStorageChgID, itemID, accum + value);

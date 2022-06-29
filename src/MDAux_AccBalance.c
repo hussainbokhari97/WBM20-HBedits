@@ -14,12 +14,13 @@ bfekete@gc.cuny.edu
 #include <MD.h>
 
 //Input;
-static int _MDInAux_AccPrecipID      = MFUnset;
-static int _MDInAux_AccEvapID        = MFUnset;
-static int _MDInAux_AccSnowPackChgID = MFUnset;
-static int _MDInAux_AccSMoistChgID   = MFUnset;
-static int _MDInAux_AccGrdWatChgID   = MFUnset;
-static int _MDInAux_AccCore_RunoffID = MFUnset;
+static int _MDInAux_AccPrecipID        = MFUnset;
+static int _MDInAux_AccEvapID          = MFUnset;
+static int _MDInAux_AccSnowPackChgID   = MFUnset;
+static int _MDInAux_AccSMoistChgID     = MFUnset;
+static int _MDInAux_AccGrdWatChgID     = MFUnset;
+static int _MDInAux_AccRunoffID        = MFUnset;
+static int _MDInAux_AccRiverStorageChg = MFUnset;
 
 //Output
 static int _MDOutAux_AccBalanceID  = MFUnset;
@@ -27,20 +28,15 @@ static int _MDOutAux_AccBalanceID  = MFUnset;
 static void _MDAux_AccumBalance (int itemID)
 {
 // Input
-	float precip;      // Precipitation [mm/dt]
-	float evap;        // Evapotranspiration [mm/dt]
-	float snowPackChg; // Snowpack Change [mm/dt] 
-	float sMoistChg;   // Soil moisture change [mm/dt]
-	float grdWatChg;   // Groundwater change [mm/dt]
-	float runoff;      // Runoff [mm/dt]
+	float precip          = MFVarGetFloat (_MDInAux_AccPrecipID,        itemID, 0.0); // Precipitation [m3/s]
+	float evap            = MFVarGetFloat (_MDInAux_AccEvapID,          itemID, 0.0); // Evapotranspiration [m3/s]
+	float snowPackChg     = MFVarGetFloat (_MDInAux_AccSnowPackChgID,   itemID, 0.0); // Snowpack Change [m3/s] 
+	float sMoistChg       = MFVarGetFloat (_MDInAux_AccSMoistChgID,     itemID, 0.0); // Soil moisture change [m3/s]
+	float grdWatChg       = MFVarGetFloat (_MDInAux_AccGrdWatChgID,     itemID, 0.0); // Groundwater change [m3/s]
+	float runoff          = MFVarGetFloat (_MDInAux_AccRunoffID,        itemID, 0.0); // Runoff [m3/s]
+	float riverStorageChg = MFVarGetFloat (_MDInAux_AccRiverStorageChg, itemID, 0.0); // River storage Change [m3/dt]
 
-	precip      = MFVarGetFloat (_MDInAux_AccPrecipID,      itemID, 0.0);
-	evap        = MFVarGetFloat (_MDInAux_AccEvapID,        itemID, 0.0);
-	snowPackChg = MFVarGetFloat (_MDInAux_AccSnowPackChgID, itemID, 0.0);
-	sMoistChg   = MFVarGetFloat (_MDInAux_AccSMoistChgID,   itemID, 0.0);
-	grdWatChg   = MFVarGetFloat (_MDInAux_AccGrdWatChgID,   itemID, 0.0);
-	runoff      = MFVarGetFloat (_MDInAux_AccCore_RunoffID, itemID, 0.0);
-	MFVarSetFloat(_MDOutAux_AccBalanceID, itemID, precip - evap - snowPackChg - sMoistChg - grdWatChg - runoff);
+	MFVarSetFloat(_MDOutAux_AccBalanceID, itemID, precip - evap - snowPackChg - sMoistChg - grdWatChg - runoff - riverStorageChg);
 }
 
 int MDAux_AccumBalanceDef() {
@@ -49,13 +45,14 @@ int MDAux_AccumBalanceDef() {
 
 	MFDefEntering ("Accumulated Balance");
 
-	if (((_MDInAux_AccPrecipID      = MDAux_AccumPrecipDef ())      == CMfailed) ||
-        ((_MDInAux_AccCore_RunoffID = MDAux_AccumRunoffDef ())      == CMfailed) ||
-        ((_MDInAux_AccSnowPackChgID = MDAux_AccumSnowPackChgDef ()) == CMfailed) ||
-        ((_MDInAux_AccGrdWatChgID   = MDAux_AccumGrdWatChgDef ())   == CMfailed) ||
-        ((_MDInAux_AccSMoistChgID   = MDAux_AccumSMoistChgDef ())   == CMfailed) ||
-        ((_MDInAux_AccEvapID        = MDAux_AccumEvapDef ())        == CMfailed) ||
-        ((_MDOutAux_AccBalanceID    = MFVarGetID (MDVarAux_AccBalance, "m3/s", MFOutput, MFState, MFBoundary)) == CMfailed) ||
+	if (((_MDInAux_AccPrecipID        = MDAux_AccumPrecipDef ())      == CMfailed) ||
+        ((_MDInAux_AccEvapID          = MDAux_AccumEvapDef ())        == CMfailed) ||
+        ((_MDInAux_AccSnowPackChgID   = MDAux_AccumSnowPackChgDef ()) == CMfailed) ||
+        ((_MDInAux_AccSMoistChgID     = MDAux_AccumSMoistChgDef ())   == CMfailed) ||
+        ((_MDInAux_AccGrdWatChgID     = MDAux_AccumGrdWatChgDef ())   == CMfailed) ||
+        ((_MDInAux_AccRunoffID        = MDAux_AccumRunoffDef ())      == CMfailed) ||
+		((_MDInAux_AccRiverStorageChg = MDAux_AccumRiverStorageChg ()) == CMfailed) ||
+        ((_MDOutAux_AccBalanceID      = MFVarGetID (MDVarAux_AccBalance, "m3/s", MFOutput, MFState, MFBoundary)) == CMfailed) ||
         (MFModelAddFunction(_MDAux_AccumBalance) == CMfailed)) return CMfailed;
 
 	MFDefLeaving ("Accumulated Balance");

@@ -424,6 +424,7 @@ int MDAux_AccumGrdWatChgDef ();
 int MDAux_AccumPrecipDef ();
 int MDAux_AccumRunoffDef ();
 int MDAux_AccumSMoistChgDef ();
+int MDAux_AccumRiverStorageChg ();
 int MDAux_AvgNStepsDef ();
 int MDAux_MeanDischargeDef ();
 int MDAux_MinimumDischargeDef ();
