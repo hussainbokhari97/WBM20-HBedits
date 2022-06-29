@@ -67,7 +67,7 @@ static void _MDDischRouteMuskingumCoeff (int itemID) {
 
 enum { MDhelp, MDinput, MDstatic };
 
-int MDRouting_DischargeInChannelMuskingumCoeffDef () {
+int MDRouting_ChannelDischargeMuskingumCoeffDef () {
 	int  optID = MDinput;
 	const char *optStr;
 	const char *options [] = { MFhelpStr, MFinputStr, "static", (char *) NULL };

@@ -29,7 +29,7 @@ int MDReservoir_ReleaseDef () {
 		default:     MFOptionMessage (MDOptConfig_Reservoirs, optStr, MFswitchOptions); return (CMfailed);
 		case MFhelp: MFOptionMessage (MDOptConfig_Reservoirs, optStr, MFswitchOptions);
 		case MFoff:
-			if ((_MDOutResReleaseID = MDRouting_DischargeInChannelDef()) == CMfailed) return (CMfailed);
+			if ((_MDOutResReleaseID = MDRouting_ChannelDischargeDef()) == CMfailed) return (CMfailed);
 			break; 
 		case MFon:
 			if ((_MDOutResReleaseID = MDReservoir_OperationDef ()) == CMfailed) return (CMfailed);

@@ -169,3 +169,30 @@ int MDAux_AccumRunoffDef() {
 	MFDefLeaving ("Accumulate Runoff");
 	return (_MDOutAux_AccCore_RunoffID);	
 }
+
+//Input;
+static int _MDInCore_RiverStorageChgID    = MFUnset;
+//Output
+static int _MDOutAux_AccRiverStorageChgID = MFUnset;
+
+static void _MDAux_AccumRiverStorageChg (int itemID) {
+	float accum, value;
+
+	value = MFVarGetFloat (_MDInCore_RiverStorageChgID,    itemID, 0.0);
+	accum = MFVarGetFloat (_MDOutAux_AccRiverStorageChgID, itemID, 0.0);
+
+	MFVarSetFloat(_MDOutAux_AccRiverStorageChgID, itemID, accum + value);
+}
+
+int MDAux_AccumRiverStorageChg () {
+
+	if (_MDInCore_RiverStorageChgID != MFUnset) return (_MDInCore_RiverStorageChgID);
+
+	MFDefEntering ("Accumulate River Storage Change");
+	if (((_MDInCore_RiverStorageChgID    = MDRouting_ChannelStorageDef()) == CMfailed) ||
+        ((_MDOutAux_AccRiverStorageChgID = MFVarGetID (MDVarRouting_RiverStorageChg, "m3", MFRoute, MFState, MFBoundary)) == CMfailed) ||
+        (MFModelAddFunction(_MDAux_AccumRiverStorageChg) == CMfailed)) return (CMfailed);
+
+	MFDefLeaving ("Accumulate River Storage Change");
+	return (_MDOutAux_AccRiverStorageChgID);	
+}

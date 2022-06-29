@@ -13,6 +13,6 @@ bfekete@gc.cuny.edu
 #include <MF.h>
 #include <MD.h>
 
-int MDRouting_DischargeInChannelCascadeDef () {
+int MDRouting_ChannelDischargeCascadeDef () {
 	return (CMfailed);
 }

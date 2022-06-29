@@ -35,8 +35,9 @@ static int _MDOutTP2M_WTempRiverID         = MFUnset;
 
 static void _MDWTempRiver (int itemID) {
 // Model
-    float dt       = MFModelGet_dt ();
-    float cellArea = MFModelGetArea (itemID);
+    float dt            = MFModelGet_dt ();
+    float channelLength = MFModelGetLength (itemID);
+    float cellArea      = MFModelGetArea (itemID);
 // Input
     float discharge0 = MFVarGetFloat (_MDInRouting_Discharge0ID, itemID, 0.0); // Outflowing discharge in m3/s 
     float discharge  = MFVarGetFloat (_MDInRouting_DischargeID,  itemID, 0.0); // Outflowing discharge in m3/s 
@@ -48,7 +49,7 @@ static void _MDWTempRiver (int itemID) {
     float equilTemp; // Equlibrium temperature in degC
 
     // Near zero river flows can lead to exploding temperature values.
-    if ((discharge0 > cellArea * dt * 0.0001) && (discharge > cellArea * dt * 0.0001)) { 
+    if ((discharge0 > cellArea * 0.0001 / dt ) && (discharge > cellArea * 0.0001 / dt)) { 
         // Input
         float dewpointTemp = MFVarGetFloat (_MDInCommon_HumidityDewPointID, itemID, 0.0); // Dewpoint temperature in degC
         float runoffVolume = MFVarGetFloat (_MDInCore_RunoffVolumeID,       itemID, 0.0); // RO volume in m3/s
@@ -64,13 +65,12 @@ static void _MDWTempRiver (int itemID) {
             // Local
             int i;
             float windFunc;
-            float meanTemp;
-            float beta;
             float kay;
-            float channelLength = MFModelGetLength(itemID);
 
             windFunc = 9.2 + 0.46 * pow (windSpeed,2); // wind function
             for (i = 0; i < 4; ++i) {
+                float meanTemp;
+                float beta;
 	            meanTemp  = (dewpointTemp + equilTemp) / 2; // mean of rivertemp initial and dew point
 	            beta      = 0.35 + 0.015 * meanTemp + 0.0012 * pow (meanTemp, 2.0); //beta
 	            kay       = 4.50 + 0.050 * equilTemp + (beta + 0.47) * windFunc; // K in W/m2/degC

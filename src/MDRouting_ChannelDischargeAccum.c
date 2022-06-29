@@ -31,16 +31,16 @@ static void _MDDischLevel3Accumulate (int itemID) {
 	MFVarSetFloat (_MDOutRouting_RiverStorageID, itemID, 0.0);
 }
 
-int MDRouting_DischargeInChannelAccumulateDef () {
+int MDRouting_ChannelDischargeAccumulateDef () {
 
 	if (_MDOutRouting_DischLevel3ID != MFUnset) return (_MDOutRouting_DischLevel3ID);
 
 	MFDefEntering ("Discharge Routing - Accumulate");
-	if (((_MDInCore_RunoffVolumeID  = MDCore_RunoffVolumeDef()) == CMfailed) ||
+	if (((_MDInCore_RunoffVolumeID     = MDCore_RunoffVolumeDef()) == CMfailed) ||
         ((_MDInRouting_DischargeID     = MFVarGetID (MDVarRouting_Discharge,       "m3/s", MFInput,  MFState, MFInitial))  == CMfailed) ||
         ((_MDOutRouting_DischLevel3ID  = MFVarGetID ("__DischLevel3",              "m3/s", MFOutput, MFState, MFBoundary)) == CMfailed) ||
         ((_MDOutRouting_RiverStorChgID = MFVarGetID (MDVarRouting_RiverStorageChg, "m3",   MFOutput, MFFlux,  MFBoundary)) == CMfailed) ||
-        ((_MDOutRouting_RiverStorageID     = MFVarGetID (MDVarRouting_RiverStorage,    "m3",   MFOutput, MFState, MFInitial))  == CMfailed) ||
+        ((_MDOutRouting_RiverStorageID = MFVarGetID (MDVarRouting_RiverStorage,    "m3",   MFOutput, MFState, MFInitial))  == CMfailed) ||
         (MFModelAddFunction (_MDDischLevel3Accumulate) == CMfailed)) return CMfailed;
 	MFDefLeaving ("Discharge Routing - Accumulate");
 	return (_MDOutRouting_DischLevel3ID);

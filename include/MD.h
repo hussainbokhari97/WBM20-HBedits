@@ -501,11 +501,12 @@ int MDParam_LCStemAreaIndexDef ();
 
 int MDRouting_BankfullQcalcDef ();
 int MDRouting_DischargeDef ();
-int MDRouting_DischargeInChannelDef ();
-int MDRouting_DischargeInChannelAccumulateDef ();
-int MDRouting_DischargeInChannelCascadeDef ();
-int MDRouting_DischargeInChannelMuskingumDef ();
-int MDRouting_DischargeInChannelMuskingumCoeffDef ();
+int MDRouting_ChannelDischargeDef ();
+int MDRouting_ChannelStorageDef ();
+int MDRouting_ChannelDischargeAccumulateDef ();
+int MDRouting_ChannelDischargeCascadeDef ();
+int MDRouting_ChannelDischargeMuskingumDef ();
+int MDRouting_ChannelDischargeMuskingumCoeffDef ();
 int MDRouting_DischargeUptakeDef ();
 int MDRouting_RiverShapeExponentDef ();
 int MDRouting_RiverWidthDef ();

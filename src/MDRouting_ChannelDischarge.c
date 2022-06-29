@@ -17,7 +17,7 @@ enum { MDhelp, MDmuskingum, MDaccumulate, MDcascade };
 
 static int _MDDischLevel3ID = MFUnset;
 
-int MDRouting_DischargeInChannelDef() {
+int MDRouting_ChannelDischargeDef () {
 	int optID = MDmuskingum;
 	const char *optStr;
 	const char *options []    = { MFhelpStr, "muskingum", "accumulate", "cascade", (char *) NULL };
@@ -29,11 +29,20 @@ int MDRouting_DischargeInChannelDef() {
 	switch (optID) {
 		default:
 		case MDhelp:       MFOptionMessage (MDOptConfig_Routing, optStr, options); return (CMfailed);
-		case MDmuskingum:  _MDDischLevel3ID = MDRouting_DischargeInChannelMuskingumDef();  break;
-		case MDaccumulate: _MDDischLevel3ID = MDRouting_DischargeInChannelAccumulateDef(); break;
-		case MDcascade:    _MDDischLevel3ID = MDRouting_DischargeInChannelCascadeDef();    break;
+		case MDmuskingum:  _MDDischLevel3ID = MDRouting_ChannelDischargeMuskingumDef();  break;
+		case MDaccumulate: _MDDischLevel3ID = MDRouting_ChannelDischargeAccumulateDef(); break;
+		case MDcascade:    _MDDischLevel3ID = MDRouting_ChannelDischargeCascadeDef();    break;
 	}
 	if (_MDDischLevel3ID == CMfailed) return (CMfailed);
 	MFDefLeaving ("Discharge - In channel");
 	return (_MDDischLevel3ID);
+}
+
+static int _MDRouting_ChannelStorageID = MFUnset;
+
+int MDRouting_ChannelStorageDef () { 
+	if (_MDRouting_ChannelStorageID != MFUnset) return (_MDRouting_ChannelStorageID);
+	if (((MDRouting_ChannelDischargeDef ()) == CMfailed) ||
+	    ((_MDRouting_ChannelStorageID  = MFVarGetID (MDVarRouting_RiverStorageChg, "m3", MFInput, MFFlux,  MFBoundary)) == CMfailed))
+	return (CMfailed);
 }
