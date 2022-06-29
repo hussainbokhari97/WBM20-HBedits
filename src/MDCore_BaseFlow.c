@@ -58,7 +58,7 @@ static void _MDCore_BaseFlow (int itemID) {
 		grdWaterRecharge += irrReturnFlow + irrRunoff;
 
 		if (_MDOutCore_IrrUptakeGrdWaterID   != MFUnset) {
-			if (irrDemand < grdWater) { // Irrigation demand is satisfied from groundwater storage 
+			if (grdWater > irrDemand) { // Irrigation demand is satisfied from groundwater storage 
 				irrUptakeGrdWater = irrDemand;
 				grdWater -= irrUptakeGrdWater;
 			}
@@ -72,8 +72,9 @@ static void _MDCore_BaseFlow (int itemID) {
 		else irrUptakeExt = irrDemand;
 		MFVarSetFloat (_MDOutCore_Irrigation_UptakeExternalID, itemID, irrUptakeExt);
 	}
-	baseFlow    = grdWater * _MDGroundWatBETA;
-	grdWater   -= baseFlow;
+	baseFlow = grdWater * _MDGroundWatBETA;
+	if (grdWater > baseFlow) grdWater -= baseFlow;
+	else { baseFlow = grdWater; grdWater = 0.0; }
 
 	MFVarSetFloat (_MDOutCore_GrdWatID,         itemID, grdWater);
     MFVarSetFloat (_MDOutCore_GrdWatChgID,      itemID, grdWater - grdWater0);

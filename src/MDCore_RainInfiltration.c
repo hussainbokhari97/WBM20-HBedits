@@ -43,7 +43,7 @@ int MDCore_RainInfiltrationDef () {
 	if (_MDOutRainInfiltrationID != MFUnset) return (_MDOutRainInfiltrationID);
 	if ((optStr = MFOptionGet (MDParInfiltrationFrac))  != (char *) NULL) {
 		if (strcmp(optStr,MFhelpStr) == 0) CMmsgPrint (CMmsgInfo,"%s = %f", MDParInfiltrationFrac, _MDInfiltrationFrac);
-		_MDInfiltrationFrac = sscanf (optStr,"%f",&par) == 1 ? par : _MDInfiltrationFrac;
+		_MDInfiltrationFrac = sscanf (optStr,"%f",&par) == 1 ? (((par >= 0.0) && (par <= 1.0)) ? par : _MDInfiltrationFrac)  : _MDInfiltrationFrac;
 	}
 	MFDefEntering ("Rainfed Infiltration");
 	if (((_MDInRainWaterSurplusID  = MDCore_RainWaterSurplusDef()) == CMfailed) ||

@@ -48,8 +48,8 @@ static void _MDWTempRiver (int itemID) {
     float riverTemp; // River temprature in degC
     float equilTemp; // Equlibrium temperature in degC
 
-    // Near zero river flows can lead to exploding temperature values. 0.1 mm/day runoff over the grid cell area is a reasonable minimum threshold FBM 2022-06-29
-    if ((discharge0 > cellArea * 0.0001 / dt ) && (discharge > cellArea * 0.0001 / dt)) { 
+    // Near zero river flows can lead to exploding temperature values. 10 mm/day runoff over the grid cell area is a reasonable minimum threshold FBM 2022-06-29
+    if ((discharge0 > cellArea * 0.01 / dt ) && (discharge > cellArea * 0.01 / dt)) { 
         // Input
         float dewpointTemp = MFVarGetFloat (_MDInCommon_HumidityDewPointID, itemID, 0.0); // Dewpoint temperature in degC
         float runoffVolume = MFVarGetFloat (_MDInCore_RunoffVolumeID,       itemID, 0.0); // RO volume in m3/s
