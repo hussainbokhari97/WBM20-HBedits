@@ -40,8 +40,8 @@ int MDCore_SoilAvailWaterCapDef () {
 	MFDefEntering ("Soil available water capacity");
 	if ((optStr = MFOptionGet (MDVarCore_SoilAvailWaterCap)) != (char *) NULL) optID = CMoptLookup (MFsourceOptions, optStr, true);
 		switch (optID) {
-			default:      MFOptionMessage (MDVarCore_SoilAvailWaterCap, optStr, MFsourceOptions); return (CMfailed);
-			case MFhelp:  MFOptionMessage (MDVarCore_SoilAvailWaterCap, optStr, MFsourceOptions);
+			default:
+			case MFhelp:  MFOptionMessage (MDVarCore_SoilAvailWaterCap, optStr, MFsourceOptions); return (CMfailed);
 			case MFinput: _MDOutSoilAvailWaterCapID = MFVarGetID (MDVarCore_SoilAvailWaterCap, "mm", MFInput, MFState, MFBoundary); break;
 			case MFcalculate:
 				if (((_MDInSoilFieldCapacityID  = MFVarGetID (MDVarCore_SoilFieldCapacity,     "mm/m", MFInput,  MFState, MFBoundary)) == CMfailed) ||

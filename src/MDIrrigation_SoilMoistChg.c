@@ -23,10 +23,12 @@ int MDIrrigation_SoilMoistChgDef() {
 	if ((optStr = MFOptionGet (MDOptConfig_Irrigation)) != (char *) NULL) optID = CMoptLookup (MFcalcOptions, optStr, true);
 		
 	switch (optID) {
-		default:      return CMfailed;
-		case MFhelp:
+		default:
+		case MFhelp:  MFOptionMessage (MDOptConfig_Irrigation, optStr, MFcalcOptions); return (CMfailed);
 		case MFnone: 
-		case MFinput: break;
+		case MFinput:
+			_MDOutIrrSoilMoistChgID = MFVarGetID (MDVarIrrigation_SoilMoistChange, "mm", MFInput, MFFlux, MFBoundary);
+			break;
 		case MFcalculate: 
 			if ((ret = MDIrrigation_GrossDemandDef ()) == CMfailed) return CMfailed;
 			_MDOutIrrSoilMoistChgID = ret != MFUnset ? MFVarGetID (MDVarIrrigation_SoilMoistChange, "mm", MFInput, MFFlux, MFBoundary) : MFUnset;

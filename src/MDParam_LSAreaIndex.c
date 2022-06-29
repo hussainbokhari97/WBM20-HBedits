@@ -42,8 +42,8 @@ int MDParam_LeafAreaIndexDef () {
 	MFDefEntering ("Leaf Area");
 	if ((optStr = MFOptionGet (MDVarCore_LeafAreaIndex)) != (char *) NULL) optID = CMoptLookup (MFsourceOptions,optStr,true);
 	switch (optID) {
-		default:       MFOptionMessage (MDVarCore_LeafAreaIndex, optStr, MFsourceOptions); return (CMfailed);
-		case MFhelp:   MFOptionMessage (MDVarCore_LeafAreaIndex, optStr, MFsourceOptions);
+		default:
+		case MFhelp:   MFOptionMessage (MDVarCore_LeafAreaIndex, optStr, MFsourceOptions); return (CMfailed);
 		case MFinput:  _MDOutParam_LeafAreaIndexID = MFVarGetID (MDVarCore_LeafAreaIndex, MFNoUnit, MFInput, MFState, MFBoundary); break;
 		case MFcalculate:
 			if (((_MDInParam_LPMaxID          = MDParam_LCLPMaxDef ())          == CMfailed) ||
@@ -81,8 +81,8 @@ int MDParam_LCStemAreaIndexDef () {
 	MFDefEntering ("Stem Area Index");
 	if ((optStr = MFOptionGet (MDVarCore_StemAreaIndex)) != (char *) NULL) optID = CMoptLookup (MFsourceOptions,optStr,true);
 	switch (optID) {
-		default:       MFOptionMessage (MDVarCore_StemAreaIndex, optStr, MFsourceOptions); return (CMfailed);
-		case MFhelp:   MFOptionMessage (MDVarCore_StemAreaIndex, optStr, MFsourceOptions);
+		default:
+		case MFhelp:  MFOptionMessage (MDVarCore_StemAreaIndex, optStr, MFsourceOptions); return (CMfailed);
 		case MFinput:  _MDOutStemAreaIndexID = MFVarGetID (MDVarCore_StemAreaIndex, MFNoUnit, MFInput, MFState, MFBoundary); break;
 		case MFcalculate:
 			if (((_MDInParam_LPMaxID    = MDParam_LCLPMaxDef ())  == CMfailed) ||

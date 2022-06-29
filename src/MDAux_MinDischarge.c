@@ -36,8 +36,8 @@ int MDAux_MinimumDischargeDef () {
 	MFDefEntering ("Discharge Minimum");
 	if ((optStr = MFOptionGet (MDVarAux_DischMean)) != (char *) NULL) optID = CMoptLookup (MFsourceOptions, optStr, true);
 	switch (optID) {
-		default:      MFOptionMessage (MDVarAux_DischMean, optStr, MFsourceOptions); return (CMfailed);
-		case MFhelp:  MFOptionMessage (MDVarAux_DischMean, optStr, MFsourceOptions);
+		default:
+		case MFhelp:  MFOptionMessage (MDVarAux_DischMean, optStr, MFsourceOptions); return (CMfailed);
 		case MFinput: _MDOutAux_MinimumDischargeID = MFVarGetID (MDVarAux_DischMean, "m3/s", MFInput, MFState, MFInitial); break;
 		case MFcalculate:
 			if (((_MDInAux_AccumRunoffID        = MDAux_AccumRunoffDef()) == CMfailed) ||

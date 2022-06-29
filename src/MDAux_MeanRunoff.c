@@ -36,8 +36,8 @@ int MDAux_MeanRunoffDef () {
 	MFDefEntering ("Runoff Mean");
 	if ((optStr = MFOptionGet (MDVarCore_RunoffMean)) != (char *) NULL) optID = CMoptLookup (MFsourceOptions, optStr, true);
 	switch (optID) {
-		default:      MFOptionMessage (MDVarCore_RunoffMean, optStr, MFsourceOptions); return (CMfailed);
-		case MFhelp:  MFOptionMessage (MDVarCore_RunoffMean, optStr, MFsourceOptions);
+		default:
+		case MFhelp:  MFOptionMessage (MDVarCore_RunoffMean, optStr, MFsourceOptions); return (CMfailed);
 		case MFinput: _MDOutAux_MeanDischargeID  = MFVarGetID (MDVarCore_RunoffMean, "mm/d", MFInput, MFState, MFBoundary); break;
 		case MFcalculate:
 			if (((_MDAux_InAvgNStepsID      = MDAux_AvgNStepsDef()) == CMfailed) ||

@@ -26,8 +26,8 @@ int MDReservoir_ReleaseDef () {
 	MFDefEntering ("Reservoir release");
 	if ((optStr = MFOptionGet (MDOptConfig_Reservoirs)) != (char *) NULL) optID = CMoptLookup (MFswitchOptions, optStr, true);
  	switch (optID) {
-		default:     MFOptionMessage (MDOptConfig_Reservoirs, optStr, MFswitchOptions); return (CMfailed);
-		case MFhelp: MFOptionMessage (MDOptConfig_Reservoirs, optStr, MFswitchOptions);
+		default:
+		case MFhelp: MFOptionMessage (MDOptConfig_Reservoirs, optStr, MFswitchOptions); return (CMfailed);
 		case MFoff:
 			if ((_MDOutResReleaseID = MDRouting_ChannelDischargeDef()) == CMfailed) return (CMfailed);
 			break; 
@@ -48,8 +48,8 @@ int MDReservoir_ExtractableReleaseDef () {
 	MFDefEntering ("Extractable release");
 	if ((optStr = MFOptionGet (MDOptConfig_Reservoirs)) != (char *) NULL) optID = CMoptLookup (MFswitchOptions, optStr, true);
  	switch (optID) {
-		default:     MFOptionMessage (MDOptConfig_Reservoirs, optStr, MFswitchOptions); return (CMfailed);
-		case MFhelp: MFOptionMessage (MDOptConfig_Reservoirs, optStr, MFswitchOptions); break;
+		default:
+		case MFhelp: MFOptionMessage (MDOptConfig_Reservoirs, optStr, MFswitchOptions); return (CMfailed);
 		case MFoff: break;
 		case MFon:
 			if ((_MDOutResReleaseID = MDReservoir_OperationDef ()) == CMfailed) return (CMfailed);

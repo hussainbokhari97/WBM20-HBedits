@@ -356,8 +356,8 @@ int MDIrrigation_GrossDemandDef () {
 	MFDefEntering ("Irrigation Gross Demand");
 	if ((optStr = MFOptionGet (MDOptConfig_Irrigation)) != (char *) NULL) optID = CMoptLookup (MFcalcOptions,optStr,true);
 	switch (optID) {
-		default:     MFOptionMessage (MDOptConfig_Irrigation, optStr, MFcalcOptions); return (CMfailed);
-		case MFhelp: MFOptionMessage (MDOptConfig_Irrigation, optStr, MFcalcOptions);
+		default:
+		case MFhelp: MFOptionMessage (MDOptConfig_Irrigation, optStr, MFcalcOptions); return (CMfailed);
 		case MFnone: break;
 		case MFinput: _MDOutIrrGrossDemandID = MFVarGetID (MDVarIrrigation_GrossDemand, "mm", MFInput, MFFlux, MFBoundary); break;
 		case MFcalculate:

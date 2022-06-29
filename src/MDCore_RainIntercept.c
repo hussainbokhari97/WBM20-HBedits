@@ -64,8 +64,8 @@ int MDCore_RainInterceptDef () {
 	MFDefEntering ("Rainfed Intercept");
 	if ((optStr = MFOptionGet (MDVarCore_RainInterception)) != (char *) NULL) optID = CMoptLookup (MFcalcOptions,optStr,true);
 	switch (optID) {
-		default:      MFOptionMessage (MDVarCore_RainInterception, optStr, MFcalcOptions); return (CMfailed);
-		case MFhelp:  MFOptionMessage (MDVarCore_RainInterception, optStr, MFcalcOptions);
+		default:
+		case MFhelp:  MFOptionMessage (MDVarCore_RainInterception, optStr, MFcalcOptions); return (CMfailed);
 		case MFnone:  break;
 		case MFinput: _MDOutInterceptID = MFVarGetID (MDVarCore_RainInterception, "mm", MFInput, MFFlux, MFBoundary); break;
 		case MFcalculate:

@@ -75,8 +75,8 @@ int MDSediment_DischargeBFDef () {
 	MFDefEntering ("DischargeBF");
 	if ((optStr = MFOptionGet (MDOptConfig_Discharge)) != (char *) NULL) optID = CMoptLookup (MFsourceOptions,optStr,true);
 	switch (optID) {
-		default:      MFOptionMessage (MDOptConfig_Discharge, optStr, MFsourceOptions); return (CMfailed);
-		case MFhelp:  MFOptionMessage (MDOptConfig_Discharge, optStr, MFsourceOptions);
+		default:
+		case MFhelp:  MFOptionMessage (MDOptConfig_Discharge, optStr, MFsourceOptions); return (CMfailed);
 		case MFinput: _MDOutDischargeID = MFVarGetID (MDVarRouting_Discharge,         "m3/s",   MFInput,  MFState, MFInitial); break;
 		case MFcalculate:
 			if (((_MDOutDischargeID      = MFVarGetID (MDVarRouting_Discharge,        "m3/s",   MFRoute,  MFState, MFInitial))  == CMfailed) ||

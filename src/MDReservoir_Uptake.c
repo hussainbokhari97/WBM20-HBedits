@@ -25,8 +25,8 @@ int MDReservoir_UptakeDef () {
 	MFDefEntering ("Reservoirs");
 	if ((optStr = MFOptionGet (MDVarReservoir_Uptake)) != (char *) NULL) optID = CMoptLookup (MFsourceOptions, optStr, true);
  	switch (optID) {
-		default:     MFOptionMessage (MDVarReservoir_Uptake, optStr, MFsourceOptions); return (CMfailed);
-		case MFhelp: MFOptionMessage (MDVarReservoir_Uptake, optStr, MFsourceOptions);
+		default:
+		case MFhelp: MFOptionMessage (MDVarReservoir_Uptake, optStr, MFsourceOptions); return (CMfailed);
 		case MFnone: break;
 		case MFinput:
 			if ((_MDOutResUptakeID = MFVarGetID (MDVarReservoir_Uptake, "m3/s", MFOutput, MFFlux,  MFBoundary)) == CMfailed)

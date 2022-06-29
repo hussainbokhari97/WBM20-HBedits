@@ -107,8 +107,8 @@ int MDRouting_DischargeUptakeDef () {
 		if (ret == CMfailed) return (CMfailed);
 		if ((optStr = MFOptionGet ("IrrUptakeRiver")) != (char *) NULL) optID = CMoptLookup (MFswitchOptions, optStr, true);
 		switch (optID) {
-			default:      MFOptionMessage ("IrrUptakeRiver", optStr, MFswitchOptions); return (CMfailed);
-			case MFhelp:  MFOptionMessage ("IrrUptakeRiver", optStr, MFswitchOptions);
+			default: 
+			case MFhelp: MFOptionMessage ("IrrUptakeRiver", optStr, MFswitchOptions); return (CMfailed);
 			case MFoff:
 				if (((_MDInIrrigation_UptakeExternalID      = MFVarGetID (MDVarIrrigation_UptakeExternal, "mm", MFInput,  MFFlux, MFBoundary))  == CMfailed) ||
                     ((_MDOutIrrigation_UptakeExcessID       = MFVarGetID (MDVarIrrigation_UptakeExcess,   "mm", MFOutput, MFFlux, MFBoundary)) == CMfailed))
