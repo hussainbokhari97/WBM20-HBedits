@@ -506,7 +506,7 @@ int MDParam_LCStemAreaIndexDef ();
 int MDRouting_BankfullQcalcDef ();
 int MDRouting_DischargeDef ();
 int MDRouting_ChannelDischargeDef ();
-int MDRouting_ChannelStorageDef ();
+int MDRouting_ChannelStorageChgDef ();
 int MDRouting_ChannelDischargeAccumulateDef ();
 int MDRouting_ChannelDischargeCascadeDef ();
 int MDRouting_ChannelDischargeMuskingumDef ();

@@ -26,7 +26,7 @@ static int _MDInWTemp_RunoffID             = MFUnset;
 // Route
 static int _MDInWTemp_HeatFluxID           = MFUnset;
 // Output
-static int _MDOutWTemp_Equil_Temp          = MFUnset;
+static int _MDOutWTemp_EquilTemp           = MFUnset;
 static int _MDOutWTemp_RiverID             = MFUnset;
 
 static void _MDWTempRiver (int itemID) {
@@ -42,19 +42,17 @@ static void _MDWTempRiver (int itemID) {
 // Routed
     float heatFlux     = MFVarGetFloat (_MDInWTemp_HeatFluxID,     itemID, 0.0); // Heat flux degC * m3/s
 // Output
-    float riverTemp; // River temprature in degC
-    float equilTemp; // Equlibrium temperature in degC
+    float riverTemp;       // River temprature in degC
+    float equilTemp = 0.0; // Equlibrium temperature change in degC
 // Local
-    float flowThreshold = cellArea * 0.0001 / dt; // 1 mm/day over the the cell area
+    float flowThreshold = cellArea * 0.0001 / dt; // 0.1 mm/day over the the cell area
 
     if ((discharge0 > runoffFlow) && (discharge0 > flowThreshold) && (discharge > flowThreshold)) { 
         // Input
         float dewpointTemp = MFVarGetFloat (_MDInCommon_HumidityDewPointID, itemID, 0.0); // Dewpoint temperature in degC
         heatFlux += runoffTemp * runoffFlow;
         riverTemp = heatFlux / discharge0;
-        if (riverTemp > 100.0) {
-            fprintf (stderr, "Gebasz\n");
-        }
+        if (riverTemp > 50.0) { /* fprintf (stderr, "Gebasz\n"); */ riverTemp = runoffTemp; }
         // EQUILIBRIUM TEMP MODEL - Edinger et al. 1974: Heat Exchange and Transport in the Environment
         if (dewpointTemp > 0.0) {
             // Input
@@ -65,7 +63,8 @@ static void _MDWTempRiver (int itemID) {
             int i;
             float windFunc;
             float kay;
-
+            float riverTemp0;
+            equilTemp = riverTemp0 = riverTemp;
             windFunc = 9.2 + 0.46 * pow (windSpeed,2); // wind function
             for (i = 0; i < 4; ++i) {
                 float meanTemp;
@@ -76,14 +75,14 @@ static void _MDWTempRiver (int itemID) {
 	            equilTemp = dewpointTemp + solarRad / kay; // Solar radiation is in W/m2;
             }
             riverTemp = equilTemp + (riverTemp - equilTemp) * exp (-kay * channelLength * channelWidth / (4181.3 * discharge * dt));
+            equilTemp = riverTemp - riverTemp0;
         }
-        else equilTemp = riverTemp;
-    } else  riverTemp = equilTemp = runoffTemp;
+    } else  riverTemp = runoffTemp;
 
     heatFlux = riverTemp * discharge;
-    MFVarSetFloat(_MDInWTemp_HeatFluxID,  itemID, heatFlux);  // Route
-    MFVarSetFloat(_MDOutWTemp_Equil_Temp, itemID, equilTemp);
-    MFVarSetFloat(_MDOutWTemp_RiverID,    itemID, riverTemp);
+    MFVarSetFloat(_MDInWTemp_HeatFluxID, itemID, heatFlux);  // Route
+    MFVarSetFloat(_MDOutWTemp_EquilTemp, itemID, equilTemp);
+    MFVarSetFloat(_MDOutWTemp_RiverID,   itemID, riverTemp);
 }
 
 int MDWTemp_RiverDef () {
@@ -100,7 +99,7 @@ int MDWTemp_RiverDef () {
         ((_MDInRouting_Discharge0ID      = MFVarGetID (MDVarRouting_Discharge0,      "m3/s",      MFInput,  MFState, MFInitial))  == CMfailed) ||
         ((_MDInCommon_WindSpeedID        = MFVarGetID (MDVarCommon_WindSpeed,        "m/s",       MFInput,  MFState, MFBoundary)) == CMfailed) ||
         ((_MDInWTemp_HeatFluxID          = MFVarGetID (MDVarWTemp_HeatFlux,          "degC*m3/s", MFRoute,  MFState, MFInitial))  == CMfailed) ||
-        ((_MDOutWTemp_Equil_Temp   	     = MFVarGetID (MDVarWTemp_EquilTemp,         "degC",      MFOutput, MFState, MFBoundary)) == CMfailed) ||
+        ((_MDOutWTemp_EquilTemp   	     = MFVarGetID (MDVarWTemp_EquilTemp,         "degC",      MFOutput, MFState, MFBoundary)) == CMfailed) ||
         ((_MDOutWTemp_RiverID            = MFVarGetID (MDVarWTemp_River,             "degC",      MFOutput, MFState, MFBoundary)) == CMfailed) ||
         (MFModelAddFunction (_MDWTempRiver) == CMfailed)) return (CMfailed);
 	   MFDefLeaving ("Route river temperature");

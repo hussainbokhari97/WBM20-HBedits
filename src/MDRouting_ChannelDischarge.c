@@ -38,11 +38,12 @@ int MDRouting_ChannelDischargeDef () {
 	return (_MDDischLevel3ID);
 }
 
-static int _MDRouting_ChannelStorageID = MFUnset;
+static int _MDRouting_ChannelStorageChgID = MFUnset;
 
-int MDRouting_ChannelStorageDef () { 
-	if (_MDRouting_ChannelStorageID != MFUnset) return (_MDRouting_ChannelStorageID);
+int MDRouting_ChannelStorageChgDef () { 
+	if (_MDRouting_ChannelStorageChgID != MFUnset) return (_MDRouting_ChannelStorageChgID);
 	if (((MDRouting_DischargeDef()) == CMfailed) ||
-	    ((_MDRouting_ChannelStorageID  = MFVarGetID (MDVarRouting_RiverStorageChg, "m3", MFInput, MFFlux,  MFBoundary)) == CMfailed))
-	return (CMfailed);
+	    ((_MDRouting_ChannelStorageChgID  = MFVarGetID (MDVarRouting_RiverStorageChg, "m3", MFInput, MFFlux,  MFBoundary)) == CMfailed))
+		return (CMfailed);
+	return (_MDRouting_ChannelStorageChgID);
 }
