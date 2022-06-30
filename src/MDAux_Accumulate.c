@@ -135,7 +135,7 @@ int MDAux_AccumGrdWatChgDef() {
 	if (_MDOutAux_AccGrdWatChgID != MFUnset) return (_MDOutAux_AccGrdWatChgID);
 
 	MFDefEntering ("Accumulate Groundwater Change");
-	if (((_MDInAux_GrdWatChgID     = MFVarGetID (MDVarCore_GroundWaterChange,   "mm",   MFInput, MFFlux,  MFBoundary)) == CMfailed) ||
+	if (((_MDInAux_GrdWatChgID     = MDCore_GroundWaterChangeDef ()) == CMfailed) ||
         ((_MDOutAux_AccGrdWatChgID = MFVarGetID (MDVarAux_AccGroundWaterChange, "m3/s", MFRoute, MFState, MFBoundary)) == CMfailed) ||
         (MFModelAddFunction(_MDAux_AccumGrdWatChg) == CMfailed)) return (CMfailed);
 

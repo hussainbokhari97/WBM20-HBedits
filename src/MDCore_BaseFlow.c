@@ -112,3 +112,9 @@ int MDCore_BaseFlowDef () {
 	MFDefLeaving ("Base flow ");
 	return (_MDOutCore_BaseFlowID);
 }
+
+int MDCore_GroundWaterChangeDef () {
+	if (_MDOutCore_GrdWatChgID != MFUnset)   return (_MDOutCore_GrdWatChgID);
+	if (MDCore_BaseFlowDef () == (CMfailed)) return (CMfailed);	
+	return (_MDOutCore_GrdWatChgID);
+}

@@ -447,6 +447,7 @@ int MDCommon_WetBulbTempDef ();
 int MDCommon_WetDaysDef ();
 
 int MDCore_BaseFlowDef ();
+int MDCore_GroundWaterChangeDef ();
 int MDCore_EvapotranspirationDef ();
 int MDCore_RainEvapotranspirationDef ();
 int MDCore_RainInfiltrationDef ();
