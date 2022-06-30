@@ -7,6 +7,7 @@ Copyright 1994-2022, UNH - ASRC/CUNY
 MDCommon_Precipitation.c
 
 bfekete@gc.cuny.edu
+
 ******************************************************************************/
 
 #include <math.h>

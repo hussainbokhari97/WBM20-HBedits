@@ -6,13 +6,7 @@ Copyright 1994-2022, UNH - ASRC/CUNY
 
 MDTP2M_TempSurfRunoff.c
 
-wil.wollheim@unh.edu
-
-EDITED: amiara@ccny.cuny.edu Sep 2016
-EDITED: ariel.miara@nrel.gov Feb11 2021
-
-This module calculates the temperature of surface runoff and infiltration to groundwater
-Irrigation inputs are not accounted here.
+bfekete@gc.cuny.edu
 
 *******************************************************************************/
 

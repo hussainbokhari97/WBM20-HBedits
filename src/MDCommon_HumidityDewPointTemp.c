@@ -1,21 +1,18 @@
 /******************************************************************************
- GHAAS Water Balance/Transport Model
- Global Hydrological Archive and Analysis System
- Copyright 1994-2022, UNH - ASRC/CUNY
 
- MDCommon_HumidityDewPointTemp.c
+GHAAS Water Balance/Transport Model
+Global Hydrological Archive and Analysis System
+Copyright 1994-2022, UNH - ASRC/CUNY
 
- amiara@ccny.cuny.edu
+MDCommon_HumidityDewPointTemp.c
 
- *******************************************************************************/
+bfekete@gc.cuny.edu
 
-/********************************************************************************
- * Calculates Specific Humidity from pressure, air temperature and rh
- * ******************************************************************************/
+*********************************************************************************/
 
-#include <math.h>
 #include <MF.h>
 #include <MD.h>
+#include <math.h>
 
 // Input
 static int _MDInCommon_HumidityVaporPressureID = MFUnset;

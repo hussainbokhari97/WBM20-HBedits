@@ -1,5 +1,5 @@
-
 /******************************************************************************
+
 GHAAS Water Balance/Transport Model
 Global Hydrological Archive and Analysis System
 Copyright 1994-2007, University of New Hampshire
@@ -23,7 +23,7 @@ static int _MDInCommon_GrossRadID    = MFUnset;
 //Output
 static int _MDOutCommon_CloudCoverID = MFUnset;
 
-static void _MDCommon_CloudCover(int itemID) {             // should it be InCloudCover?
+static void _MDCommon_CloudCover(int itemID) {
 // Input
     float grossRad = MFVarGetFloat(_MDInCommon_GrossRadID, itemID, 0.0); // Gross/Clear Sky radiation W/m2
     float solarRad = MFVarGetFloat(_MDInCommon_SolarRadID, itemID, 0.0); // Solar radiation W/m2

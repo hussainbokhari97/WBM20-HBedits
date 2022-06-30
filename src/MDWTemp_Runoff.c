@@ -6,9 +6,7 @@ Copyright 1994-2022, UNH - ASRC/CUNY
 
 MDTP2M_TempRiver.c
 
-wil.wollheim@unh.edu
-
-Calculate the temperature in runoff from the local grid cell.  Weight groundwater and surface water temperatures.
+bfekete@gc.cuny.edu
 
 *******************************************************************************/
 

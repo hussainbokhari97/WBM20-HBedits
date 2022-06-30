@@ -3,13 +3,9 @@ GHAAS Water Balance/Transport Model
 Global Hydrological Archive and Analysis System
 Copyright 1994-2022, UNH - ASRC/CUNY
 
-MDTP2M_WTempRiver.c
+MDWTemp_River.c
 
-wil.wollheim@unh.edu
-
-amiara@ccny.cuny.edu - updated river temperature calculations as of Sep 2016
-
-Route temperature through river network
+bfekete@gc.cuny.edu
 
 *******************************************************************************/
 
@@ -19,19 +15,19 @@ Route temperature through river network
 #include <MD.h>
 
 // Input
-static int _MDInCommon_HumidityDewPointID  = MFUnset; // FOR NEW TEMP MODULE
+static int _MDInCommon_HumidityDewPointID  = MFUnset;
 static int _MDInCommon_SolarRadID          = MFUnset;
 static int _MDInCommon_WindSpeedID         = MFUnset;
 static int _MDInCore_RunoffVolumeID        = MFUnset;
 static int _MDInRouting_Discharge0ID       = MFUnset;
 static int _MDInRouting_DischargeID        = MFUnset;
 static int _MDInRouting_RiverWidthID       = MFUnset;
-static int _MDInWTemp_RunoffID         = MFUnset;
-static int _MDInWTemp_HeatFluxID            = MFUnset; // Route
+static int _MDInWTemp_RunoffID             = MFUnset;
+// Route
+static int _MDInWTemp_HeatFluxID           = MFUnset;
 // Output
-static int _MDOutWTemp_Equil_Temp           = MFUnset;
-static int _MDOutWTemp_RiverID         = MFUnset;
-
+static int _MDOutWTemp_Equil_Temp          = MFUnset;
+static int _MDOutWTemp_RiverID             = MFUnset;
 
 static void _MDWTempRiver (int itemID) {
 // Model
@@ -54,7 +50,7 @@ static void _MDWTempRiver (int itemID) {
         float runoffVolume = MFVarGetFloat (_MDInCore_RunoffVolumeID,       itemID, 0.0); // RO volume in m3/s
 
         heatFlux += runoffTemp * runoffVolume;
-        riverTemp = equilTemp = heatFlux / discharge0;
+        riverTemp = heatFlux / discharge0;
         // EQUILIBRIUM TEMP MODEL - Edinger et al. 1974: Heat Exchange and Transport in the Environment
         if (dewpointTemp > 0.0) {
             // Input
@@ -77,6 +73,7 @@ static void _MDWTempRiver (int itemID) {
             }
             riverTemp = equilTemp + (riverTemp - equilTemp) * exp (-kay * channelLength * channelWidth / (4181.3 * discharge * dt));
         }
+        else equilTemp = riverTemp;
     } else  riverTemp = equilTemp = runoffTemp;
 
     heatFlux = riverTemp * discharge;
