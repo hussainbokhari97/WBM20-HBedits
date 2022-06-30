@@ -26,11 +26,11 @@ static int _MDInCore_RunoffVolumeID        = MFUnset;
 static int _MDInRouting_Discharge0ID       = MFUnset;
 static int _MDInRouting_DischargeID        = MFUnset;
 static int _MDInRouting_RiverWidthID       = MFUnset;
-static int _MDInTP2M_WTempRunoffID         = MFUnset;
-static int _MDInTP2M_HeatFluxID            = MFUnset; // Route
+static int _MDInWTemp_RunoffID         = MFUnset;
+static int _MDInWTemp_HeatFluxID            = MFUnset; // Route
 // Output
-static int _MDOutTP2M_Equil_Temp           = MFUnset;
-static int _MDOutTP2M_WTempRiverID         = MFUnset;
+static int _MDOutWTemp_Equil_Temp           = MFUnset;
+static int _MDOutWTemp_RiverID         = MFUnset;
 
 
 static void _MDWTempRiver (int itemID) {
@@ -41,15 +41,14 @@ static void _MDWTempRiver (int itemID) {
 // Input
     float discharge0 = MFVarGetFloat (_MDInRouting_Discharge0ID, itemID, 0.0); // Outflowing discharge in m3/s 
     float discharge  = MFVarGetFloat (_MDInRouting_DischargeID,  itemID, 0.0); // Outflowing discharge in m3/s 
-   	float runoffTemp = MFVarGetFloat (_MDInTP2M_WTempRunoffID,   itemID, 0.0); // Runoff temperature degC
+   	float runoffTemp = MFVarGetFloat (_MDInWTemp_RunoffID,   itemID, 0.0); // Runoff temperature degC
 // Routed
-    float heatFlux   = MFVarGetFloat (_MDInTP2M_HeatFluxID,      itemID, 0.0); // Heat flux degC * m3/s
+    float heatFlux   = MFVarGetFloat (_MDInWTemp_HeatFluxID,      itemID, 0.0); // Heat flux degC * m3/s
 // Output
     float riverTemp; // River temprature in degC
     float equilTemp; // Equlibrium temperature in degC
 
-    // Near zero river flows can lead to exploding temperature values. 10 mm/day runoff over the grid cell area is a reasonable minimum threshold FBM 2022-06-29
-    if ((discharge0 > cellArea * 0.01 / dt ) && (discharge > cellArea * 0.01 / dt)) { 
+    if ((discharge0 > 0.0) && (discharge > 0.0) && (heatFlux > 0.0)) { 
         // Input
         float dewpointTemp = MFVarGetFloat (_MDInCommon_HumidityDewPointID, itemID, 0.0); // Dewpoint temperature in degC
         float runoffVolume = MFVarGetFloat (_MDInCore_RunoffVolumeID,       itemID, 0.0); // RO volume in m3/s
@@ -81,28 +80,28 @@ static void _MDWTempRiver (int itemID) {
     } else  riverTemp = equilTemp = runoffTemp;
 
     heatFlux = riverTemp * discharge;
-    MFVarSetFloat(_MDOutTP2M_Equil_Temp,   itemID, equilTemp);
-    MFVarSetFloat(_MDInTP2M_HeatFluxID,    itemID, heatFlux);  // Route
-    MFVarSetFloat(_MDOutTP2M_WTempRiverID, itemID, riverTemp);
+    MFVarSetFloat(_MDOutWTemp_Equil_Temp,   itemID, equilTemp);
+    MFVarSetFloat(_MDInWTemp_HeatFluxID,    itemID, heatFlux);  // Route
+    MFVarSetFloat(_MDOutWTemp_RiverID, itemID, riverTemp);
 }
 
-int MDTP2M_WTempRiverDef () {
+int MDWTemp_RiverDef () {
 
-	if (_MDOutTP2M_WTempRiverID != MFUnset) return (_MDOutTP2M_WTempRiverID);
+	if (_MDOutWTemp_RiverID != MFUnset) return (_MDOutWTemp_RiverID);
 
 	MFDefEntering ("Route river temperature");
 	if (((_MDInCommon_HumidityDewPointID = MDCommon_HumidityDewPointTemperatureDef ()) == CMfailed) ||
         ((_MDInCommon_SolarRadID         = MDCommon_SolarRadDef ())                    == CMfailed) ||
         ((_MDInCore_RunoffVolumeID       = MDCore_RunoffVolumeDef ())                  == CMfailed) ||
         ((_MDInRouting_DischargeID       = MDRouting_DischargeDef ())                  == CMfailed) ||
-        ((_MDInTP2M_WTempRunoffID        = MDTP2M_WTempRunoffDef ())                   == CMfailed) ||
+        ((_MDInWTemp_RunoffID            = MDWTemp_RunoffDef ())                       == CMfailed) ||
         ((_MDInRouting_RiverWidthID      = MDRouting_RiverWidthDef ())                 == CMfailed) ||
-        ((_MDInRouting_Discharge0ID      = MFVarGetID (MDVarRouting_Discharge0,      "m3/s",      MFInput,  MFState, MFInitial))  == CMfailed) ||
-        ((_MDInCommon_WindSpeedID        = MFVarGetID (MDVarCommon_WindSpeed,        "m/s",       MFInput,  MFState, MFBoundary)) == CMfailed) ||
-        ((_MDInTP2M_HeatFluxID           = MFVarGetID (MDVarTP2M_HeatFlux,           "m3*degC/d", MFRoute,  MFFlux,  MFBoundary)) == CMfailed) ||
-        ((_MDOutTP2M_Equil_Temp   	     = MFVarGetID (MDVarTP2M_Equil_Temp,         "degC",      MFOutput, MFState, MFBoundary)) == CMfailed) ||
-        ((_MDOutTP2M_WTempRiverID        = MFVarGetID (MDVarTP2M_WTempRiver,         "degC",      MFOutput, MFState, MFBoundary)) == CMfailed) ||
+        ((_MDInRouting_Discharge0ID      = MFVarGetID (MDVarRouting_Discharge0, "m3/s",    MFInput,  MFState, MFInitial))  == CMfailed) ||
+        ((_MDInCommon_WindSpeedID        = MFVarGetID (MDVarCommon_WindSpeed,   "m/s",     MFInput,  MFState, MFBoundary)) == CMfailed) ||
+        ((_MDInWTemp_HeatFluxID          = MFVarGetID (MDVarWTemp_HeatFlux,     "m3*degC", MFRoute,  MFFlux,  MFInitial))  == CMfailed) ||
+        ((_MDOutWTemp_Equil_Temp   	     = MFVarGetID (MDVarWTemp_EquilTemp,    "degC",    MFOutput, MFState, MFBoundary)) == CMfailed) ||
+        ((_MDOutWTemp_RiverID            = MFVarGetID (MDVarWTemp_River,        "degC",    MFOutput, MFState, MFBoundary)) == CMfailed) ||
         (MFModelAddFunction (_MDWTempRiver) == CMfailed)) return (CMfailed);
 	   MFDefLeaving ("Route river temperature");
-	   return (_MDOutTP2M_WTempRiverID);
+	   return (_MDOutWTemp_RiverID);
 }

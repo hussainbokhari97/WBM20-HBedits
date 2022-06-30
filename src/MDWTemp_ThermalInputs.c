@@ -1085,17 +1085,17 @@ static void _MDThermalInputs3 (int itemID) {
     MFVarSetFloat(_MDOutHeatToRiver4ID,        itemID, heat_to_river_4);
 }
 
-int MDTP2M_ThermalInputsDef () {
+int MDWTemp_ThermalInputsDef () {
 
 	MFDefEntering ("Thermal Inputs");
-    if (((_MDPlaceHolderID             = MDTP2M_WTempRiverDef ())  == CMfailed) ||
+    if (((_MDPlaceHolderID             = MDWTemp_RiverDef ())  == CMfailed) ||
         ((_MDInRouting_DischargeID     = MDRouting_DischargeDef ())     == CMfailed) ||
         ((_MDInWetBulbTempID           = MDCommon_WetBulbTempDef ())    == CMfailed) ||
 	    ((_MDInCommon_AirTemperatureID = MDCommon_AirTemperatureDef ()) == CMfailed) ||
 	    ((_MDInDischargeIncomingID     = MFVarGetID (MDVarRouting_Discharge0,       "m3/s",      MFInput,  MFState, MFInitial))  == CMfailed) ||
-	    ((_MDFluxMixing_QxTID          = MFVarGetID (MDVarTP2M_HeatFlux,            "m3*degC/d", MFInput,  MFFlux,  MFBoundary)) == CMfailed) ||
-        ((_MDFlux_QxTID                = MFVarGetID (MDVarTP2M_HeatFlux,            "m3*degC/d", MFInput,  MFFlux,  MFBoundary)) == CMfailed) ||
-	    ((_MDWTempRiverID               = MFVarGetID (MDVarTP2M_WTempRiver,         "degC",      MFOutput, MFState, MFBoundary)) == CMfailed) ||
+	    ((_MDFluxMixing_QxTID          = MFVarGetID (MDVarWTemp_HeatFlux,            "m3*degC/d", MFInput,  MFFlux,  MFBoundary)) == CMfailed) ||
+        ((_MDFlux_QxTID                = MFVarGetID (MDVarWTemp_HeatFlux,            "m3*degC/d", MFInput,  MFFlux,  MFBoundary)) == CMfailed) ||
+	    ((_MDWTempRiverID               = MFVarGetID (MDVarWTemp_River,         "degC",      MFOutput, MFState, MFBoundary)) == CMfailed) ||
         ((_MDInNamePlate1ID            = MFVarGetID (MDVarTP2M_NamePlate1,          "MW",        MFInput,  MFState, MFBoundary)) == CMfailed) ||
         ((_MDInFuelType1ID             = MFVarGetID (MDVarTP2M_FuelType1,           "-",         MFInput,  MFState, MFBoundary)) == CMfailed) ||
         ((_MDInTechnology1ID           = MFVarGetID (MDVarTP2M_Technology1,         "-",         MFInput,  MFState, MFBoundary)) == CMfailed) ||

@@ -14,38 +14,38 @@ bfekete@gc.cuny.edu
 #include <MD.h>
 
 static int _MDInAux_AccumRunoffID = MFUnset;
-static int _MDAux_InAvgNStepsID   = MFUnset;
+static int _MDInAux_StepCounterID = MFUnset;
 
-static int _MDOutAux_MinimumDischargeID = MFUnset;
+static int _MDOutAux_DischargeMinID = MFUnset;
 
-static void _MDAux_MinimumDischarge (int itemID) {
-	int   nSteps     = MFVarGetInt   (_MDAux_InAvgNStepsID,         itemID, 0);
-	float discharge  = MFVarGetFloat (_MDOutAux_MinimumDischargeID, itemID, 0.0);
+static void _MDAux_DischargeMin (int itemID) {
+	int   nSteps     = MFVarGetInt   (_MDInAux_StepCounterID,       itemID, 0);
+	float discharge  = MFVarGetFloat (_MDOutAux_DischargeMinID, itemID, 0.0);
 	float accumDisch = nSteps > 0 ? MFVarGetFloat (_MDInAux_AccumRunoffID, itemID, 0.0) : discharge;
 
 	discharge  = discharge < accumDisch ? discharge : accumDisch;
-	MFVarSetFloat (_MDOutAux_MinimumDischargeID, itemID, discharge);
+	MFVarSetFloat (_MDOutAux_DischargeMinID, itemID, discharge);
 }
 
-int MDAux_MinimumDischargeDef () {
+int MDAux_DischargeMinDef () {
 	int  optID = MFinput;
 	const char *optStr;
 
-	if (_MDOutAux_MinimumDischargeID != MFUnset) return (_MDOutAux_MinimumDischargeID);
+	if (_MDOutAux_DischargeMinID != MFUnset) return (_MDOutAux_DischargeMinID);
 
 	MFDefEntering ("Discharge Minimum");
-	if ((optStr = MFOptionGet (MDVarAux_DischMean)) != (char *) NULL) optID = CMoptLookup (MFsourceOptions, optStr, true);
+	if ((optStr = MFOptionGet (MDVarAux_DischargeMean)) != (char *) NULL) optID = CMoptLookup (MFsourceOptions, optStr, true);
 	switch (optID) {
 		default:
-		case MFhelp:  MFOptionMessage (MDVarAux_DischMean, optStr, MFsourceOptions); return (CMfailed);
-		case MFinput: _MDOutAux_MinimumDischargeID = MFVarGetID (MDVarAux_DischMean, "m3/s", MFInput, MFState, MFInitial); break;
+		case MFhelp:  MFOptionMessage (MDVarAux_DischargeMean, optStr, MFsourceOptions); return (CMfailed);
+		case MFinput: _MDOutAux_DischargeMinID = MFVarGetID (MDVarAux_DischargeMean, "m3/s", MFInput, MFState, MFInitial); break;
 		case MFcalculate:
-			if (((_MDInAux_AccumRunoffID        = MDAux_AccumRunoffDef()) == CMfailed) ||
-				((_MDAux_InAvgNStepsID          = MDAux_AvgNStepsDef())   == CMfailed) ||
-                ((_MDOutAux_MinimumDischargeID  = MFVarGetID (MDVarAux_DischMax,  "m3/s", MFOutput, MFState, MFInitial)) == CMfailed) ||
-                (MFModelAddFunction(_MDAux_MinimumDischarge) == CMfailed)) return (CMfailed);
+			if (((_MDInAux_AccumRunoffID   = MDAux_AccumRunoffDef()) == CMfailed) ||
+				((_MDInAux_StepCounterID   = MDAux_StepCounterDef()) == CMfailed) ||
+                ((_MDOutAux_DischargeMinID = MFVarGetID (MDVarAux_DischargeMin,  "m3/s", MFOutput, MFState, MFInitial)) == CMfailed) ||
+                (MFModelAddFunction(_MDAux_DischargeMin) == CMfailed)) return (CMfailed);
 			break;
 	}
 	MFDefLeaving ("Discharge Minimum");
-	return (_MDOutAux_MinimumDischargeID);
+	return (_MDOutAux_DischargeMinID);
 }

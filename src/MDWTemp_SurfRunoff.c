@@ -27,16 +27,20 @@ static int _MDInCommon_AirTemperatureID = MFUnset;
 static int _MDOutWTempSurfROID          = MFUnset;
 
 static void _MDWTempSurfRunoff (int itemID) {
-    MFVarSetFloat (_MDOutWTempSurfROID, itemID, MDMaximum (MFVarGetFloat (_MDInCommon_AirTemperatureID, itemID, 0.0) - 1.5, 0.0));
+	float airTemp = MFVarGetFloat (_MDInCommon_AirTemperatureID, itemID, 0.0); // Air temperature degC
+	float surfRunoffTemp;
+
+	surfRunoffTemp = airTemp > 1.5 ? airTemp - 1.5 : (airTemp > 0.0 ? airTemp : 0.0);
+    MFVarSetFloat (_MDOutWTempSurfROID, itemID, surfRunoffTemp);
 }
 
-int MDTP2M_WTempSurfRunoffDef () {
+int MDWTemp_SurfRunoffDef () {
 
 	if (_MDOutWTempSurfROID != MFUnset) return (_MDOutWTempSurfROID);
 
 	MFDefEntering ("Surface runoff temperature");
 	if (((_MDInCommon_AirTemperatureID = MDCommon_AirTemperatureDef ()) == CMfailed) ||
-        ((_MDOutWTempSurfROID          = MFVarGetID (MDVarTP2M_WTempSurfRunoff,  "degC", MFOutput, MFState, MFBoundary)) == CMfailed) ||
+        ((_MDOutWTempSurfROID          = MFVarGetID (MDVarWTemp_SurfRunoff,  "degC", MFOutput, MFState, MFBoundary)) == CMfailed) ||
         (MFModelAddFunction (_MDWTempSurfRunoff) == CMfailed)) return (CMfailed);
 	MFDefLeaving ("Surface runoff temperature");
 	return (_MDOutWTempSurfROID);

@@ -274,7 +274,7 @@ int MDSediment_FluxOLDDef() {
 	MFDefEntering ("SedimentFlux");
 	
 	if (((_MDInDischargeID 		     = MDRouting_DischargeDef ())          == CMfailed) ||
-	    ((_MDInDischMeanID 		     = MDAux_MeanDischargeDef ())          == CMfailed) ||
+	    ((_MDInDischMeanID 		     = MDAux_DischargeMeanDef ())          == CMfailed) ||
 	    ((_MDInAirTempID             = MDCommon_AirTemperatureDef ())      == CMfailed) ||
 	    ((_MDInAirTempAcc_timeID     = MFVarGetID (MDVarSediment_AirTemperatureAcc_time,    "degC",     MFInput,  MFState, MFInitial))  == CMfailed) ||
 	    ((_MDInTimeStepsID           = MFVarGetID (MDVarSediment_TimeSteps,                 MFNoUnit,   MFInput,  MFState, MFInitial))  == CMfailed) ||

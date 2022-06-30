@@ -143,8 +143,8 @@ int MDSediment_BedloadFluxDef() {
 	
 	if (((_MDInDischargeID            = MDSediment_DischargeBFDef ()) == CMfailed) || 
 	    ((_MDInSedimentFluxID         = MDSediment_FluxDef ())        == CMfailed) ||
-	    ((_MDInWTempRiver             = MDTP2M_WTempRiverDef ())      == CMfailed) ||
-	    ((_MDInDischMeanID            = MFVarGetID (MDVarAux_DischMean,               "m3/s",   MFRoute,  MFState, MFInitial))  == CMfailed) ||
+	    ((_MDInWTempRiver             = MDWTemp_RiverDef ())      == CMfailed) ||
+	    ((_MDInDischMeanID            = MFVarGetID (MDVarAux_DischargeMean,               "m3/s",   MFRoute,  MFState, MFInitial))  == CMfailed) ||
 	    ((_MDInQs_barID               = MFVarGetID (MDVarSediment_Qs_bar,             "kg/s",   MFRoute,  MFState, MFBoundary)) == CMfailed) ||
 	    ((_MDInRiverSlopeID           = MFVarGetID (MDVarRouting_RiverSlope,          "m/km",   MFInput,  MFState, MFBoundary)) == CMfailed) ||
 	    ((_MDInMDVarVelocityTHID      = MFVarGetID (MDVarSediment_VelocityTH,         MFNoUnit, MFInput,  MFState, MFBoundary)) == CMfailed) ||

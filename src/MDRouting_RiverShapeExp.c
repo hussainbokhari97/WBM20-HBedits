@@ -80,7 +80,7 @@ int MDRouting_RiverShapeExponentDef () {
 		case MDdependent:
 			if ((_MDInRiverSlopeID           = MFVarGetID (MDVarRouting_RiverSlope, "m/km", MFInput, MFState, MFBoundary)) == CMfailed) return (CMfailed);
 		case MDindependent:
-			if (((_MDInAux_MeanDischargeID = MDAux_MeanDischargeDef()) == CMfailed) ||
+			if (((_MDInAux_MeanDischargeID = MDAux_DischargeMeanDef()) == CMfailed) ||
                 ((_MDOutRiverAvgDepthMeanID  = MFVarGetID (MDVarRouting_RiverAvgDepthMean, "m", MFOutput, MFState, MFBoundary)) == CMfailed) ||
                 ((_MDOutRiverWidthMeanID     = MFVarGetID (MDVarRouting_RiverWidthMean, "m", MFOutput, MFState, MFBoundary)) == CMfailed) ||
                 ((_MDOutRiverVelocityMeanID  = MFVarGetID (MDVarRouting_RiverVelocityMean, "m/s", MFOutput, MFState, MFBoundary)) == CMfailed) ||

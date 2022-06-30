@@ -14,19 +14,19 @@ bfekete@gc.cuny.edu
 #include <MD.h>
 
 // Output
-static int _MDOutAux_AvgNStepsID = MFUnset;
+static int _MDOutAux_StepCounterID = MFUnset;
 
-static void _MDAux_AvgNSteps (int itemID) {
-	int nStep = MFVarGetInt (_MDOutAux_AvgNStepsID, itemID, 0);
-	MFVarSetInt (_MDOutAux_AvgNStepsID, itemID, nStep + 1);
+static void _MDAux_StepCounter (int itemID) {
+	int nStep = MFVarGetInt (_MDOutAux_StepCounterID, itemID, 0);
+	MFVarSetInt (_MDOutAux_StepCounterID, itemID, nStep + 1);
 }
 
-int MDAux_AvgNStepsDef () {
+int MDAux_StepCounterDef () {
 
-	if (_MDOutAux_AvgNStepsID != MFUnset) return (_MDOutAux_AvgNStepsID);
-	MFDefEntering ("Average NSteps");
-	if (((_MDOutAux_AvgNStepsID = MFVarGetID (MDVarAux_AvgNSteps, MFNoUnit, MFInt, MFState, MFInitial)) == CMfailed) ||
-        (MFModelAddFunction(_MDAux_AvgNSteps) == CMfailed)) return (CMfailed);
+	if (_MDOutAux_StepCounterID != MFUnset) return (_MDOutAux_StepCounterID);
+	MFDefEntering ("Step Count");
+	if (((_MDOutAux_StepCounterID = MFVarGetID (MDVarAux_StepCounter, MFNoUnit, MFInt, MFState, MFInitial)) == CMfailed) ||
+        (MFModelAddFunction(_MDAux_StepCounter) == CMfailed)) return (CMfailed);
 	MFDefLeaving ("Average NSteps");
-	return (_MDOutAux_AvgNStepsID);
+	return (_MDOutAux_StepCounterID);
 }

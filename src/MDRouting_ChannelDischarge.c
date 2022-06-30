@@ -42,7 +42,7 @@ static int _MDRouting_ChannelStorageID = MFUnset;
 
 int MDRouting_ChannelStorageDef () { 
 	if (_MDRouting_ChannelStorageID != MFUnset) return (_MDRouting_ChannelStorageID);
-	if (((MDRouting_ChannelDischargeDef ()) == CMfailed) ||
+	if (((MDRouting_DischargeDef()) == CMfailed) ||
 	    ((_MDRouting_ChannelStorageID  = MFVarGetID (MDVarRouting_RiverStorageChg, "m3", MFInput, MFFlux,  MFBoundary)) == CMfailed))
 	return (CMfailed);
 }

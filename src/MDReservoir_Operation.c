@@ -201,7 +201,7 @@ int MDReservoir_OperationDef () {
 		case MDwisser:
 			if (((_MDInRouting_DischargeID      = MDRouting_ChannelDischargeDef())   == CMfailed) ||
 				((_MDInResUptakeID              = MDReservoir_UptakeDef ())          == CMfailed) ||
-				((_MDInAux_MeanDischargeID      = MDAux_MeanDischargeDef ())         == CMfailed) ||
+				((_MDInAux_MeanDischargeID      = MDAux_DischargeMeanDef ())         == CMfailed) ||
             	((_MDInResCapacityID            = MFVarGetID (MDVarReservoir_Capacity,           "km3",  MFInput,  MFState, MFBoundary)) == CMfailed) ||
                 ((_MDOutResStorageID            = MFVarGetID (MDVarReservoir_Storage,            "km3",  MFOutput, MFState, MFInitial))  == CMfailed) ||
                 ((_MDOutResStorageChgID         = MFVarGetID (MDVarReservoir_StorageChange,      "km3",  MFOutput, MFState, MFBoundary)) == CMfailed) ||

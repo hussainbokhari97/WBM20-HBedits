@@ -63,8 +63,8 @@ int main (int argc,char *argv []) {
         case MDbalance:                   return (MFModelRun(argc, argv, argNum, MDCore_WaterBalanceDef));
         case MDgeometry:                  return (MFModelRun(argc, argv, argNum, MDRouting_RiverWidthDef));
         case MDRiverbedShape:             return (MFModelRun(argc, argv, argNum, MDRouting_RiverShapeExponentDef));
-        case MDwatertemp:                 return (MFModelRun(argc, argv, argNum, MDTP2M_WTempRiverDef));
-        case MDthermal:                   return (MFModelRun(argc, argv, argNum, MDTP2M_ThermalInputsDef));
+        case MDwatertemp:                 return (MFModelRun(argc, argv, argNum, MDWTemp_RiverDef));
+        case MDthermal:                   return (MFModelRun(argc, argv, argNum, MDWTemp_ThermalInputsDef));
         case MDbankfullQcalc:             return (MFModelRun(argc, argv, argNum, MDRouting_BankfullQcalcDef));
         case MDsedimentflux:              return (MFModelRun(argc, argv, argNum, MDSediment_FluxDef));
         case MDbedloadflux:               return (MFModelRun(argc, argv, argNum, MDSediment_BedloadFluxDef));
