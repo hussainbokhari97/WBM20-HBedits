@@ -1093,9 +1093,9 @@ int MDWTemp_ThermalInputsDef () {
         ((_MDInWetBulbTempID           = MDCommon_WetBulbTempDef ())    == CMfailed) ||
 	    ((_MDInCommon_AirTemperatureID = MDCommon_AirTemperatureDef ()) == CMfailed) ||
 	    ((_MDInDischargeIncomingID     = MFVarGetID (MDVarRouting_Discharge0,       "m3/s",      MFInput,  MFState, MFInitial))  == CMfailed) ||
-	    ((_MDFluxMixing_QxTID          = MFVarGetID (MDVarWTemp_HeatFlux,            "m3*degC/d", MFInput,  MFFlux,  MFBoundary)) == CMfailed) ||
-        ((_MDFlux_QxTID                = MFVarGetID (MDVarWTemp_HeatFlux,            "m3*degC/d", MFInput,  MFFlux,  MFBoundary)) == CMfailed) ||
-	    ((_MDWTempRiverID               = MFVarGetID (MDVarWTemp_River,         "degC",      MFOutput, MFState, MFBoundary)) == CMfailed) ||
+	    ((_MDFluxMixing_QxTID          = MFVarGetID (MDVarWTemp_HeatFlux,           "m3*degC/d", MFInput,  MFFlux,  MFBoundary)) == CMfailed) ||
+        ((_MDFlux_QxTID                = MFVarGetID (MDVarWTemp_HeatFlux,           "m3*degC/d", MFInput,  MFFlux,  MFBoundary)) == CMfailed) ||
+	    ((_MDWTempRiverID              = MFVarGetID (MDVarWTemp_River,              "degC",      MFOutput, MFState, MFBoundary)) == CMfailed) ||
         ((_MDInNamePlate1ID            = MFVarGetID (MDVarTP2M_NamePlate1,          "MW",        MFInput,  MFState, MFBoundary)) == CMfailed) ||
         ((_MDInFuelType1ID             = MFVarGetID (MDVarTP2M_FuelType1,           "-",         MFInput,  MFState, MFBoundary)) == CMfailed) ||
         ((_MDInTechnology1ID           = MFVarGetID (MDVarTP2M_Technology1,         "-",         MFInput,  MFState, MFBoundary)) == CMfailed) ||

@@ -118,7 +118,7 @@ extern "C" {
 #define MDVarCore_RelSoilMoisture               "RelativeSoilMoisture"
 #define MDVarCore_Runoff                        "Runoff"
 #define MDVarCore_RunoffMean                    "RunoffMean"
-#define MDVarCore_RunoffVolume                  "RunoffVolume"
+#define MDVarCore_RunoffFlow                    "RunoffFlow"
 #define MDVarCore_SnowMelt                      "SnowMelt"
 #define MDVarCore_SnowPack                      "SnowPack"
 #define MDVarCore_SnowPackChange                "SnowPackChange"
@@ -468,7 +468,7 @@ int MDCore_RainSMoistChgDef ();
 int MDCore_RainSurfRunoffDef ();
 int MDCore_RainWaterSurplusDef ();
 int MDCore_RunoffDef ();
-int MDCore_RunoffVolumeDef ();
+int MDCore_RunoffFlowDef ();
 int MDCore_SnowPackChgDef ();
 int MDCore_SnowPackMeltDef ();
 int MDCore_SoilAvailWaterCapDef ();

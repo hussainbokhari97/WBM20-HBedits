@@ -162,7 +162,7 @@ int MDAux_AccumRunoffDef() {
 	if (_MDOutAux_AccCore_RunoffID != MFUnset) return (_MDOutAux_AccCore_RunoffID);
 
 	MFDefEntering ("Accumulate Runoff");
-	if (((_MDInCore_RunoffVolumeID   = MDCore_RunoffVolumeDef()) == CMfailed) ||
+	if (((_MDInCore_RunoffVolumeID   = MDCore_RunoffFlowDef()) == CMfailed) ||
         ((_MDOutAux_AccCore_RunoffID = MFVarGetID (MDVarAux_AccRunoff, "m3/s", MFRoute, MFState, MFBoundary)) == CMfailed) ||
         (MFModelAddFunction(_MDAux_AccumRunoff) == CMfailed)) return (CMfailed);
 

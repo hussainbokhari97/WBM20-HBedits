@@ -27,6 +27,8 @@ static int _MDOutAux_AccBalanceID  = MFUnset;
 
 static void _MDAux_AccumBalance (int itemID)
 {
+// Local
+    float dt              = MFModelGet_dt ();
 // Input
 	float precip          = MFVarGetFloat (_MDInAux_AccPrecipID,        itemID, 0.0); // Precipitation [m3/s]
 	float evap            = MFVarGetFloat (_MDInAux_AccEvapID,          itemID, 0.0); // Evapotranspiration [m3/s]
@@ -36,7 +38,7 @@ static void _MDAux_AccumBalance (int itemID)
 	float runoff          = MFVarGetFloat (_MDInAux_AccRunoffID,        itemID, 0.0); // Runoff [m3/s]
 	float riverStorageChg = MFVarGetFloat (_MDInAux_AccRiverStorageChg, itemID, 0.0); // River storage Change [m3/dt]
 
-	MFVarSetFloat(_MDOutAux_AccBalanceID, itemID, precip - evap - snowPackChg - sMoistChg - grdWatChg - runoff - riverStorageChg);
+	MFVarSetFloat(_MDOutAux_AccBalanceID, itemID, precip - evap - snowPackChg - sMoistChg - grdWatChg - runoff - riverStorageChg / dt);
 }
 
 int MDAux_AccumBalanceDef() {
