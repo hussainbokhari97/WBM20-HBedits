@@ -13,8 +13,8 @@ bfekete@gc.cuny.edu
 #include <MF.h>
 #include <MD.h>
 
-static int _MDInAux_AccumRunoffID    = MFUnset;
 static int _MDInAux_StepCounterID    = MFUnset;
+static int _MDInAux_AccumRunoffID    = MFUnset;
 
 static int _MDOutAux_DischargeMeanID = MFUnset;
 
@@ -28,7 +28,7 @@ static void _MDAux_DischargeMean (int itemID) {
 }
 
 int MDAux_DischargeMeanDef () {
-	int  optID = MFinput;
+	int  optID = MFcalculate;
 	const char *optStr;
 
 	if (_MDOutAux_DischargeMeanID != MFUnset) return (_MDOutAux_DischargeMeanID);
@@ -38,10 +38,10 @@ int MDAux_DischargeMeanDef () {
 	switch (optID) {
 		default:
 		case MFhelp:  MFOptionMessage (MDVarAux_DischargeMean, optStr, MFsourceOptions); return (CMfailed);
-		case MFinput: _MDOutAux_DischargeMeanID = MFVarGetID (MDVarAux_DischargeMean, "m3/s", MFInput, MFState, MFInitial); break;
+		case MFinput: _MDOutAux_DischargeMeanID = MFVarGetID (MDVarAux_DischargeMean, "m3/s", MFInput, MFState, MFBoundary); break;
 		case MFcalculate:
-			if (((_MDInAux_AccumRunoffID    = MDAux_AccumRunoffDef()) == CMfailed) ||
-			    ((_MDInAux_StepCounterID    = MDAux_StepCounterDef()) == CMfailed) ||
+			if (((_MDInAux_StepCounterID    = MDAux_StepCounterDef()) == CMfailed) ||
+			    ((_MDInAux_AccumRunoffID    = MDAux_AccumRunoffDef()) == CMfailed) ||
                 ((_MDOutAux_DischargeMeanID = MFVarGetID (MDVarAux_DischargeMean, "m3/s", MFOutput, MFState, MFInitial)) == CMfailed) ||
                 (MFModelAddFunction(_MDAux_DischargeMean) == CMfailed)) return (CMfailed);
 			break;

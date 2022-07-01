@@ -21,7 +21,7 @@ static int _MDOutWTemp_GrdWaterID        = MFUnset;
 
 static void _MDWTemp_GrdWater (int itemID) {
 // Input
-	float airTemp     = MFVarGetFloat (_MDInCommon_AirTemperatureID,  itemID, 0.0);  // Air temperature
+	float airTemp     = MFVarGetFloat (_MDInCommon_AirTemperatureID,  itemID, 0.0); // Air temperature
 	float airTempMean = MFVarGetFloat (_MDInAux_AirTemperatureMeanID, itemID, 0.0); // Long-term mean Air temperature
 // Output
 	float grdWaterTemp;

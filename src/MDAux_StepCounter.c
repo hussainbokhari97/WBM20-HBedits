@@ -24,9 +24,9 @@ static void _MDAux_StepCounter (int itemID) {
 int MDAux_StepCounterDef () {
 
 	if (_MDOutAux_StepCounterID != MFUnset) return (_MDOutAux_StepCounterID);
-	MFDefEntering ("Step Count");
+	MFDefEntering ("Step Counter");
 	if (((_MDOutAux_StepCounterID = MFVarGetID (MDVarAux_StepCounter, MFNoUnit, MFInt, MFState, MFInitial)) == CMfailed) ||
         (MFModelAddFunction(_MDAux_StepCounter) == CMfailed)) return (CMfailed);
-	MFDefLeaving ("Average NSteps");
+	MFDefLeaving ("Step Counter");
 	return (_MDOutAux_StepCounterID);
 }
