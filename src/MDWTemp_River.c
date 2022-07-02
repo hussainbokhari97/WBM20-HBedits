@@ -52,8 +52,8 @@ static void _MDWTempRiver (int itemID) {
         float dewpointTemp = MFVarGetFloat (_MDInCommon_HumidityDewPointID, itemID, 0.0); // Dewpoint temperature in degC
         heatFlux += runoffTemp * runoffFlow;
         riverTemp = heatFlux / discharge0;
-        if (riverTemp > 50.0) {
-            CMmsgPrint (CMmsgWarning, "River temperature in cell: %ld day: %d : %.1f\n", itemID, MFDateGetDayOfYear (), riverTemp);
+        if (riverTemp > 100.0) {
+            CMmsgPrint (CMmsgWarning, "Day: %3d in Cell: %10ld River Temperature: %5.1f\n", MFDateGetDayOfYear (), itemID, riverTemp);
             riverTemp = runoffTemp;
         }
         // EQUILIBRIUM TEMP MODEL - Edinger et al. 1974: Heat Exchange and Transport in the Environment
