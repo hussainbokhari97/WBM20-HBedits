@@ -53,7 +53,7 @@ static void _MDWTempRiver (int itemID) {
         heatFlux += runoffTemp * runoffFlow;
         riverTemp = heatFlux / discharge0;
         if (riverTemp > 100.0) {
-            CMmsgPrint (CMmsgWarning, "Day: %3d in Cell: %10ld River Temperature: %5.1f\n", MFDateGetDayOfYear (), itemID, riverTemp);
+            CMmsgPrint (CMmsgWarning, "Day: %3d Cell: %10ld River Temperature: %6.1f\n", MFDateGetDayOfYear (), itemID, riverTemp);
             riverTemp = runoffTemp;
         }
         // EQUILIBRIUM TEMP MODEL - Edinger et al. 1974: Heat Exchange and Transport in the Environment
