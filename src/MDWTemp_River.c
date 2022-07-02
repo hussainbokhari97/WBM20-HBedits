@@ -52,7 +52,7 @@ static void _MDWTempRiver (int itemID) {
         float dewpointTemp = MFVarGetFloat (_MDInCommon_HumidityDewPointID, itemID, 0.0); // Dewpoint temperature in degC
         heatFlux += runoffTemp * runoffFlow;
         riverTemp = heatFlux / discharge0;
-        if (riverTemp > 100.0) {
+        if (riverTemp > 50.0) {
             CMmsgPrint (CMmsgWarning, "Day: %3d Cell: %10ld River Temperature: %6.1f\n", MFDateGetDayOfYear (), itemID, riverTemp);
             riverTemp = runoffTemp;
         }
