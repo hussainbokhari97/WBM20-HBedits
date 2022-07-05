@@ -14,7 +14,7 @@ bfekete@gc.cuny.edu
 #include <MD.h>
 
 //Input;
-static int _MDInCommon_PrecipID     = MFUnset;
+static int _MDInCommon_PrecipID  = MFUnset;
 //Output
 static int _MDOutAux_AccPrecipID = MFUnset;
 
@@ -98,7 +98,7 @@ static void _MDAux_AccumSnowPackChage (int itemID) {
 
 int MDAux_AccumSnowPackChgDef() {
 
-	if (_MDOutAux_AccEvapID != MFUnset) return (_MDOutAux_AccEvapID);
+	if (_MDOutAux_AccSnowPackChgID != MFUnset) return (_MDOutAux_AccSnowPackChgID);
 
 	MFDefEntering ("Accumulate Snowpack Change");
 	if (((_MDInAux_SnowPackChgID     = MDCore_SnowPackChgDef ()) == CMfailed) ||
@@ -223,11 +223,11 @@ static void _MDAux_AccumRiverStorageChg (int itemID) {
 
 int MDAux_AccumRiverStorageChg () {
 
-	if (_MDInCore_RiverStorageChgID != MFUnset) return (_MDInCore_RiverStorageChgID);
+	if (_MDOutAux_AccRiverStorageChgID != MFUnset) return (_MDOutAux_AccRiverStorageChgID);
 
 	MFDefEntering ("Accumulate River Storage Change");
 	if (((_MDInCore_RiverStorageChgID    = MDRouting_ChannelStorageChgDef()) == CMfailed) ||
-        ((_MDOutAux_AccRiverStorageChgID = MFVarGetID (MDVarRouting_RiverStorageChg, "m3", MFRoute, MFState, MFBoundary)) == CMfailed) ||
+        ((_MDOutAux_AccRiverStorageChgID = MFVarGetID (MDVarAux_AccRiverStorageChg, "m3/s", MFRoute, MFState, MFBoundary)) == CMfailed) ||
         (MFModelAddFunction(_MDAux_AccumRiverStorageChg) == CMfailed)) return (CMfailed);
 	MFDefLeaving ("Accumulate River Storage Change");
 	return (_MDOutAux_AccRiverStorageChgID);	
