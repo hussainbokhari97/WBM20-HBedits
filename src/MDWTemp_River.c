@@ -40,7 +40,7 @@ static void _MDWTempRiver (int itemID) {
     float runoffFlow = MFVarGetFloat (_MDInCore_RunoffFlowID,    itemID, 0.0); // RO volume in m3/s
    	float runoffTemp = MFVarGetFloat (_MDInWTemp_RunoffID,       itemID, 0.0); // Runoff temperature degC
 // Routed
-    float heatFlux     = MFVarGetFloat (_MDInWTemp_HeatFluxID,     itemID, 0.0); // Heat flux degC * m3/s
+    float heatFlux   = MFVarGetFloat (_MDInWTemp_HeatFluxID,     itemID, 0.0); // Heat flux degC * m3/s
 // Output
     float riverTemp;       // River temprature in degC
     float equilTemp = 0.0; // Equlibrium temperature change in degC
@@ -50,9 +50,9 @@ static void _MDWTempRiver (int itemID) {
     if ((discharge0 > runoffFlow) && (discharge0 > flowThreshold) && (discharge > flowThreshold)) { 
     // Input
         float dewpointTemp = MFVarGetFloat (_MDInCommon_HumidityDewPointID, itemID, 0.0); // Dewpoint temperature in degC
-     	float solarRad     = MFVarGetFloat (_MDInCommon_SolarRadID,    itemID, 0.0); // Solar radiation in W/m2 averaged over the day
-        float windSpeed    = MFVarGetFloat (_MDInCommon_WindSpeedID,   itemID, 0.0); // Winds speed in m/s
-        float channelWidth = MFVarGetFloat (_MDInRouting_RiverWidthID, itemID, 0.0); // River width in m
+     	float solarRad     = MFVarGetFloat (_MDInCommon_SolarRadID,         itemID, 0.0); // Solar radiation in W/m2 averaged over the day
+        float windSpeed    = MFVarGetFloat (_MDInCommon_WindSpeedID,        itemID, 0.0); // Winds speed in m/s
+        float channelWidth = MFVarGetFloat (_MDInRouting_RiverWidthID,      itemID, 0.0); // River width in m
     // Local
         int i;
         float windFunc;
