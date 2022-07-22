@@ -20,10 +20,10 @@ int MDIrrigation_UptakeRiverDef () {
 	const char *optStr;
 
 	if (_MDOutIrrigation_UptakeRiverID != MFUnset) return (_MDOutIrrigation_UptakeRiverID);
-	if ((optStr = MFOptionGet ("IrrUptakeRiver")) != (char *) NULL) optID = CMoptLookup (MFswitchOptions, optStr, true);
+	if ((optStr = MFOptionGet (MDVarIrrigation_UptakeRiver)) != (char *) NULL) optID = CMoptLookup (MFswitchOptions, optStr, true);
 	switch (optID) {
 		default:
-		case MFhelp: MFOptionMessage ("IrrUptakeRiver", optStr, MFswitchOptions); return CMfailed;
+		case MFhelp: MFOptionMessage (MDVarIrrigation_UptakeRiver, optStr, MFswitchOptions); return CMfailed;
 		case MFoff: break;
 		case MFon: _MDOutIrrigation_UptakeRiverID = MFVarGetID (MDVarIrrigation_UptakeRiver, "mm", MFOutput, MFFlux, MFBoundary); break;
 	}
