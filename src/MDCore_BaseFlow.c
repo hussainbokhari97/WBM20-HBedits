@@ -100,7 +100,7 @@ int MDCore_BaseFlowDef () {
 		 (((_MDInIrrigation_ReturnFlowID   = MDIrrigation_ReturnFlowDef ())     == CMfailed) ||
           ((_MDInIrrigation_RunoffID       = MDIrrigation_RunoffDef ())         == CMfailed) ||
           ((_MDOutCore_IrrUptakeGrdWaterID = MDIrrigation_UptakeGrdWaterDef ()) == CMfailed) ||
-          ((_MDOutCore_Irrigation_UptakeExternalID = MFVarGetID (MDVarIrrigation_UptakeExternal, "mm", MFOutput, MFFlux,  MFBoundary) == CMfailed)))) ||
+          ((_MDOutCore_Irrigation_UptakeExternalID = MFVarGetID (MDVarIrrigation_UptakeExternal, "mm", MFOutput, MFFlux,  MFBoundary)) == CMfailed))) ||
 		((_MDOutCore_GrdWatID                      = MFVarGetID (MDVarCore_GroundWater,          "mm", MFOutput, MFState, MFInitial))  == CMfailed)   ||
         ((_MDOutCore_GrdWatChgID                   = MFVarGetID (MDVarCore_GroundWaterChange,    "mm", MFOutput, MFFlux,  MFBoundary)) == CMfailed)   ||
         ((_MDOutCore_GrdWatRechargeID              = MFVarGetID (MDVarCore_GroundWaterRecharge,  "mm", MFOutput, MFFlux,  MFBoundary)) == CMfailed)   ||
