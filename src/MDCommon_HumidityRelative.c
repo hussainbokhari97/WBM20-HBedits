@@ -37,10 +37,10 @@ int MDCommon_HumidityRelativeDef () {
     if (_MDOutCommon_HumidityRelativeID != MFUnset) return (_MDOutCommon_HumidityRelativeID);    
 
     MFDefEntering ("RelativeHumidity");
-    if ((optStr = MFOptionGet(MDOptWeather_RelativeHumidity)) != (char *) NULL) optID = CMoptLookup(MFsourceOptions, optStr, true);
+    if ((optStr = MFOptionGet(MDVarCommon_HumidityRelative)) != (char *) NULL) optID = CMoptLookup(MFsourceOptions, optStr, true);
     switch (optID) {
         default:
-        case MFhelp: MFOptionMessage (MDOptWeather_RelativeHumidity, optStr, MFsourceOptions); return (CMfailed);
+        case MFhelp: MFOptionMessage (MDVarCommon_HumidityRelative, optStr, MFsourceOptions); return (CMfailed);
         case MFinput: _MDOutCommon_HumidityRelativeID = MFVarGetID (MDVarCommon_HumidityRelative, "%", MFInput, MFState, MFBoundary); break;
         case MFcalculate:
             if (((_MDInCommon_HumiditySaturatedVaporPressID = MDCommon_HumiditySaturatedVaporPressureDef ()) == CMfailed) ||

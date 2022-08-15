@@ -42,10 +42,10 @@ int MDCommon_HumiditySpecificDef () {
     if (_MDOutCommon_HumiditySpecificID != MFUnset) return (_MDOutCommon_HumiditySpecificID);
     
     MFDefEntering ("SpecificHumidity");
-    if ((optStr = MFOptionGet (MDOptWeather_SpecificHumidity)) != (char *) NULL) optID = CMoptLookup (MFsourceOptions, optStr, true);
+    if ((optStr = MFOptionGet (MDVarCommon_HumiditySpecific)) != (char *) NULL) optID = CMoptLookup (MFsourceOptions, optStr, true);
     switch (optID) {
         default:
-        case MFhelp: MFOptionMessage (MDOptWeather_SpecificHumidity, optStr, MFsourceOptions); return (CMfailed);
+        case MFhelp: MFOptionMessage (MDVarCommon_HumiditySpecific, optStr, MFsourceOptions); return (CMfailed);
         case MFinput: _MDOutCommon_HumiditySpecificID = MFVarGetID (MDVarCommon_HumiditySpecific, "kg/kg", MFInput, MFState, MFBoundary); break;
         case MFcalculate:
             if (((_MDInCommon_HumiditySaturatedVaporPressID  = MDCommon_HumiditySaturatedVaporPressureDef ()) == CMfailed) ||

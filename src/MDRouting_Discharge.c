@@ -32,7 +32,7 @@ static void _MDRouting_Discharge (int itemID) {
 
 enum { MDhelp, MDinput, MDcalculate, MDcorrected };
 
-int MDRouting_DischargeDef() {
+int MDRouting_DischargeDef () {
 	int optID = MDinput;
 	const char *optStr;
 	const char *options [] = { MFhelpStr, MFinputStr, MFcalculateStr, "corrected", (char *) NULL };
@@ -40,10 +40,10 @@ int MDRouting_DischargeDef() {
 	if (_MDOutRouting_DischargeID != MFUnset) return (_MDOutRouting_DischargeID);
 
 	MFDefEntering ("Discharge");
-	if ((optStr = MFOptionGet (MDOptConfig_Discharge)) != (char *) NULL) optID = CMoptLookup (options,optStr,true);
+	if ((optStr = MFOptionGet (MDVarRouting_Discharge)) != (char *) NULL) optID = CMoptLookup (options,optStr,true);
 	switch (optID) {
 		default:
-		case MDhelp:  MFOptionMessage (MDOptConfig_Discharge, optStr, options); return (CMfailed);
+		case MDhelp:  MFOptionMessage (MDVarRouting_Discharge, optStr, options); return (CMfailed);
 		case MDinput: _MDOutRouting_DischargeID = MFVarGetID (MDVarRouting_Discharge, "m3/s", MFInput, MFState, MFInitial); break;
 		case MDcalculate:
 			if (((_MDInRouting_DischargeID  = MDRouting_DischargeUptakeDef ()) == CMfailed) ||

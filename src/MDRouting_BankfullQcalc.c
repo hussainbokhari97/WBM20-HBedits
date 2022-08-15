@@ -90,8 +90,9 @@ int MDRouting_BankfullQcalcDef () {
 
 	MFDefEntering ("BankfullQcalc");
 	// inputs set as initial but don't update, always use last values to calc var, skew of distribution
-	if (((_MDInLogQMaxM2ID          = MFVarGetID (MDVarRouting_LogQMaxM2,       "",       MFInput,   MFState, MFInitial))  == CMfailed) ||
-        ((_MDInLogQMaxM3ID          = MFVarGetID (MDVarRouting_LogQMaxM3,       "",       MFInput,   MFState, MFInitial))  == CMfailed) ||
+	if (((_MDInYearCountID          = MFVarGetID (MDVarAux_YearCount,           "yr",     MFOutput,  MFState, MFInitial))  == CMfailed) ||
+		((_MDInLogQMaxM2ID          = MFVarGetID (MDVarRouting_LogQMaxM2,       "",       MFOutput,  MFState, MFInitial))  == CMfailed) ||
+        ((_MDInLogQMaxM3ID          = MFVarGetID (MDVarRouting_LogQMaxM3,       "",       MFOutput,  MFState, MFInitial))  == CMfailed) ||
 	    ((_MDOutBankfullQ2ID  		= MFVarGetID (MDVarRouting_BankfullQ2, 		"m2s", 	  MFOutput,  MFState, MFBoundary)) == CMfailed) ||
 	    ((_MDOutBankfullQ5ID  		= MFVarGetID (MDVarRouting_BankfullQ5, 		"m2s", 	  MFOutput,  MFState, MFBoundary)) == CMfailed) ||
 	    ((_MDOutBankfullQ10ID  		= MFVarGetID (MDVarRouting_BankfullQ10, 	"m2s", 	  MFOutput,  MFState, MFBoundary)) == CMfailed) ||
@@ -99,7 +100,7 @@ int MDRouting_BankfullQcalcDef () {
         ((_MDOutBankfullQ50ID  		= MFVarGetID (MDVarRouting_BankfullQ50, 	"m2s", 	  MFOutput,  MFState, MFBoundary)) == CMfailed) ||
         ((_MDOutBankfullQ100ID  	= MFVarGetID (MDVarRouting_BankfullQ100, 	"m2s", 	  MFOutput,  MFState, MFBoundary)) == CMfailed) ||
         ((_MDOutBankfullQ200ID  	= MFVarGetID (MDVarRouting_BankfullQ200, 	"m2s", 	  MFOutput,  MFState, MFBoundary)) == CMfailed) ||
-	    ((_MDInYearCountID          = MFVarGetID (MDVarAux_YearCount,           "yr",     MFInput,   MFState, MFInitial))  == CMfailed) ||
+
         (MFModelAddFunction (_MDBankfullQcalc) == CMfailed)) return (CMfailed);
 	MFDefLeaving  ("BankfullQcalc");
 	return (_MDOutBankfullQ5ID);

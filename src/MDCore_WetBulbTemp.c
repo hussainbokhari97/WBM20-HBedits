@@ -127,10 +127,10 @@ int MDCommon_WetBulbTempDef () {
     if (_MDOutWetBulbTempID != MFUnset) return (_MDOutWetBulbTempID);
 
     MFDefEntering("WetBulbTemp");
-    if ((optStr = MFOptionGet (MDOptWeather_WetBulbTemp)) != (char *) NULL) optID = CMoptLookup (MFsourceOptions, optStr, true);
+    if ((optStr = MFOptionGet (MDVarCommon_WetBulbTemp)) != (char *) NULL) optID = CMoptLookup (MFsourceOptions, optStr, true);
     switch (optID) {
         default:      
-        case MFhelp:  MFOptionMessage (MDOptWeather_WetBulbTemp, optStr, MFsourceOptions); return (CMfailed);
+        case MFhelp:  MFOptionMessage (MDVarCommon_WetBulbTemp, optStr, MFsourceOptions); return (CMfailed);
         case MFinput: _MDOutWetBulbTempID = MFVarGetID (MDVarCommon_WetBulbTemp, "degC", MFInput, MFState, MFBoundary); break;
         case MFcalculate:
             if (((_MDInCommon_HumiditySpecificID = MDCommon_HumiditySpecificDef ()) == CMfailed) ||

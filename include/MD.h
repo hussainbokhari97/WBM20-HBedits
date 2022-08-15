@@ -18,7 +18,6 @@ extern "C" {
 #endif
 
 // Configuration options
-#define MDOptConfig_Discharge                   "Discharge"
 #define MDOptConfig_Irrigation                  "Irrigation"
 #define MDOptConfig_Model                       "Model"
 #define MDOptConfig_Reservoirs                  "Reservoirs"
@@ -31,12 +30,6 @@ extern "C" {
 // River routing options
 #define MDOptRouting_Muskingum                  "Muskingum"
 #define MDOptRouting_Riverbed                   "Riverbed"
-
-// Weather options
-#define MDOptWeather_CloudCover		            "CloudCover"
-#define MDOptWeather_SpecificHumidity           "SpecificHumidity"
-#define MDOptWeather_RelativeHumidity           "RelativeHumidity" //for wet bulb
-#define MDOptWeather_WetBulbTemp                "WetBulbTemp"
 
 // Constant parameters
 #define MDParGrossRadTAU                        "GrossRadTAU"

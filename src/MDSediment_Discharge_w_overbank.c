@@ -14,7 +14,6 @@ sagy.cohen@colorado.edu
 
 // Input
 static int _MDInDischLevel1ID   = MFUnset;
-static int _MDInDischObservedID = MFUnset;
 static int _MDInBankfullQID 	= MFUnset;
 static int _MDInBankfull_QnID  	= MFUnset;
 static int _MDInFlowCoefficientID= MFUnset;
@@ -58,9 +57,6 @@ static void _MDDischargeBF (int itemID) {
 		if (discharge > Qbf) discharge = Qbf;	
 	}
 
-	if (_MDInDischObservedID != MFUnset)
-		 discharge = MFVarGetFloat (_MDInDischObservedID, itemID, discharge);
-
 	MFVarSetFloat (_MDOutPCQdifferenceID, itemID, percentDiff);
 	MFVarSetFloat (_MDOutOverBankQID, itemID, ExcessQ);
 	MFVarSetFloat (_MDOutDischargeID, itemID, discharge);
@@ -73,19 +69,19 @@ int MDSediment_DischargeBFDef () {
 	if (_MDOutDischargeID != MFUnset) return (_MDOutDischargeID);
 
 	MFDefEntering ("DischargeBF");
-	if ((optStr = MFOptionGet (MDOptConfig_Discharge)) != (char *) NULL) optID = CMoptLookup (MFsourceOptions,optStr,true);
+	if ((optStr = MFOptionGet (MDVarRouting_Discharge)) != (char *) NULL) optID = CMoptLookup (MFsourceOptions,optStr,true);
 	switch (optID) {
 		default:
-		case MFhelp:  MFOptionMessage (MDOptConfig_Discharge, optStr, MFsourceOptions); return (CMfailed);
+		case MFhelp:  MFOptionMessage (MDVarRouting_Discharge, optStr, MFsourceOptions); return (CMfailed);
 		case MFinput: _MDOutDischargeID = MFVarGetID (MDVarRouting_Discharge,         "m3/s",   MFInput,  MFState, MFInitial); break;
 		case MFcalculate:
-			if (((_MDOutDischargeID      = MFVarGetID (MDVarRouting_Discharge,        "m3/s",   MFRoute,  MFState, MFInitial))  == CMfailed) ||
-				((_MDInDischLevel1ID     = MDRouting_DischargeUptakeDef ()) == CMfailed) ||
-				((_MDInBankfullQID       = MFVarGetID (MDVarRouting_BankfullQ,        "m3/s",   MFInput,  MFState, MFBoundary)) == CMfailed) ||
-				((_MDInBankfull_QnID  	 = MFVarGetID (MDVarRouting_Bankfull_Qn,      "m3/s",   MFInput,  MFState, MFBoundary)) == CMfailed) ||
+			if (((_MDInDischLevel1ID     = MDRouting_DischargeUptakeDef ())  == CMfailed) ||
+				((_MDInBankfullQID       = MDRouting_BankfullQcalcDef ())    == CMfailed) ||
+				((_MDInBankfull_QnID     = MFVarGetID (MDVarRouting_BankfullQ50,      "m3/s",   MFInput,  MFState, MFBoundary)) == CMfailed) ||
 				((_MDInFlowCoefficientID = MFVarGetID (MDVarSediment_FlowCoefficient, "m3/s",   MFInput,  MFState, MFBoundary)) == CMfailed) ||
 				((_MDOutOverBankQID      = MFVarGetID (MDVarSediment_OverBankQ,       "m3/s",   MFOutput, MFState, MFInitial))  == CMfailed) ||
 				((_MDOutPCQdifferenceID  = MFVarGetID (MDVarSediment_PCQdifference,   MFNoUnit, MFOutput, MFState, MFInitial))  == CMfailed) ||
+				((_MDOutDischargeID      = MFVarGetID (MDVarRouting_Discharge,        "m3/s",   MFRoute,  MFState, MFInitial))  == CMfailed) ||
 				(MFModelAddFunction (_MDDischargeBF) == CMfailed)) return (CMfailed);
 			break;
 	}

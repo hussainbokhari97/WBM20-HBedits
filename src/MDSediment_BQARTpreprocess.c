@@ -120,8 +120,7 @@ MFVarSetInt (_MDOutBQART_AID, itemID, A);
 	MFVarSetFloat (_MDInDischargeAccID, itemID, Qacc);
 
 // Accumulate time steps
-	TimeStep = (MFVarGetInt (_MDInTimeStepsID, itemID, 0.0)+1);	
-	MFVarSetInt (_MDInTimeStepsID, itemID, TimeStep);
+	TimeStep = MFVarGetInt (_MDInTimeStepsID, itemID, 0.0);
 
 //Calculate moving avarege temperature (Tbar) and discharge 
 	Tbar = Tacc/TimeStep/A;
@@ -145,21 +144,21 @@ int MDSediment_BQARTpreprocessDef () {
 	    ((_MDInDischMeanID  = MDAux_DischargeMeanDef ())     == CMfailed) ||
 	    ((_MDInBankfullQ5ID = MDRouting_BankfullQcalcDef ()) == CMfailed) ||
         ((_MDInAirTempID    = MDCommon_AirTemperatureDef ()) == CMfailed) ||
-	    ((_MDInContributingAreaAccID = MFVarGetID (MDVarSediment_ContributingAreaAcc,    "km2",     MFRoute,  MFState, MFBoundary)) == CMfailed) ||
-	    ((_MDInAirTempAcc_timeID     = MFVarGetID (MDVarSediment_AirTemperatureAcc_time, "degC",    MFOutput, MFState, MFInitial))  == CMfailed) ||
+	    ((_MDInTimeStepsID  = MDAux_StepCounterDef ())       == CMfailed) ||
+        ((_MDOutYearCountID          = MFVarGetID (MDVarAux_YearCount,                    "yr",     MFOutput, MFState, MFInitial))  == CMfailed) ||
+        ((_MDOutLogQMaxM2ID          = MFVarGetID (MDVarRouting_LogQMaxM2,                "m3/s",   MFOutput, MFState, MFInitial))  == CMfailed) ||
+        ((_MDOutLogQMaxM3ID          = MFVarGetID (MDVarRouting_LogQMaxM3,                "m3/s",   MFOutput, MFState, MFInitial))  == CMfailed) ||
+        ((_MDOutMeanLogQMaxID        = MFVarGetID (MDVarRouting_MeanLogQMax ,             "m3/s",   MFOutput, MFState, MFInitial))  == CMfailed) ||
+	    ((_MDInContributingAreaAccID = MFVarGetID (MDVarSediment_ContributingAreaAcc,     "km2",    MFRoute,  MFState, MFBoundary)) == CMfailed) ||
+	    ((_MDInAirTempAcc_timeID     = MFVarGetID (MDVarSediment_AirTemperatureAcc_time,  "degC",   MFOutput, MFState, MFInitial))  == CMfailed) ||
 	    ((_MDInAirTempAcc_spaceID    = MFVarGetID (MDVarSediment_AirTemperatureAcc_space, "degC",   MFRoute,  MFState, MFBoundary)) == CMfailed) ||
 	    ((_MDInDischargeAccID        = MFVarGetID (MDVarSediment_DischargeAcc,            "m3/s",   MFOutput, MFState, MFInitial))  == CMfailed) ||
-	    ((_MDInTimeStepsID           = MFVarGetID (MDVarSediment_TimeSteps,               MFNoUnit, MFOutput, MFState, MFInitial))  == CMfailed) ||
         ((_MDOutBQART_AID            = MFVarGetID (MDVarSediment_BQART_A,                 "km2",    MFRoute,  MFState, MFBoundary)) == CMfailed) ||
 	    ((_MDOutBQART_RID            = MFVarGetID (MDVarSediment_BQART_R,                 "km" ,    MFRoute,  MFState, MFBoundary)) == CMfailed) ||
 	    ((_MDOutBQART_Qbar_m3sID     = MFVarGetID (MDVarSediment_BQART_Qbar_m3s,          "m3s",    MFOutput, MFState, MFBoundary)) == CMfailed) ||
 	    ((_MDOutBQART_Qbar_km3yID    = MFVarGetID (MDVarSediment_BQART_Qbar_km3y,         "km3/y",  MFOutput, MFState, MFBoundary)) == CMfailed) ||
 	    ((_MDOutBQART_TID            = MFVarGetID (MDVarSediment_BQART_T,                 "degC",   MFOutput, MFState, MFBoundary)) == CMfailed) ||
-        ((_MDOutDischMaxID           = MFVarGetID (MDVarAux_DischargeMax,                     "m3/s",   MFOutput, MFState, MFInitial))  == CMfailed) ||
-        ((_MDOutYearCountID          = MFVarGetID (MDVarAux_YearCount,                    "yr",     MFOutput, MFState, MFInitial))  == CMfailed) ||
-        ((_MDOutLogQMaxM2ID          = MFVarGetID (MDVarRouting_LogQMaxM2,                "m3/s",   MFOutput, MFState, MFInitial))  == CMfailed) ||
-        ((_MDOutLogQMaxM3ID          = MFVarGetID (MDVarRouting_LogQMaxM3,                "m3/s",   MFOutput, MFState, MFInitial))  == CMfailed) ||
-        ((_MDOutMeanLogQMaxID        = MFVarGetID (MDVarRouting_MeanLogQMax ,             "m3/s",   MFOutput, MFState, MFInitial))  == CMfailed) ||
+        ((_MDOutDischMaxID           = MFVarGetID (MDVarAux_DischargeMax,                 "m3/s",   MFOutput, MFState, MFInitial))  == CMfailed) ||
        (MFModelAddFunction (_MDQBARTpreprocess) == CMfailed)) return (CMfailed);
 
 	MFDefLeaving  ("QBARTpreprocess");

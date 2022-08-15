@@ -57,10 +57,10 @@ int MDCommon_CloudCoverDef() {
     if (_MDOutCommon_CloudCoverID != MFUnset) return (_MDOutCommon_CloudCoverID);
  
     MFDefEntering("CloudCover");
-    if ((optStr = MFOptionGet (MDOptWeather_CloudCover)) != (char *) NULL) optID = CMoptLookup(MFsourceOptions, optStr, true);
+    if ((optStr = MFOptionGet (MDVarCommon_CloudCover)) != (char *) NULL) optID = CMoptLookup(MFsourceOptions, optStr, true);
     switch (optID) {
         default:
-        case MDhelp:  MFOptionMessage (MDOptWeather_CloudCover, optStr, MFsourceOptions); return (CMfailed);
+        case MDhelp:  MFOptionMessage (MDVarCommon_CloudCover, optStr, MFsourceOptions); return (CMfailed);
         case MDinput: _MDOutCommon_CloudCoverID = MFVarGetID(MDVarCommon_CloudCover, "fraction", MFInput, MFState, MFBoundary); break;
         case MDcalculate:
             if (((_MDInCommon_GrossRadID    = MDCommon_GrossRadDef()) == CMfailed) ||
