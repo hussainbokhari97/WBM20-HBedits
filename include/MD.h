@@ -364,9 +364,11 @@ extern "C" {
 #define MDVarWTemp_GrdWater                     "GroundWaterTemp"
 #define MDVarWTemp_Runoff                       "RunoffTemperature"
 #define MDVarWTemp_SurfRunoff                   "SurfRunoffTemp"
-#define MDVarWTemp_EquilTemp                    "EquilibriumTemp"
+#define MDVarWTemp_EquilTemp                    "RiverEquilibriumTemp"
+#define MDVarWTemp_EquilTempDiff                "RiverEquilibriumTempDiff"
 #define MDVarWTemp_River                        "RiverTemperature"
 #define MDVarWTemp_HeatFlux                     "RiverHeatFlux"
+#define MDVarWTemp_HeatFluxTemp                 "RiverHeatFluxTemp"
 
 // Varying Parameters
 #define MDVarParam_Albedo                       "Albedo"
