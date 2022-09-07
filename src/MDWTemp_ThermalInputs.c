@@ -26,11 +26,9 @@ static int _MDInDownstream_OnOffID       = MFUnset;   // TODO putin
 static int _MDInCWA_316b_OnOffID         = MFUnset;   // TODO putin
 
 // Input
+static int _MDInTempRiverID              = MFUnset;
 static int _MDInRouting_DischargeID      = MFUnset;
-static int _MDInDischargeIncomingID      = MFUnset;
-static int _MDFlux_QxTID                 = MFUnset;
-static int _MDFluxMixing_QxTID           = MFUnset;
-static int _MDPlaceHolderID              = MFUnset;
+static int _MDInWTemp_HeatFluxID         = MFUnset;
 
 static int _MDInNamePlate1ID             = MFUnset;
 static int _MDInFuelType1ID              = MFUnset;
@@ -61,8 +59,6 @@ static int _MDInWetBulbTempID            = MFUnset;
 static int _MDInCommon_AirTemperatureID	 = MFUnset;
 
 // Output
-static int _MDWTempRiverID                = MFUnset;
-static int _MDOutRouting_DischargeID     = MFUnset; // Late-night discharge test
 static int _MDOutAvgEfficiencyID	     = MFUnset;
 static int _MDOutAvgDeltaTempID		     = MFUnset;
 static int _MDOutTotalEvaporationID	     = MFUnset;
@@ -270,7 +266,6 @@ static void _MDThermalInputs3 (int itemID) {
     float opt_QO_1                   = 0.0;
     float output_1                   = 0.0;
     float OT_effluent_1              = 0.0;
-    float placeHolder                = 0.0;
     float pot_WTemp_1                = 0.0;
     float Q                          = 0.0; // discharge (m3/s)
     float Q_incoming_1               = 0.0;
@@ -389,13 +384,13 @@ static void _MDThermalInputs3 (int itemID) {
     float heat_to_river              = 0.0;
     float eff_volume                 = 0.0;
     float eff_temperature            = 0.0;
-    float discharge_T                = 0.0;
     float Downstream_onoff           = 0.0;
     float CWA_316b_OnOff             = 0.0;
     float cccc                       = 0.0;
 
-    placeHolder      = MFVarGetFloat (_MDPlaceHolderID,             itemID, 0.0); // running MDWTempRiverRoute, value is previous water Temp
-    flux_QxT         = MFVarGetFloat (_MDFlux_QxTID,                itemID, 0.0); // reading in discharge * temp (m3*degC/day)
+    float dt         = MFModelGet_dt ();          // Model time step in seconds
+
+    flux_QxT         = MFVarGetFloat (_MDInWTemp_HeatFluxID,        itemID, 0.0); // reading in discharge * temp (m3*degC/day)
     Q = Q_incoming_1 = MFVarGetFloat (_MDInRouting_DischargeID,     itemID, 0.0);
     air_temp         = MFVarGetFloat (_MDInCommon_AirTemperatureID, itemID, 0.0); //read in air temperature (c)
     nameplate_1      = MFVarGetFloat (_MDInNamePlate1ID,            itemID, 0.0); //todo check
@@ -474,11 +469,11 @@ static void _MDThermalInputs3 (int itemID) {
     CWA_onoff	     = MFVarGetFloat (_MDInCWA_OnOffID,        itemID, 0.0);
     Downstream_onoff = MFVarGetFloat (_MDInDownstream_OnOffID, itemID, 0.0);
     discharge = Q;
-    day_discharge = Q * 86400;
+    day_discharge = Q * dt;
 
-    //post_temperature = flux_QxT / (discharge * 86400); //for setting initial temperature when there are multiple plants
+    //post_temperature = flux_QxT / (discharge * dt); //for setting initial temperature when there are multiple plants
 
-    river_temp_initial  = (flux_QxT < 0.00001) ? 0.0 : flux_QxT / (Q * 86400);
+    river_temp_initial  = (flux_QxT < 0.00001) ? 0.0 : flux_QxT / (Q * dt);
     CWA_limit           = (CWA_limit < 25.0) ? 32.0 : CWA_limit;
     CWA_delta           = (CWA_delta < 1.0) ? 3.0 : CWA_delta;
     max_river_temp      = (CWA_onoff < 0.5) ? 99 : 99; //NO CWA
@@ -503,7 +498,7 @@ static void _MDThermalInputs3 (int itemID) {
     Q_check = ( (LakeOcean > 0.5) || (technology_1 == 3) || (technology_2 == 3) || (technology_3 == 3) || (technology_4 == 3) || (technology_1 == 6) || (technology_2 == 6) || (technology_3 == 6) || (technology_4 == 6) )? 1.0 : Q;
 
     if (Q_check > 0.000001) {
-        Q_WTemp = (Q <= 0.000001) ? Q_WTemp : flux_QxT / (Q * 86400);                      // degC RJS 013112
+        Q_WTemp = (Q <= 0.000001) ? Q_WTemp : flux_QxT / (Q * dt);                      // degC RJS 013112
         if ((nameplate_1 + nameplate_2 + nameplate_3 + nameplate_4) > 0) {
     	for ( m = 1; m < ( i + 1 ); m = m + 1 ) {
             if (m == 1) fuel_type = fuel_type_1;
@@ -569,10 +564,10 @@ static void _MDThermalInputs3 (int itemID) {
             // NEW STARTS HERE
             if (nameplate > 0 ) opt_heat_cond = ( nameplate / opt_efficiency ) * ( 1.0 - opt_efficiency - heat_sink); // optimal heat out in MJ/s if power plant oeprates at nameplate capacity
             heat_to_river	    = 0.0; //reset heat to river, so doesn't carry over
-            discharge 	    = (i > 1.0 ) ? ((day_discharge - day_consumption)/86400) : discharge;
-            available_discharge = (i > 1.0 ) ? 0.7 * ((day_discharge - day_consumption)/86400)  : 0.7 * discharge; // new available discharge accounting for consumption in first part of plant
-            river_temp          = (day_post_temperature > 0.0 ) ? day_post_temperature : flux_QxT / (discharge * 86400); // river temp accounting for operating hours
-            day_discharge 	    = (i > 1.0 ) ? (day_discharge - day_consumption) : 86400 * discharge;
+            discharge 	    = (i > 1.0 ) ? ((day_discharge - day_consumption) / dt) : discharge;
+            available_discharge = (i > 1.0 ) ? 0.7 * ((day_discharge - day_consumption) / dt)  : 0.7 * discharge; // new available discharge accounting for consumption in first part of plant
+            river_temp          = (day_post_temperature > 0.0 ) ? day_post_temperature : flux_QxT / (discharge * dt); // river temp accounting for operating hours
+            day_discharge 	    = (i > 1.0 ) ? (day_discharge - day_consumption) : discharge * dt;
             heat_in             = nameplate / opt_efficiency;
 
             // There are two options for withdrawal rate, pick one below and edit out the other ----
@@ -752,19 +747,17 @@ static void _MDThermalInputs3 (int itemID) {
             heat_to_river = 3600 * op_hours * eff_volume * eff_temperature;
             consumption_T       	= consumption_T + day_consumption; // keeping track of total consumption
             total_withdrawal_T	= total_withdrawal_T + day_total_withdrawal;
-            discharge_T		= 86400 * Q;
-            day_post_temperature = ( ( ( (86400*discharge) - day_total_withdrawal ) * river_temp ) + heat_to_river ) / ( (86400*discharge) - day_consumption); // outlet temperature after mixing deg C
+            day_post_temperature = ( ( ( (discharge * dt) - day_total_withdrawal ) * river_temp ) + heat_to_river ) / ( (discharge * dt) - day_consumption); // outlet temperature after mixing deg C
 
             if ( (generation < 0.001) || (nameplate < 0.00000001) || ( ((technology == 1) || (technology == 4)) && (LakeOcean > 0.5)) ) {
                 generation		= 0.0;
                 op_hours		= 0.0;
-                day_total_withdrawal	= 0.0;
-                day_consumption		= 0.0;
-                heat_to_river		= 0.0;
-                consumption_T		= 0.0;
-                total_withdrawal_T	= 0.0;
-                heat_to_river_T		= 0.0;
-                discharge_T		= 86400 * Q;
+                day_total_withdrawal = 0.0;
+                day_consumption		 = 0.0;
+                heat_to_river		 = 0.0;
+                consumption_T		 = 0.0;
+                total_withdrawal_T	 = 0.0;
+                heat_to_river_T		 = 0.0;
                 day_post_temperature	= river_temp_initial;
             }
             heat_to_river_T  = heat_to_river_T + heat_to_river;
@@ -909,8 +902,8 @@ static void _MDThermalInputs3 (int itemID) {
 			totalDaily_heatToSink	  = 0.0;
 			Q_outgoing_1			  = Q;
 			Q_outgoing_WTemp_1		  = Q_WTemp;
-			flux_QxT_new   	   		  = Q_outgoing_WTemp_1 * Q_outgoing_1 * 86400.0;		// late-night discharge test
-			flux_GJ_old_prist         = Q_outgoing_WTemp_1 * Q_outgoing_1 * 86400.0;
+			flux_QxT_new   	   		  = Q_outgoing_WTemp_1 * Q_outgoing_1 * dt;		// late-night discharge test
+			flux_GJ_old_prist         = Q_outgoing_WTemp_1 * Q_outgoing_1 * dt;
 			flux_GJ_new				  = flux_GJ_old_prist;
 			totalDaily_heatToRiv	  = 0.0;
 			totalDaily_heatToEng	  = 0.0;
@@ -946,7 +939,7 @@ static void _MDThermalInputs3 (int itemID) {
 		totalDaily_heatToSink	  = 0.0;
 		Q_outgoing_1			  = Q;
 		Q_outgoing_WTemp_1		  = Q_WTemp;
-		flux_QxT_new   	   		  = Q_outgoing_WTemp_1 * Q_outgoing_1 * 86400.0;		// late-night discharge test
+		flux_QxT_new   	   		  = Q_outgoing_WTemp_1 * Q_outgoing_1 * dt;		// late-night discharge test
 		totalDaily_heatToRiv	  = 0.0;
 		totalDaily_heatToEng	  = 0.0;
 		totalDaily_heatToSink	  = 0.0;
@@ -982,7 +975,7 @@ static void _MDThermalInputs3 (int itemID) {
         totalDaily_heatToSink   = 0.0;
         Q_outgoing_1            = Q;
         Q_outgoing_WTemp_1      = Q_WTemp;
-        flux_QxT_new            = Q_outgoing_WTemp_1 * Q_outgoing_1 * 86400.0; // late-night discharge test
+        flux_QxT_new            = Q_outgoing_WTemp_1 * Q_outgoing_1 * dt; // late-night discharge test
         totalDaily_heatToRiv    = 0.0;
         totalDaily_heatToEng    = 0.0;
         totalDaily_heatToSink   = 0.0;
@@ -1001,9 +994,9 @@ static void _MDThermalInputs3 (int itemID) {
     Q_outgoing_WTemp_1 = day_post_temperature; 
 
     //consumption_T=0; // added this for thermal pollution calculations
-    Q_outgoing_1 = ((Q*86400) - consumption_T)/86400;
+    Q_outgoing_1 = ((Q * dt) - consumption_T) / dt;
 
-    flux_QxT_new = Q_outgoing_WTemp_1 * Q_outgoing_1 * 86400.0;
+    flux_QxT_new = Q_outgoing_WTemp_1 * Q_outgoing_1 * dt;
 
 /*    if ((nameplate_1 > 187.4) && (nameplate_1 < 187.6) && (Q_WTemp > 40.0) && (Q > 2)) {
         printf(" INTITAL INITIAL INITIAL flux_QxT = %f, cccc= %f \n", flux_QxT, cccc);
@@ -1016,7 +1009,7 @@ static void _MDThermalInputs3 (int itemID) {
         printf("operational_capacity = %f, demand = %f, generation = %f, op_hours = %f \n", operational_capacity, demand, generation, op_hours);
         printf("temp = %f, inlet_temp = %f, consumption = %f, post_temperature = %f, opt_heat_cond = %f, withdrawal = %f, total_withdrawal = %f \n", Q_WTemp, inlet_temp, consumption, post_temperature, opt_heat_cond, withdrawal, total_withdrawal);
         printf("day_discharge = %f, day_total_withdrawal = %f, day_withdrawal = %f, day_consumption = %f, day_post_temperature = %f \n", day_discharge, day_total_withdrawal, day_withdrawal, day_consumption, day_post_temperature);
-        printf("withdrawal_T = %f, total_withdrawal_T = %f, heat_to_river_T = %f, eff_volume = %f, eff_temperature = %f, discharge_T = %f \n", withdrawal_T, total_withdrawal_T, heat_to_river_T, eff_volume, eff_temperature, discharge_T);
+        printf("withdrawal_T = %f, total_withdrawal_T = %f, heat_to_river_T = %f, eff_volume = %f, eff_temperature = %f, withdrawal_T, total_withdrawal_T, heat_to_river_T, eff_volume, eff_temperature);
         printf("checking \n");
         printf("operational_capacity = %f, consumption_T = %f, generation = %f, Q_outgoing_WTemp_1 = %f, Q_outgoing_1 = %f, flux_QxT_new = %f \n",operational_capacity, consumption_T, generation, Q_outgoing_WTemp_1, Q_outgoing_1, flux_QxT_new);
     }
@@ -1034,8 +1027,8 @@ static void _MDThermalInputs3 (int itemID) {
     MFVarSetFloat(_MDOutLossToInletID,         itemID, loss_inlet_total);
     MFVarSetFloat(_MDOutLossToWaterID,         itemID, loss_water_total);
     MFVarSetFloat(_MDInRouting_DischargeID,    itemID, Q_outgoing_1); //late-night discharge test
-    MFVarSetFloat(_MDWTempRiverID,             itemID, Q_outgoing_WTemp_1);
-    MFVarSetFloat(_MDFlux_QxTID,               itemID, flux_QxT_new);
+    MFVarSetFloat(_MDInTempRiverID,            itemID, Q_outgoing_WTemp_1);
+    MFVarSetFloat(_MDInWTemp_HeatFluxID,       itemID, flux_QxT_new);
     MFVarSetFloat(_MDOutTotalThermalWdlsID,    itemID, totalDaily_wdl_1);
     MFVarSetFloat(_MDOutTotalEvaporationID,    itemID, totalDaily_evap_1 + totalDaily_evap_2); //RJS 120912 added totalDaily_evap_2
     MFVarSetFloat(_MDOutTotalExternalWaterID,  itemID, totalDaily_external_2);  // RJS 120912, total external water use.  Sum of this and Evaporation is the TOTAL CONSUMPTION
@@ -1088,14 +1081,11 @@ static void _MDThermalInputs3 (int itemID) {
 int MDWTemp_ThermalInputsDef () {
 
 	MFDefEntering ("Thermal Inputs");
-    if (((_MDPlaceHolderID             = MDWTemp_RiverDef ())  == CMfailed) ||
+    if (((_MDInTempRiverID             = MDWTemp_RiverDef ())           == CMfailed) ||
         ((_MDInRouting_DischargeID     = MDRouting_DischargeDef ())     == CMfailed) ||
         ((_MDInWetBulbTempID           = MDCommon_WetBulbTempDef ())    == CMfailed) ||
 	    ((_MDInCommon_AirTemperatureID = MDCommon_AirTemperatureDef ()) == CMfailed) ||
-	    ((_MDInDischargeIncomingID     = MFVarGetID (MDVarRouting_Discharge0,       "m3/s",      MFInput,  MFState, MFInitial))  == CMfailed) ||
-	    ((_MDFluxMixing_QxTID          = MFVarGetID (MDVarWTemp_HeatFlux,           "m3*degC/d", MFInput,  MFFlux,  MFBoundary)) == CMfailed) ||
-        ((_MDFlux_QxTID                = MFVarGetID (MDVarWTemp_HeatFlux,           "m3*degC/d", MFInput,  MFFlux,  MFBoundary)) == CMfailed) ||
-	    ((_MDWTempRiverID              = MFVarGetID (MDVarWTemp_River,              "degC",      MFOutput, MFState, MFBoundary)) == CMfailed) ||
+        ((_MDInWTemp_HeatFluxID        = MFVarGetID (MDVarWTemp_HeatFlux,           "m3*degC/d", MFInput,  MFFlux,  MFBoundary)) == CMfailed) ||
         ((_MDInNamePlate1ID            = MFVarGetID (MDVarTP2M_NamePlate1,          "MW",        MFInput,  MFState, MFBoundary)) == CMfailed) ||
         ((_MDInFuelType1ID             = MFVarGetID (MDVarTP2M_FuelType1,           "-",         MFInput,  MFState, MFBoundary)) == CMfailed) ||
         ((_MDInTechnology1ID           = MFVarGetID (MDVarTP2M_Technology1,         "-",         MFInput,  MFState, MFBoundary)) == CMfailed) ||
@@ -1173,6 +1163,6 @@ int MDWTemp_ThermalInputsDef () {
         ((_MDOutLossToInlet4ID         = MFVarGetID (MDVarTP2M_LossToInlet4,        "degC",      MFOutput, MFState, MFBoundary)) == CMfailed) ||
         (MFModelAddFunction (_MDThermalInputs3) == CMfailed)) return (CMfailed);
 	MFDefLeaving ("Thermal Inputs");
-	return (_MDWTempRiverID);
+	return (_MDInTempRiverID);
 }
 
