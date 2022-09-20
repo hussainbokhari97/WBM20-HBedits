@@ -39,8 +39,6 @@ int main (int argc,char *argv []) {
                               "runoff",
                               "discharge", 
                               "balance",
-                              "geometry",
-                              "riverbedshape",
                               "watertemp",
                               "thermal",
                               "bankfullQcalc",
@@ -61,8 +59,6 @@ int main (int argc,char *argv []) {
         case MDrunoff:                    return (MFModelRun(argc, argv, argNum, MDCore_RunoffDef));
         case MDdischarge:                 return (MFModelRun(argc, argv, argNum, MDRouting_DischargeDef));
         case MDbalance:                   return (MFModelRun(argc, argv, argNum, MDCore_WaterBalanceDef));
-        case MDgeometry:                  return (MFModelRun(argc, argv, argNum, MDRouting_RiverWidthDef));
-        case MDRiverbedShape:             return (MFModelRun(argc, argv, argNum, MDRouting_RiverShapeExponentDef));
         case MDwatertemp:                 return (MFModelRun(argc, argv, argNum, MDWTemp_RiverDef));
         case MDthermal:                   return (MFModelRun(argc, argv, argNum, MDWTemp_ThermalInputsDef));
         case MDbankfullQcalc:             return (MFModelRun(argc, argv, argNum, MDRouting_BankfullQcalcDef));
