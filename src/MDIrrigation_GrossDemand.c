@@ -34,6 +34,7 @@ static MDIrrigatedCrop *_MDirrigCropStruct = (MDIrrigatedCrop *) NULL;
 static int  _MDInIrrigation_AreaFracID  = MFUnset;
 static int *_MDInCropFractionIDs        = (int *) NULL;
 static int  _MDInCommon_PrecipID        = MFUnset;
+static int  _MDInCore_SnowPackID        = MFUnset;
 static int  _MDInIrrRefEvapotransID     = MFUnset;
 static int  _MDInFldCapaID              = MFUnset;
 static int  _MDInWltPntID               = MFUnset;
@@ -182,6 +183,7 @@ static int _MDIrrReadCropParameters (const char *filename) {
 static void _MDIrrGrossDemand (int itemID) {
 //Input
 	float precip;
+	float snowPack;
 	float wltPnt;
 	float fldCap;
 	float irrAreaFrac;
@@ -215,8 +217,8 @@ static void _MDIrrGrossDemand (int itemID) {
 	curDay = MFDateGetDayOfYear ();
 
 	irrAreaFrac = MFVarGetFloat (_MDInIrrigation_AreaFracID, itemID, 0.0);
-	
-	if (irrAreaFrac > 0.0) {
+	snowPack    = MFVarGetFloat (_MDInCore_SnowPackID,       itemID, 0.0);
+	if ((snowPack <= 0.0) && (irrAreaFrac > 0.0)) {
         irrCropETP = irrNetDemand = irrGrossDemand = irrRunoff = irrReturnFlow = irrSMoist = irrSMoistChg = sumOfCropFractions = 0.0;
 		for (cropID = 0; cropID < _MDNumberOfIrrCrops; ++cropID) {
 			cropFraction [cropID] = MFVarGetFloat (_MDInCropFractionIDs [cropID],itemID, 0.0);
@@ -362,6 +364,7 @@ int MDIrrigation_GrossDemandDef () {
 		case MFinput: _MDOutIrrGrossDemandID = MFVarGetID (MDVarIrrigation_GrossDemand, "mm", MFInput, MFFlux, MFBoundary); break;
 		case MFcalculate:
 			if (((_MDInCommon_PrecipID       = MDCommon_PrecipitationDef ())   == CMfailed) ||
+				((_MDInCore_SnowPackID       = MDCore_SnowPackDef ())          == CMfailed) ||
                 ((_MDInIrrRefEvapotransID    = MDIrrigation_ReferenceETDef ()) == CMfailed) ||
                 ((_MDInIrrigation_AreaFracID = MDIrrigation_IrrAreaDef ())     == CMfailed) ||
                 ((_MDInIrrIntensityID        = MFVarGetID (MDVarIrrigation_Intensity,               MFNoUnit, MFInput,  MFState, MFBoundary)) == CMfailed) ||

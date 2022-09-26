@@ -466,6 +466,7 @@ int MDCore_RainSurfRunoffDef ();
 int MDCore_RainWaterSurplusDef ();
 int MDCore_RunoffDef ();
 int MDCore_RunoffFlowDef ();
+int MDCore_SnowPackDef ();
 int MDCore_SnowPackChgDef ();
 int MDCore_SnowPackMeltDef ();
 int MDCore_SoilAvailWaterCapDef ();

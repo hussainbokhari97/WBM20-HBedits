@@ -85,12 +85,22 @@ int MDCore_SnowPackChgDef () {
 	return (_MDOutSPackChgID);
 }
 
+int MDCore_SnowPackDef () {
+
+	if (_MDOutSnowPackID != MFUnset) return (_MDOutSnowPackID);
+
+	if ((MDCore_SnowPackChgDef () == CMfailed) ||
+        ((_MDOutSnowPackID = MFVarGetID (MDVarCore_SnowPack,       "mm", MFOutput, MFState, MFInitial))  == CMfailed))
+		return (CMfailed);
+	return (_MDOutSnowPackID);
+}
+
 int MDCore_SnowPackMeltDef () {
 
 	if (_MDOutSnowMeltID != MFUnset) return (_MDOutSnowMeltID);
 
 	if ((MDCore_SnowPackChgDef () == CMfailed) ||
-        ((_MDOutSnowMeltID   = MFVarGetID (MDVarCore_SnowMelt, "mm", MFInput, MFFlux, MFBoundary)) == CMfailed))
+        ((_MDOutSnowMeltID = MFVarGetID (MDVarCore_SnowMelt, "mm", MFInput, MFFlux, MFBoundary)) == CMfailed))
 		return (CMfailed);
 	return (_MDOutSnowMeltID);
 }

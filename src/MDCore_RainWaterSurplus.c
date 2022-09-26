@@ -25,7 +25,7 @@ static int _MDOutRainWaterSurplusID = MFUnset;
 static void _MDRainWaterSurplus (int itemID) {
 // Input
 	float irrAreaFrac = _MDInIrrigation_AreaFracID != MFUnset ? MFVarGetFloat (_MDInIrrigation_AreaFracID, itemID, 0.0) : 0.0;
-	float sPackChg    = MFVarGetFloat (_MDInSnowPackChgID,    itemID, 0.0); // No irrigaiton during snow fall or melt
+	float sPackChg    = MFVarGetFloat (_MDInSnowPackChgID,    itemID, 0.0); // No irrigaiton when snow is on the ground
 	float sMoistChg   = MFVarGetFloat (_MDInRainSMoistChgID,  itemID, 0.0) * (1.0 - irrAreaFrac);
 	float evapoTrans  = MFVarGetFloat (_MDInRainEvapoTransID, itemID, 0.0) * (1.0 - irrAreaFrac); 
 	float precip      = MFVarGetFloat (_MDInCommon_PrecipID,  itemID, 0.0) * (1.0 - irrAreaFrac);

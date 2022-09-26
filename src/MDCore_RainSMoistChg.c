@@ -39,16 +39,17 @@ static void _MDRainSMoistChg (int itemID) {
 	float pet          = MFVarGetFloat (_MDInPotETID,             itemID, 0.0); // Potential evapotranspiration [mm/dt]
 	float snowPackChg  = MFVarGetFloat (_MDInSnowPackChgID,       itemID, 0.0); // Snow pack change [mm/dt]
 	float irrAreaFrac  = _MDInIrrigation_AreaFracID != MFUnset ? MFVarGetFloat (_MDInIrrigation_AreaFracID, itemID, 0.0) : 0.0; // Irrigated area fraction
-	float sMoist       = MFVarGetFloat (_MDOutSoilMoistID,        itemID, 0.0) / (1.0 - irrAreaFrac); // Soil moisture [mm]
+	float sMoist       = MFVarGetFloat (_MDOutSoilMoistID,        itemID, 0.0); // Soil moisture [mm]
 	float awCap        = MFVarGetFloat (_MDInSoilAvailWaterCapID, itemID, 0.0); // Available water capacity
 	float intercept    = _MDInInterceptID != MFUnset ? MFVarGetFloat (_MDInInterceptID, itemID, 0.0) : 0.0; // Interception (when the interception module is turned on) [mm/dt]
 // Output
 	float sMoistChg   = 0.0; // Soil moisture change [mm/dt]
 	float evapotrans;
 
-	if (awCap > 0.0) {
+	if ((irrAreaFrac < 1.0) && (awCap > 0.0)) {
 	// Input
 		float snowPack = MFVarGetFloat (_MDInSnowPackID,          itemID, 0.0); // Snow pack [mm]
+		sMoist = sMoist / (1.0 - irrAreaFrac);
 		if (snowPack > 0.0) sMoistChg = 0.0;
 		else {
 			float waterIn;
