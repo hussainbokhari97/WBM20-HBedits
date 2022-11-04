@@ -15,47 +15,49 @@ bfekete@gc.cuny.edu
 #include <MD.h>
 
 // Input
-static int _MDInRouting_DischargeID      = MFUnset;
-static int _MDInAux_MeanDischargeID      = MFUnset;
-static int _MDInResCapacityID            = MFUnset;
-static int _MDInResUptakeID              = MFUnset;
+static int _MDInRouting_DischargeID        = MFUnset;
+static int _MDInAux_MeanDischargeID        = MFUnset;
+static int _MDInResCapacityID              = MFUnset;
 
-static int _MDInResNatInflowDailyMeanID  = MFUnset;
-static int _MDInResNatInflowAnnualMeanID = MFUnset;
-static int _MDInNonIrrDemand             = MFUnset;
-static int _MDInNonIrrDemandDailyMean    = MFUnset;
-static int _MDInNonIrrDemandAnnualMean   = MFUnset;
-static int _MDInIrrDemand                = MFUnset;
-static int _MDInIrrDemandDailyMean       = MFUnset;
-static int _MDInIrrDemandAnnualMean      = MFUnset;
-static int _MDInResInitStorage           = MFUnset;
-
+static int _MDInResUptakeID                = MFUnset;
+static int _MDInResNatInflowMonthlyMeanID  = MFUnset;
+static int _MDInResNatInflowDailyMeanID    = MFUnset;
+static int _MDInResInitStorageID           = MFUnset;
+static int _MDInResStorageRatioID          = MFUnset;
+static int _MDInResStorageRatio25ID        = MFUnset;
+static int _MDInResStorageRatio75ID        = MFUnset;
+static int _MDInResDemandFactorID          = MFUnset;
+static int _MDInResIncMultID               = MFUnset;
+static int _MDInResIncrement1ID            = MFUnset;
+static int _MDInResIncrement2ID            = MFUnset;
+static int _MDInResIncrement3ID            = MFUnset;
+static int _MDInResAlphaID                 = MFUnset;
+static int _MDInResReleaseAdjID            = MFUnset;
 // Output
-static int _MDOutResStorageID            = MFUnset;
-static int _MDOutResStorageChgID         = MFUnset;
-static int _MDOutResInflowID             = MFUnset;
-static int _MDOutResReleaseID            = MFUnset;
-static int _MDOutResExtractableReleaseID = MFUnset;
-
-static int _MDOutResTargetReleaseID      = MFUnset; // for Debuging only
-static int _MDOutResAttemptedReleaseID   = MFUnset; // for Debuging only
+static int _MDOutResStorageID              = MFUnset;
+static int _MDOutResStorageChgID           = MFUnset;
+static int _MDOutResInflowID               = MFUnset;
+static int _MDOutResReleaseID              = MFUnset;
+static int _MDOutResExtractableReleaseID   = MFUnset;
+static int _MDOutResTargetReleaseID        = MFUnset; // for Debuging only
+static int _MDOutResAttemptedReleaseID     = MFUnset; // for Debuging only
 
 static void _MDReservoirWisser (int itemID) {
 
 // Input
-	float discharge;           // Current discharge [m3/s]
-	float meanDischarge;       // Long-term mean annual discharge [m3/s]
-	float resCapacity;         // Reservoir capacity [km3]
-	float resUptake;           // Water uptake from reservoir [m3/s]
+	float discharge;             // Current discharge [m3/s]
+	float meanDischarge;         // Long-term mean annual discharge [m3/s]
+	float resCapacity;           // Reservoir capacity [km3]
+	float resUptake;             // Water uptake from reservoir [m3/s]
 // Output
-	float resStorage    = 0.0; // Reservoir storage [km3]
-	float resStorageChg = 0.0; // Reservoir storage change [km3/dt]
-	float resInflow;           // Reservoir release [m3/s] 
-	float resRelease;          // Reservoir release [m3/s] 
-	float resExtRelease;       // Reservoir extractable release [m3/s]
+	float resStorage    = 0.0;   // Reservoir storage [km3]
+	float resStorageChg = 0.0;   // Reservoir storage change [km3/dt]
+	float resInflow;             // Reservoir release [m3/s] 
+	float resRelease;            // Reservoir release [m3/s] 
+	float resExtRelease;         // Reservoir extractable release [m3/s]
 // local
-	float prevResStorage;      // Reservoir storage from the previous time step [km3]
-	float dt;                  // Time step length [s]
+	float prevResStorage;        // Reservoir storage from the previous time step [km3]
+	float dt = MFModelGet_dt (); // Time step length [s]
 // Parameters
 	float drySeasonPct = 0.60; // RJS 071511
 	float wetSeasonPct = 0.16; // RJS 071511
@@ -65,8 +67,7 @@ static void _MDReservoirWisser (int itemID) {
 	discharge     = MFVarGetFloat (_MDInRouting_DischargeID,      itemID, 0.0);
 	resExtRelease = MFVarGetFloat (_MDOutResExtractableReleaseID, itemID, 0.0);
 
-	if ((resCapacity = MFVarGetFloat (_MDInResCapacityID, itemID, 0.0)) > 0.0001) { // TODO Arbitrary limit
-		            dt = MFModelGet_dt ();
+	if ((resCapacity = MFVarGetFloat (_MDInResCapacityID, itemID, 0.0)) > 0.0001) { // TODO Arbitrary limit      
 		 meanDischarge = MFVarGetFloat (_MDInAux_MeanDischargeID,      itemID, discharge);
 		prevResStorage = MFVarGetFloat(_MDOutResStorageID, itemID, 0.0);
 		     resUptake = _MDInResUptakeID != MFUnset ? MFVarGetFloat (_MDInResUptakeID,itemID, 0.0) : 0.0; 
@@ -97,87 +98,125 @@ static void _MDReservoirWisser (int itemID) {
 }
 
 static void _MDReservoirSNL (int itemID) {
-// Input
-	float discharge;              // Current discharge [m3/s]
-	float natInflowDailyMean;     // Naturalized long-term mean daily inflow [m3/s]
-	float natInflowAnnualMean;    // Naturalzied long-term mean annual inflow [m3/s]
-	float nonIrrDemand;           // Non-irrigational water demand [m3/s]
-	float nonIrrDemandDailyMean;  // Non-irrigational long-term mean daily water demand [m3/s]
-	float nonIrrDemandAnnualMean; // Non-irrigational long-term mean annual water demand [m3/s]
-	float irrDemand;              // irrigational water demand [m3/s]
-	float irrDemandDailyMean;     // irrigational long-term mean daily water demand [m3/s]
-	float irrDemandAnnualMean;    // irrigational long-term mean annual water demand [m3/s]
-	float resCapacity;            // Reservoir capacity [km3]
-	float resInitStorage;         // Reference storage dictatink actual release ratio [km3]
-// Output
-	float resStorage    = 0.0;    // Reservoir storage [km3]
-	float resStorageChg = 0.0;    // Reservoir storage change [km3/dt]
-	float resRelease;             // Reservoir release [m3/s] 
-	float resExtRelease;          // Reservoir extractable release [m3/s]
-// Local
-	float resInflow;              // Reservoir inflow [m3/s] 
-	float waterDemand;            // Daily water demand [m3/s] 
-	float waterDemandDailyMean;   // Long-term mean daily water demand [m3/s] 
-	float waterDemandAnnualMean;  // Long-term mean annual water demand [m3/s] 
-	float prevResStorage;         // Previous reservoir storage [km3]
-	float releaseTarget;          // Target reservoir release [m3/s]
-	float dt;                     // Time step length [s]
-	float alpha = 0.85;           // Adjusting factor
-	float c;                      // Residency time [yr]
-	float krls;                   // release ratio
+	// Input
+	float discharge;             // Current discharge [m3/s] -- this is the inflow to the dam
+	float natInflowMonthlyMean;  // Naturalized long-term mean monthly inflow [m3/s]
+	float natInflowDailyMean;    // Naturalized long-term mean daily inflow [m3/s]
+	float resCapacity;           // Reservoir capacity [km3]
+	float resInitStorage;        // Reference storage dictatink actual release ratio [km3]
+	float storageRatio;          // constant per dam hussain check   
+	float storageRatio25;        // constant per dam hussain check
+	float storageRatio75;        // constant per dam hussain check
+	float demandFactor;          // monthly constant per dam
+	float incMult;               // monthly constant per dam 
+	float increment1;            // monthly constant per dam 
+	float increment2;            // monthly constant per dam 
+	float increment3;            // monthly constant per dam 
+	float alpha;                 // monthly constant per dam 
+	float releaseAdj;            // monthly constant per dam 
+	// Output
+	float resStorage    = 0.0;   // Reservoir storage [km3]
+	float resStorageChg = 0.0;   // Reservoir storage change [km3/dt]
+	float resRelease;            // Reservoir release [m3/s] 
+	float resExtRelease;         // Reservoir extractable release [m3/s]
+	// Local
+	float resInflow;             // Reservoir inflow [m3/s] 
+	float waterDemandDailyMean;  // 
+	float prevResStorage;        // Previous reservoir storage [km3]
+	float releaseTarget;         // Target reservoir release [m3/s]
+	float krls;                  // release ratio
+	float initial_krls;  
+	float waterDemandMonthlyMean;
+	float bottomRelease;
+	float spill = 0.0;            // gets calculated further down, otherwise 0
+	float dt = MFModelGet_dt ();  // Time step length [s]
 
+	bottomRelease  =  // equals total release, unless there is Spill
 	resRelease     =
 	resInflow      =
 	discharge      = MFVarGetFloat (_MDInRouting_DischargeID,      itemID, 0.0);
 	resExtRelease  = MFVarGetFloat (_MDOutResExtractableReleaseID, itemID, 0.0);
 
 	if ((resCapacity = MFVarGetFloat (_MDInResCapacityID, itemID, 0.0)) > 0.0001) { // TODO Arbitrary limit!!!!
-		            dt = MFModelGet_dt ();
+		float res_cap_25;
+		float res_cap_75;
 		prevResStorage = MFVarGetFloat (_MDOutResStorageID,            itemID, 0.0);
 	natInflowDailyMean = MFVarGetFloat (_MDInResNatInflowDailyMeanID,  itemID, 0.0);
-   natInflowAnnualMean = MFVarGetFloat (_MDInResNatInflowAnnualMeanID, itemID, 0.0);
-		  nonIrrDemand = MFVarGetFloat (_MDInNonIrrDemand,             itemID, 0.0);
- nonIrrDemandDailyMean = MFVarGetFloat (_MDInNonIrrDemandDailyMean,    itemID, 0.0);
-nonIrrDemandAnnualMean = MFVarGetFloat (_MDInNonIrrDemandAnnualMean,   itemID, 0.0);
-		     irrDemand = MFVarGetFloat (_MDInIrrDemand,                itemID, 0.0);
-	irrDemandDailyMean = MFVarGetFloat (_MDInIrrDemandDailyMean,       itemID, 0.0);
-   irrDemandAnnualMean = MFVarGetFloat (_MDInIrrDemandAnnualMean,      itemID, 0.0);
-	    resInitStorage = MFVarGetFloat (_MDInResInitStorage,           itemID, 0.0);
-
-	waterDemand = nonIrrDemand + irrDemand;
-	waterDemandDailyMean  = nonIrrDemandDailyMean  + irrDemandDailyMean;
-	waterDemandAnnualMean = nonIrrDemandAnnualMean + irrDemandAnnualMean;
-		// Setting the initial storage to reservoir storage at the end of the hydrological year according to directions from SNL.
-		if (resInitStorage > resCapacity) resInitStorage = resCapacity; // This could only happen before the model updates the initial storage
-  		resInitStorage = MFDateGetDayOfYear () == 274 ? prevResStorage : (prevResStorage > resInitStorage ? prevResStorage : resInitStorage);
-		waterDemandAnnualMean = waterDemandAnnualMean < natInflowAnnualMean ? waterDemandAnnualMean : natInflowAnnualMean; // TODO Drastic
-		releaseTarget = irrDemandAnnualMean <= 0.0 ? /* Non-irrigaitonal reservoirs */ natInflowAnnualMean :
-		/* Irrigational reservoirs */ (waterDemandDailyMean < 0.5 * natInflowAnnualMean ? natInflowAnnualMean + waterDemandDailyMean - waterDemandAnnualMean :
-						  	          (natInflowDailyMean + 9.0 * natInflowAnnualMean * waterDemandDailyMean / waterDemandAnnualMean) / 10.0); 
-		c = natInflowAnnualMean > 0.0 ? resCapacity / (natInflowAnnualMean * 365 * dt / 1e9) : 1.0; // c is residency time that needs to be calculated from annual flow
-		krls = resInitStorage / (alpha * resCapacity);
- 
-		resRelease = c < 0.5 ? pow (c / 0.5,2.0) * krls * releaseTarget + (1.0 - pow(c / 0.5,2.0)) * natInflowDailyMean : krls * releaseTarget; 
-		MFVarSetFloat (_MDOutResTargetReleaseID,    itemID, releaseTarget); // for Debuging only
-		MFVarSetFloat (_MDOutResAttemptedReleaseID, itemID, resRelease);    // for Debuging only
-
-		resStorage = prevResStorage + (discharge - resRelease) * dt / 1e9;
-		if (resStorage > resCapacity) {
-			   resRelease += (resStorage - resCapacity) * 1e9 / dt;
-			   resStorage  = resCapacity; // This guarantees that the reservoir storage cannot exceed the reservoir capacity
-		}
-		else if (resStorage < 0.1 * resCapacity) {
-			   resRelease  = (prevResStorage - 0.1 * resCapacity) * 1e9 / dt + discharge;
-			   resStorage  = 0.1 * resCapacity; 
-		}
-		resStorageChg = resStorage - prevResStorage;
-		resExtRelease = irrDemand - (resRelease - nonIrrDemand < irrDemand ? (resRelease - nonIrrDemand) : 0.0);
+    	resInitStorage = MFVarGetFloat (_MDInResInitStorageID,           itemID, 0.0);
+	      storageRatio = MFVarGetFloat (_MDInResStorageRatioID,           itemID, 0.0);
+    	storageRatio25 = MFVarGetFloat (_MDInResStorageRatio25ID,           itemID, 0.0);
+    	storageRatio75 = MFVarGetFloat (_MDInResStorageRatio75ID,           itemID, 0.0);
+    	  demandFactor = MFVarGetFloat (_MDInResDemandFactorID,           itemID, 0.0);
+    	       incMult = MFVarGetFloat (_MDInResIncMultID,           itemID, 0.0);
+    	    increment1 = MFVarGetFloat (_MDInResIncrement1ID,           itemID, 0.0);
+    	    increment2 = MFVarGetFloat (_MDInResIncrement2ID,           itemID, 0.0);
+    	    increment3 = MFVarGetFloat (_MDInResIncrement3ID,           itemID, 0.0);
+    	         alpha = MFVarGetFloat (_MDInResAlphaID,           itemID, 0.0);
+			releaseAdj = MFVarGetFloat (_MDInResReleaseAdjID,           itemID, 0.0);
+	natInflowMonthlyMean = MFVarGetFloat (_MDInResNatInflowMonthlyMeanID,           itemID, 0.0);
+		res_cap_25 = resStorage * storageRatio25;
+		res_cap_75 = resStorage * storageRatio75;
+	// ARIEL EDITED THIS TO INCULDE "{}" -- not sure it's needed, so please remove if not.
+	if (resInitStorage > resCapacity) {resInitStorage = resCapacity; } // This could only happen before the model updates the initial storage
+        
+	// ARIEL ADDED MAIN RULES---->
+	waterDemandDailyMean = demandFactor * natInflowDailyMean;
+	waterDemandMonthlyMean = demandFactor * natInflowMonthlyMean;                               
+	// rough interpretation/goal for a release target    
+	releaseTarget = natInflowDailyMean + waterDemandDailyMean - waterDemandMonthlyMean; 
+	// krls before adjustment
+	initial_krls = (resInitStorage / (alpha * resCapacity * storageRatio));
+	// condition when storage is above 75% of normal or max
+	if ((resInflow >= natInflowMonthlyMean) && (resInitStorage >= res_cap_75)) {
+    	krls = (1 + incMult * increment1) * initial_krls;
 	}
-	else {
-		MFVarSetFloat (_MDOutResTargetReleaseID,    itemID, 0.0); // for Debuging only
-		MFVarSetFloat (_MDOutResAttemptedReleaseID, itemID, 0.0); // for Debuging only
+	if ((resInflow < natInflowMonthlyMean) && (resInitStorage >= res_cap_75)) {
+    	krls = (1 + increment1) * initial_krls;
 	}
-	MFVarSetFloat (_MDInResInitStorage,           itemID, resInitStorage);
+
+	// condition when storage is 25-75% of normal or max 
+	if ((resInflow >= natInflowMonthlyMean) && (res_cap_75 > resInitStorage >= res_cap_25)) {
+    	krls = (1 + incMult * increment2) * initial_krls;
+	}
+	if ((resInflow < natInflowMonthlyMean) && (res_cap_75 > resInitStorage >= res_cap_25)) {
+    	krls = (1 + increment2) * initial_krls;
+	}                
+
+	// condition when storage is below 25% of normal or max 
+	if ((resInflow >= natInflowMonthlyMean) && (resInitStorage < res_cap_25)) {
+		krls = (1 + incMult * increment3) * initial_krls;
+	}
+	if ((resInflow < natInflowMonthlyMean) && (resInitStorage < res_cap_25)) {
+    	krls = (1 + increment3) * initial_krls;
+	}
+	// adjustment to consider inflow on given day (should help with extremes)        
+	resRelease = 0.5 * ((krls * releaseTarget) + (releaseAdj * resInflow));
+	// assume 5% envrionemntal flow minimum, and makes sure there is no negative flow.
+	if (resRelease < 0.05 * resInflow) {
+    	resRelease = resInflow * 0.05; 
+	}
+	// <------ ARIEL FINISIHED MAIN RULES
+	MFVarSetFloat (_MDOutResTargetReleaseID,    itemID, releaseTarget); // for Debuging only
+	MFVarSetFloat (_MDOutResAttemptedReleaseID, itemID, resRelease);    // for Debuging only
+	resStorage = prevResStorage + (discharge - resRelease) * dt / 1e9;
+	if (resStorage > resCapacity) {
+		// ARIEL ADDED:
+		spill = (resStorage - resCapacity) * 1e9 / dt;
+		bottomRelease = resRelease - spill;
+		resStorage  = resCapacity; // This guarantees that the reservoir storage cannot exceed the reservoir capacity
+	} else if (resStorage < 0.03 * resCapacity) { // ARIEL EDITS (fraction of rescapacity) from 0.1 to 0.03
+	resRelease  = (prevResStorage - 0.03 * resCapacity) * 1e9 / dt + discharge;
+	resStorage  = 0.03 * resCapacity;
+	bottomRelease = resRelease;
+	resExtRelease = resRelease + spill;
+	}
+	resStorageChg = resStorage - prevResStorage;
+	} else { // No reservoir
+	MFVarSetFloat (_MDOutResTargetReleaseID,    itemID, 0.0); // for Debuging only
+	MFVarSetFloat (_MDOutResAttemptedReleaseID, itemID, 0.0); // for Debuging only
+	}
+	/// BALAZS TODO -> MODEL SHOULD OUTPUT Spill, BOTTOM RELEASE, AND TOTAL RELEASE. 
+	MFVarSetFloat (_MDInResInitStorageID,         itemID, resInitStorage);
 	MFVarSetFloat (_MDOutResStorageID,            itemID, resStorage); 
 	MFVarSetFloat (_MDOutResStorageChgID,         itemID, resStorageChg); 
 	MFVarSetFloat (_MDOutResInflowID,             itemID, resInflow);
@@ -211,24 +250,28 @@ int MDReservoir_OperationDef () {
                 (MFModelAddFunction (_MDReservoirWisser) == CMfailed)) return (CMfailed);
 			break;
 		case MDsnl:
-			if (((_MDInRouting_DischargeID      = MDRouting_ChannelDischargeDef()) == CMfailed) ||
-            	((_MDInResCapacityID            = MFVarGetID (MDVarReservoir_Capacity,               "km3",  MFInput,  MFState, MFBoundary)) == CMfailed) ||
-			    ((_MDInResNatInflowDailyMeanID  = MFVarGetID (MDVarReservoir_NatDMeanInflow,         "m3/s", MFInput,  MFState, MFBoundary)) == CMfailed) ||
-			    ((_MDInResNatInflowAnnualMeanID = MFVarGetID (MDVarReservoir_NatAMeanInflow,         "m3/s", MFInput,  MFState, MFBoundary)) == CMfailed) ||
-            	((_MDInNonIrrDemand             = MFVarGetID (MDVarReservoir_NonIrrDemand,           "m3/s", MFInput,  MFState, MFBoundary)) == CMfailed) ||
-            	((_MDInNonIrrDemandDailyMean    = MFVarGetID (MDVarReservoir_NonIrrDailyMeanDemand,  "m3/s", MFInput,  MFState, MFBoundary)) == CMfailed) ||
-            	((_MDInNonIrrDemandAnnualMean   = MFVarGetID (MDVarReservoir_NonIrrAnnualMeanDemand, "m3/s", MFInput,  MFState, MFBoundary)) == CMfailed) ||
-            	((_MDInIrrDemand                = MFVarGetID (MDVarReservoir_IrrDemand,              "m3/s", MFInput,  MFState, MFBoundary)) == CMfailed) ||
-            	((_MDInIrrDemandDailyMean       = MFVarGetID (MDVarReservoir_IrrDailyMeanDemand,     "m3/s", MFInput,  MFState, MFBoundary)) == CMfailed) ||
-            	((_MDInIrrDemandAnnualMean      = MFVarGetID (MDVarReservoir_IrrAnnualMeanDemand,    "m3/s", MFInput,  MFState, MFBoundary)) == CMfailed) ||
-            	((_MDInResInitStorage           = MFVarGetID (MDVarReservoir_InitStorage,            "km3",  MFInput,  MFState, MFInitial))  == CMfailed) ||
-                ((_MDOutResStorageID            = MFVarGetID (MDVarReservoir_Storage,                "km3",  MFOutput, MFState, MFInitial))  == CMfailed) ||
-                ((_MDOutResStorageChgID         = MFVarGetID (MDVarReservoir_StorageChange,          "km3",  MFOutput, MFState, MFBoundary)) == CMfailed) ||
-			    ((_MDOutResInflowID             = MFVarGetID (MDVarReservoir_Inflow,                 "m3/s", MFOutput, MFState, MFBoundary)) == CMfailed) ||
-			    ((_MDOutResTargetReleaseID      = MFVarGetID ("SNL_TargetRelease",                   "m3/s", MFOutput, MFState, MFBoundary)) == CMfailed) ||
-			    ((_MDOutResAttemptedReleaseID   = MFVarGetID ("SNL_AttemptedRelease",                "m3/s", MFOutput, MFState, MFBoundary)) == CMfailed) ||
- 			    ((_MDOutResExtractableReleaseID = MFVarGetID (MDVarReservoir_ExtractableRelease,     "m3/s", MFRoute,  MFState, MFBoundary)) == CMfailed) ||
-			    ((_MDOutResReleaseID            = MFVarGetID (MDVarReservoir_Release,                "m3/s", MFOutput, MFState, MFBoundary)) == CMfailed) ||
+			if (((_MDInRouting_DischargeID       = MDRouting_ChannelDischargeDef()) == CMfailed) ||
+            	((_MDInResCapacityID             = MFVarGetID (MDVarReservoir_Capacity,             "km3",    MFInput,  MFState, MFBoundary)) == CMfailed) ||
+            	((_MDInResInitStorageID          = MFVarGetID (MDVarReservoir_InitStorage,          "km3",    MFInput,  MFState, MFBoundary)) == CMfailed) ||
+			    ((_MDInResNatInflowMonthlyMeanID = MFVarGetID ("ReservoirNatInflowMonthlyMean",     "m3/s",   MFInput,  MFState, MFBoundary)) == CMfailed) ||
+			    ((_MDInResNatInflowDailyMeanID   = MFVarGetID ("ReservoirNatInflowDailyMean",       "m3/s",   MFInput,  MFState, MFBoundary)) == CMfailed) ||
+            	((_MDInResStorageRatioID         = MFVarGetID ("ReservoirStorageRatio",             MFNoUnit, MFInput,  MFState, MFBoundary)) == CMfailed) ||
+            	((_MDInResStorageRatio25ID       = MFVarGetID ("ReservoirStorageRatio25",           MFNoUnit, MFInput,  MFState, MFBoundary)) == CMfailed) ||
+            	((_MDInResStorageRatio75ID       = MFVarGetID ("ReservoirStorageRatio75",           MFNoUnit, MFInput,  MFState, MFBoundary)) == CMfailed) ||
+            	((_MDInResDemandFactorID         = MFVarGetID ("ReservoirDemandFactor",             MFNoUnit, MFInput,  MFState, MFBoundary)) == CMfailed) ||
+            	((_MDInResIncMultID              = MFVarGetID ("ReservoirIncMult",                  MFNoUnit, MFInput,  MFState, MFBoundary)) == CMfailed) ||
+            	((_MDInResIncrement1ID           = MFVarGetID ("ReservoirIncrement1",               MFNoUnit, MFInput,  MFState, MFBoundary)) == CMfailed) ||
+            	((_MDInResIncrement2ID           = MFVarGetID ("ReservoirIncrement2",               MFNoUnit, MFInput,  MFState, MFBoundary)) == CMfailed) ||
+            	((_MDInResIncrement3ID           = MFVarGetID ("ReservoirIncrement3",               MFNoUnit, MFInput,  MFState, MFBoundary)) == CMfailed) ||
+            	((_MDInResAlphaID                = MFVarGetID ("ReservoirAlpha",                    MFNoUnit, MFInput,  MFState, MFBoundary)) == CMfailed) ||
+            	((_MDInResReleaseAdjID           = MFVarGetID ("Reservoir_ReleaseAdj",              MFNoUnit, MFInput,  MFState, MFBoundary)) == CMfailed) ||
+			    ((_MDOutResTargetReleaseID       = MFVarGetID ("TargetRelease",                     "m3/s",   MFOutput, MFState, MFBoundary)) == CMfailed) ||
+			    ((_MDOutResAttemptedReleaseID    = MFVarGetID ("AttemptedRelease",                  "m3/s",   MFOutput, MFState, MFBoundary)) == CMfailed) ||
+                ((_MDOutResStorageID             = MFVarGetID (MDVarReservoir_Storage,              "km3",    MFOutput, MFState, MFInitial))  == CMfailed) ||
+                ((_MDOutResStorageChgID          = MFVarGetID (MDVarReservoir_StorageChange,        "km3",    MFOutput, MFState, MFBoundary)) == CMfailed) ||
+			    ((_MDOutResInflowID              = MFVarGetID (MDVarReservoir_Inflow,               "m3/s",   MFOutput, MFState, MFBoundary)) == CMfailed) ||
+ 			    ((_MDOutResExtractableReleaseID  = MFVarGetID (MDVarReservoir_ExtractableRelease,   "m3/s",   MFRoute,  MFState, MFBoundary)) == CMfailed) ||
+			    ((_MDOutResReleaseID             = MFVarGetID (MDVarReservoir_Release,              "m3/s",   MFOutput, MFState, MFBoundary)) == CMfailed) ||
                 (MFModelAddFunction (_MDReservoirSNL) == CMfailed)) return (CMfailed);
 			break;
 	}
