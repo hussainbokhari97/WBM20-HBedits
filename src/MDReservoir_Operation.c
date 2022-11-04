@@ -124,11 +124,11 @@ static void _MDReservoirSNL (int itemID) {
 	float releaseTarget = 0.0; // Target reservoir release [m3/s]
 	// Local
 	float resInflow;           // Reservoir inflow [m3/s] 
-	float waterDemandDailyMean;
+	float waterDemandMeanDaily;
 	float prevResStorage;      // Previous reservoir storage [km3]
 	float krls;                // release ratio
 	float initial_krls;  
-	float waterDemandMonthlyMean;
+	float waterDemandMeanMonthly;
 	float bottomRelease;
 	float spill = 0.0;            // gets calculated further down, otherwise 0
 
@@ -142,75 +142,58 @@ static void _MDReservoirSNL (int itemID) {
 		float res_cap_25;
 		float res_cap_75;
 		float dt = MFModelGet_dt ();  // Time step length [s]
-		  prevResStorage = MFVarGetFloat (_MDOutResStorageID,             itemID, 0.0);
-	natFlowMeanMonthly = MFVarGetFloat (_MDInResNatFlowMeanMonthlyID, itemID, 0.0);
-	  natFlowMeanDaily = MFVarGetFloat (_MDInResNatFlowMeanDailyID,   itemID, 0.0);
-    	  resInitStorage = MFVarGetFloat (_MDInResInitStorageID,          itemID, 0.0);
-	        storageRatio = MFVarGetFloat (_MDInResStorageRatioID,         itemID, 0.0);
-    	  storageRatio25 = MFVarGetFloat (_MDInResStorageRatio25ID,       itemID, 0.0);
-    	  storageRatio75 = MFVarGetFloat (_MDInResStorageRatio75ID,       itemID, 0.0);
-    	    demandFactor = MFVarGetFloat (_MDInResDemandFactorID,         itemID, 0.0);
-    	         incMult = MFVarGetFloat (_MDInResIncMultID,              itemID, 0.0);
-    	      increment1 = MFVarGetFloat (_MDInResIncrement1ID,           itemID, 0.0);
-    	      increment2 = MFVarGetFloat (_MDInResIncrement2ID,           itemID, 0.0);
-    	      increment3 = MFVarGetFloat (_MDInResIncrement3ID,           itemID, 0.0);
-    	           alpha = MFVarGetFloat (_MDInResAlphaID,                itemID, 0.0);
-			  releaseAdj = MFVarGetFloat (_MDInResReleaseAdjID,           itemID, 0.0);
+			prevResStorage = MFVarGetFloat (_MDOutResStorageID,           itemID, 0.0);
+		natFlowMeanMonthly = MFVarGetFloat (_MDInResNatFlowMeanMonthlyID, itemID, 0.0);
+		  natFlowMeanDaily = MFVarGetFloat (_MDInResNatFlowMeanDailyID,   itemID, 0.0);
+    	    resInitStorage = MFVarGetFloat (_MDInResInitStorageID,        itemID, 0.0);
+	          storageRatio = MFVarGetFloat (_MDInResStorageRatioID,       itemID, 0.0);
+    	    storageRatio25 = MFVarGetFloat (_MDInResStorageRatio25ID,     itemID, 0.0);
+    	    storageRatio75 = MFVarGetFloat (_MDInResStorageRatio75ID,     itemID, 0.0);
+    	      demandFactor = MFVarGetFloat (_MDInResDemandFactorID,       itemID, 0.0);
+    	           incMult = MFVarGetFloat (_MDInResIncMultID,            itemID, 0.0);
+    	        increment1 = MFVarGetFloat (_MDInResIncrement1ID,         itemID, 0.0);
+    	        increment2 = MFVarGetFloat (_MDInResIncrement2ID,         itemID, 0.0);
+    	        increment3 = MFVarGetFloat (_MDInResIncrement3ID,         itemID, 0.0);
+    	             alpha = MFVarGetFloat (_MDInResAlphaID,              itemID, 0.0);
+			    releaseAdj = MFVarGetFloat (_MDInResReleaseAdjID,         itemID, 0.0);
 		res_cap_25 = resStorage * storageRatio25;
 		res_cap_75 = resStorage * storageRatio75;
-	// ARIEL EDITED THIS TO INCULDE "{}" -- not sure it's needed, so please remove if not.
-	if (resInitStorage > resCapacity) {resInitStorage = resCapacity; } // This could only happen before the model updates the initial storage
+		// ARIEL EDITED THIS TO INCULDE "{}" -- not sure it's needed, so please remove if not.
+		if (resInitStorage > resCapacity) {resInitStorage = resCapacity; } // This could only happen before the model updates the initial storage
         
-	// ARIEL ADDED MAIN RULES---->
-	waterDemandDailyMean = demandFactor * natFlowMeanDaily;
-	waterDemandMonthlyMean = demandFactor * natFlowMeanMonthly;                               
-	// rough interpretation/goal for a release target    
-	releaseTarget = natFlowMeanDaily + waterDemandDailyMean - waterDemandMonthlyMean; 
-	// krls before adjustment
-	initial_krls = (resInitStorage / (alpha * resCapacity * storageRatio));
-	// condition when storage is above 75% of normal or max
-	if ((resInflow >= natFlowMeanMonthly) && (resInitStorage >= res_cap_75)) {
-    	krls = (1 + incMult * increment1) * initial_krls;
-	}
-	if ((resInflow < natFlowMeanMonthly) && (resInitStorage >= res_cap_75)) {
-    	krls = (1 + increment1) * initial_krls;
-	}
-
-	// condition when storage is 25-75% of normal or max 
-	if ((resInflow >= natFlowMeanMonthly) && (res_cap_75 > resInitStorage >= res_cap_25)) {
-    	krls = (1 + incMult * increment2) * initial_krls;
-	}
-	if ((resInflow < natFlowMeanMonthly) && (res_cap_75 > resInitStorage >= res_cap_25)) {
-    	krls = (1 + increment2) * initial_krls;
-	}                
-
-	// condition when storage is below 25% of normal or max 
-	if ((resInflow >= natFlowMeanMonthly) && (resInitStorage < res_cap_25)) {
-		krls = (1 + incMult * increment3) * initial_krls;
-	}
-	if ((resInflow < natFlowMeanMonthly) && (resInitStorage < res_cap_25)) {
-    	krls = (1 + increment3) * initial_krls;
-	}
-	// adjustment to consider inflow on given day (should help with extremes)        
-	resRelease = 0.5 * ((krls * releaseTarget) + (releaseAdj * resInflow));
-	// assume 5% envrionemntal flow minimum, and makes sure there is no negative flow.
-	if (resRelease < 0.05 * resInflow) {
-    	resRelease = resInflow * 0.05; 
-	}
-	// <------ ARIEL FINISIHED MAIN RULES
-	resStorage = prevResStorage + (discharge - resRelease) * dt / 1e9;
-	if (resStorage > resCapacity) {
-		// ARIEL ADDED:
-		spill = (resStorage - resCapacity) * 1e9 / dt;
-		bottomRelease = resRelease - spill;
-		resStorage  = resCapacity; // This guarantees that the reservoir storage cannot exceed the reservoir capacity
-	} else if (resStorage < 0.03 * resCapacity) { // ARIEL EDITS (fraction of rescapacity) from 0.1 to 0.03
-	resRelease  = (prevResStorage - 0.03 * resCapacity) * 1e9 / dt + discharge;
-	resStorage  = 0.03 * resCapacity;
-	bottomRelease = resRelease;
-	resExtRelease = resRelease + spill;
-	}
-	resStorageChg = resStorage - prevResStorage;
+	// MAIN RULES begin ---->
+		waterDemandMeanDaily   = demandFactor * natFlowMeanDaily;
+		waterDemandMeanMonthly = demandFactor * natFlowMeanMonthly;                               
+		// rough interpretation/goal for a release target    
+		releaseTarget = natFlowMeanDaily + waterDemandMeanDaily - waterDemandMeanMonthly; 
+		// krls before adjustment
+		initial_krls = (resInitStorage / (alpha * resCapacity * storageRatio));
+		// condition when storage is above 75% of normal or max
+		if ((resInflow >= natFlowMeanMonthly) && (resInitStorage >= res_cap_75)) krls = (1 + incMult * increment1) * initial_krls;
+		if ((resInflow <  natFlowMeanMonthly) && (resInitStorage >= res_cap_75)) krls = (1 + increment1) * initial_krls;
+		// condition when storage is 25-75% of normal or max 
+		if ((resInflow >= natFlowMeanMonthly) && (res_cap_75 > resInitStorage >= res_cap_25)) krls = (1 + incMult * increment2) * initial_krls;
+		if ((resInflow <  natFlowMeanMonthly) && (res_cap_75 > resInitStorage >= res_cap_25)) krls = (1 + increment2) * initial_krls;
+		// condition when storage is below 25% of normal or max 
+		if ((resInflow >= natFlowMeanMonthly) && (resInitStorage < res_cap_25)) krls = (1 + incMult * increment3) * initial_krls;
+		if ((resInflow <  natFlowMeanMonthly) && (resInitStorage < res_cap_25)) krls = (1 + increment3) * initial_krls;
+		// adjustment to consider inflow on given day (should help with extremes)
+		resRelease = 0.5 * ((krls * releaseTarget) + (releaseAdj * resInflow));
+		// assume 5% envrionemntal flow minimum, and makes sure there is no negative flow.
+		if (resRelease < 0.05 * resInflow) resRelease = resInflow * 0.05;
+	// MAIN RULES finish
+		resStorage = prevResStorage + (discharge - resRelease) * dt / 1e9;
+		if (resStorage > resCapacity) {
+			spill = (resStorage - resCapacity) * 1e9 / dt;
+			bottomRelease = resRelease - spill;
+			resStorage  = resCapacity; // This guarantees that the reservoir storage cannot exceed the reservoir capacity
+		} else if (resStorage < 0.03 * resCapacity) { // ARIEL EDITS (fraction of rescapacity) from 0.1 to 0.03
+			resRelease  = (prevResStorage - 0.03 * resCapacity) * 1e9 / dt + discharge;
+			resStorage  = 0.03 * resCapacity;
+			bottomRelease = resRelease;
+			resExtRelease = resRelease + spill;
+		}
+		resStorageChg = resStorage - prevResStorage;
 	}
 	/// BALAZS TODO -> MODEL SHOULD OUTPUT Spill, BOTTOM RELEASE, AND TOTAL RELEASE. 
 	MFVarSetFloat (_MDInResInitStorageID,         itemID, resInitStorage);
