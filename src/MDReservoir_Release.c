@@ -54,7 +54,7 @@ int MDReservoir_ExtractableReleaseDef () {
 		case MFon:
 			if ((_MDOutResReleaseID = MDReservoir_OperationDef ()) == CMfailed) return (CMfailed);
 			else if (_MDOutResReleaseID != MFUnset)
-				_MDOutResExtractableReleaseID = MFVarGetID (MDVarReservoir_ExtractableRelease, "m3/s", MFRoute, MFState,  MFBoundary);
+				_MDOutResExtractableReleaseID = MFVarGetID (MDVarReservoir_ReleaseExtractable, "m3/s", MFRoute, MFState,  MFBoundary);
 			break;
 	}
 	MFDefLeaving ("Extractable release");

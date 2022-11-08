@@ -165,9 +165,11 @@ extern "C" {
 #define MDVarReservoir_Capacity                 "ReservoirCapacity"
 #define MDVarReservoir_Inflow                   "ReservoirInflow"
 #define MDVarReservoir_Release                  "ReservoirRelease"
-#define MDVarReservoir_ExtractableRelease       "ReservoirExtractableRelease"
+#define MDVarReservoir_ReleaseExtractable       "ReservoirReleaseExtractable"
+#define MDVarReservoir_ReleaseBottom            "ReservoirReleaseBottom"
+#define MDVarReservoir_ReleaseSpillway          "ReservoirReleaseSpillway"
 #define MDVarReservoir_Uptake                   "ReservoirUptake"
-#define MDVarReservoir_InitStorage              "ReservoirInitStorage"
+#define MDVarReservoir_StorageInitial           "ReservoirStorageInitial"
 #define MDVarReservoir_Storage                  "ReservoirStorage"
 #define MDVarReservoir_StorageChange            "ReservoirStorageChange"
 
