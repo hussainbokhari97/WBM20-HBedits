@@ -15,7 +15,7 @@ bfekete@gc.cuny.edu
  
 // Output
 static int _MDOutResReleaseID            = MFUnset;
-static int _MDOutResExtractableReleaseID = MFUnset;
+static int _MDOutResReleaseExtractableID = MFUnset;
 
 int MDReservoir_ReleaseDef () {
 	int optID = MFoff;
@@ -43,7 +43,7 @@ int MDReservoir_ExtractableReleaseDef () {
 	int optID = MFoff;
 	const char *optStr;
 
-	if (_MDOutResExtractableReleaseID != MFUnset) return (_MDOutResExtractableReleaseID);
+	if (_MDOutResReleaseExtractableID != MFUnset) return (_MDOutResReleaseExtractableID);
 
 	MFDefEntering ("Extractable release");
 	if ((optStr = MFOptionGet (MDOptConfig_Reservoirs)) != (char *) NULL) optID = CMoptLookup (MFswitchOptions, optStr, true);
@@ -54,9 +54,9 @@ int MDReservoir_ExtractableReleaseDef () {
 		case MFon:
 			if ((_MDOutResReleaseID = MDReservoir_OperationDef ()) == CMfailed) return (CMfailed);
 			else if (_MDOutResReleaseID != MFUnset)
-				_MDOutResExtractableReleaseID = MFVarGetID (MDVarReservoir_ReleaseExtractable, "m3/s", MFRoute, MFState,  MFBoundary);
+				_MDOutResReleaseExtractableID = MFVarGetID (MDVarReservoir_ReleaseExtractable, "m3/s", MFRoute, MFState,  MFBoundary);
 			break;
 	}
 	MFDefLeaving ("Extractable release");
-	return (_MDOutResExtractableReleaseID);
+	return (_MDOutResReleaseExtractableID);
 }
