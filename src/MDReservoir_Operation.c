@@ -237,18 +237,18 @@ int MDReservoir_OperationDef () {
 			if (((_MDInRouting_DischargeID      = MDRouting_ChannelDischargeDef()) == CMfailed) ||
             	((_MDInResCapacityID            = MFVarGetID (MDVarReservoir_Capacity,           "km3",    MFInput,  MFState, MFBoundary)) == CMfailed) ||
             	((_MDInResInitStorageID         = MFVarGetID (MDVarReservoir_InitStorage,        "km3",    MFInput,  MFState, MFInitial))  == CMfailed) ||
-			    ((_MDInResNatFlowMeanMonthlyID  = MFVarGetID ("ReservoirNatInflowMeanMonthly",   "m3/s",   MFInput,  MFState, MFBoundary)) == CMfailed) ||
-			    ((_MDInResNatFlowMeanDailyID    = MFVarGetID ("ReservoirNatInflowMeanDaily",     "m3/s",   MFInput,  MFState, MFBoundary)) == CMfailed) ||
-            	((_MDInResStorageRatioID        = MFVarGetID ("ReservoirStorageRatio",           MFNoUnit, MFInput,  MFState, MFBoundary)) == CMfailed) ||
-            	((_MDInResStorageRatio25ID      = MFVarGetID ("ReservoirStorageRatio25",         MFNoUnit, MFInput,  MFState, MFBoundary)) == CMfailed) ||
-            	((_MDInResStorageRatio75ID      = MFVarGetID ("ReservoirStorageRatio75",         MFNoUnit, MFInput,  MFState, MFBoundary)) == CMfailed) ||
+			    ((_MDInResNatFlowMeanMonthlyID  = MFVarGetID ("ReservoirNatFlowMeanMonthly",     "m3/s",   MFInput,  MFState, MFBoundary)) == CMfailed) ||
+			    ((_MDInResNatFlowMeanDailyID    = MFVarGetID ("ReservoirNatFlowMeanDaily",       "m3/s",   MFInput,  MFState, MFBoundary)) == CMfailed) ||
+            	((_MDInResAlphaID               = MFVarGetID ("ReservoirAlpha",                  MFNoUnit, MFInput,  MFState, MFBoundary)) == CMfailed) ||
             	((_MDInResDemandFactorID        = MFVarGetID ("ReservoirDemandFactor",           MFNoUnit, MFInput,  MFState, MFBoundary)) == CMfailed) ||
             	((_MDInResIncMultID             = MFVarGetID ("ReservoirIncMult",                MFNoUnit, MFInput,  MFState, MFBoundary)) == CMfailed) ||
             	((_MDInResIncrement1ID          = MFVarGetID ("ReservoirIncrement1",             MFNoUnit, MFInput,  MFState, MFBoundary)) == CMfailed) ||
             	((_MDInResIncrement2ID          = MFVarGetID ("ReservoirIncrement2",             MFNoUnit, MFInput,  MFState, MFBoundary)) == CMfailed) ||
             	((_MDInResIncrement3ID          = MFVarGetID ("ReservoirIncrement3",             MFNoUnit, MFInput,  MFState, MFBoundary)) == CMfailed) ||
-            	((_MDInResAlphaID               = MFVarGetID ("ReservoirAlpha",                  MFNoUnit, MFInput,  MFState, MFBoundary)) == CMfailed) ||
-            	((_MDInResReleaseAdjID          = MFVarGetID ("Reservoir_ReleaseAdj",            MFNoUnit, MFInput,  MFState, MFBoundary)) == CMfailed) ||
+            	((_MDInResReleaseAdjID          = MFVarGetID ("ReservoirReleaseAdj",             MFNoUnit, MFInput,  MFState, MFBoundary)) == CMfailed) ||
+            	((_MDInResStorageRatioID        = MFVarGetID ("ReservoirStorageRatio",           MFNoUnit, MFInput,  MFState, MFBoundary)) == CMfailed) ||
+            	((_MDInResStorageRatio25ID      = MFVarGetID ("ReservoirStorageRatio25",         MFNoUnit, MFInput,  MFState, MFBoundary)) == CMfailed) ||
+            	((_MDInResStorageRatio75ID      = MFVarGetID ("ReservoirStorageRatio75",         MFNoUnit, MFInput,  MFState, MFBoundary)) == CMfailed) ||
 			    ((_MDOutResTargetReleaseID      = MFVarGetID ("Reservoir_TargetRelease",         "m3/s",   MFOutput, MFState, MFBoundary)) == CMfailed) ||
 			    ((_MDOutResAttemptedReleaseID   = MFVarGetID ("Reservoir_AttemptedRelease",      "m3/s",   MFOutput, MFState, MFBoundary)) == CMfailed) ||
 			    ((_MDOutResBottomReleaseID      = MFVarGetID ("Reservoir_BottomRelease",         "m3/s",   MFOutput, MFState, MFBoundary)) == CMfailed) ||
