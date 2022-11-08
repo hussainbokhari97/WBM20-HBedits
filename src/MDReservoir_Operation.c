@@ -42,7 +42,7 @@ static int _MDOutResExtractableReleaseID = MFUnset;
 static int _MDOutResTargetReleaseID      = MFUnset; // for Debuging only
 static int _MDOutResAttemptedReleaseID   = MFUnset; // for Debuging only
 static int _MDOutResBottomReleaseID      = MFUnset;
-static int _MDOutResSpillID              = MFUnset;
+static int _MDOutResSpillwayReleaseID              = MFUnset;
 
 static void _MDReservoirWisser (int itemID) {
 
@@ -117,11 +117,13 @@ static void _MDReservoirSNL (int itemID) {
 	float alpha;               // monthly constant per dam 
 	float releaseAdj;          // monthly constant per dam 
 	// Output
-	float resStorage    = 0.0; // Reservoir storage [km3]
-	float resStorageChg = 0.0; // Reservoir storage change [km3/dt]
-	float resRelease;          // Reservoir release [m3/s] 
-	float resExtRelease;       // Reservoir extractable release [m3/s]
-	float releaseTarget = 0.0; // Target reservoir release [m3/s]
+	float resStorage      = 0.0; // Reservoir storage [km3]
+	float resStorageChg   = 0.0; // Reservoir storage change [km3/dt]
+	float resRelease      = 0.0; // Reservoir release [m3/s] 
+	float resExtRelease   = 0.0; // Reservoir extractable release [m3/s]
+	float releaseTarget   = 0.0; // Target reservoir release [m3/s]
+	float bottomRelease   = 0.0;
+	float spillwayRelease = 0.0; // gets calculated further down, otherwise 0
 	// Local
 	float resInflow;           // Reservoir inflow [m3/s] 
 	float waterDemandMeanDaily;
@@ -129,8 +131,6 @@ static void _MDReservoirSNL (int itemID) {
 	float krls;                // release ratio
 	float initial_krls;  
 	float waterDemandMeanMonthly;
-	float bottomRelease;
-	float spill = 0.0;            // gets calculated further down, otherwise 0
 
 	bottomRelease  =  // equals total release, unless there is Spill
 	resRelease     =
@@ -184,14 +184,14 @@ static void _MDReservoirSNL (int itemID) {
 	// MAIN RULES finish
 		resStorage = prevResStorage + (discharge - resRelease) * dt / 1e9;
 		if (resStorage > resCapacity) {
-			spill = (resStorage - resCapacity) * 1e9 / dt;
-			bottomRelease = resRelease - spill;
+			spillwayRelease = (resStorage - resCapacity) * 1e9 / dt;
+			bottomRelease = resRelease - spillwayRelease;
 			resStorage  = resCapacity; // This guarantees that the reservoir storage cannot exceed the reservoir capacity
 		} else if (resStorage < 0.03 * resCapacity) { // ARIEL EDITS (fraction of rescapacity) from 0.1 to 0.03
 			resRelease  = (prevResStorage - 0.03 * resCapacity) * 1e9 / dt + discharge;
 			resStorage  = 0.03 * resCapacity;
 			bottomRelease = resRelease;
-			resExtRelease = resRelease + spill;
+			resExtRelease = resRelease + spillwayRelease;
 		}
 		resStorageChg = resStorage - prevResStorage;
 	}
@@ -205,7 +205,7 @@ static void _MDReservoirSNL (int itemID) {
 	MFVarSetFloat (_MDOutResTargetReleaseID,      itemID, releaseTarget); // for Debuging only
 	MFVarSetFloat (_MDOutResAttemptedReleaseID,   itemID, resRelease);    // for Debuging only
 	MFVarSetFloat (_MDOutResBottomReleaseID,      itemID, bottomRelease);
-	MFVarSetFloat (_MDOutResSpillID,              itemID, spill);
+	MFVarSetFloat (_MDOutResSpillwayReleaseID,              itemID, spillwayRelease);
 }
 
 enum { MDhelp, MDwisser, MDsnl };
@@ -252,7 +252,7 @@ int MDReservoir_OperationDef () {
 			    ((_MDOutResTargetReleaseID      = MFVarGetID ("Reservoir_TargetRelease",         "m3/s",   MFOutput, MFState, MFBoundary)) == CMfailed) ||
 			    ((_MDOutResAttemptedReleaseID   = MFVarGetID ("Reservoir_AttemptedRelease",      "m3/s",   MFOutput, MFState, MFBoundary)) == CMfailed) ||
 			    ((_MDOutResBottomReleaseID      = MFVarGetID ("Reservoir_BottomRelease",         "m3/s",   MFOutput, MFState, MFBoundary)) == CMfailed) ||
-			    ((_MDOutResSpillID              = MFVarGetID ("Reservoir_Spill",                 "m3/s",   MFOutput, MFState, MFBoundary)) == CMfailed) ||
+			    ((_MDOutResSpillwayReleaseID    = MFVarGetID ("Reservoir_SpillwayRelease",       "m3/s",   MFOutput, MFState, MFBoundary)) == CMfailed) ||
                 ((_MDOutResStorageID            = MFVarGetID (MDVarReservoir_Storage,            "km3",    MFOutput, MFState, MFInitial))  == CMfailed) ||
                 ((_MDOutResStorageChgID         = MFVarGetID (MDVarReservoir_StorageChange,      "km3",    MFOutput, MFState, MFBoundary)) == CMfailed) ||
 			    ((_MDOutResInflowID             = MFVarGetID (MDVarReservoir_Inflow,             "m3/s",   MFOutput, MFState, MFBoundary)) == CMfailed) ||
