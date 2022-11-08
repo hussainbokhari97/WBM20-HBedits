@@ -391,15 +391,15 @@ int MDIrrigation_GrossDemandDef () {
 				return (CMfailed);
 			}
 			for (cropID = 0; cropID < _MDNumberOfIrrCrops; ++cropID) {
-				sprintf (cropFractionName,  "CropFraction_%s",     _MDirrigCropStruct [cropID].cropName); // Input Fraction of crop type per cell
-				sprintf (cropSMoistName,    "CropSoilMoist_%s",    _MDirrigCropStruct [cropID].cropName); // Output Soil Moisture
-				sprintf (cropActSMoistName, "CropActSoilMoist_%s", _MDirrigCropStruct [cropID].cropName); // Output Active Soil Moisture
+				snprintf (cropFractionName,  sizeof(cropFractionName),  "CropFraction_%s",     _MDirrigCropStruct [cropID].cropName); // Input Fraction of crop type per cell
+				snprintf (cropSMoistName,    sizeof(cropSMoistName),    "CropSoilMoist_%s",    _MDirrigCropStruct [cropID].cropName); // Output Soil Moisture
+				snprintf (cropActSMoistName, sizeof(cropActSMoistName), "CropActSoilMoist_%s", _MDirrigCropStruct [cropID].cropName); // Output Active Soil Moisture
 			    if (((_MDInCropFractionIDs   [cropID] = MFVarGetID (cropFractionName,  MFNoUnit, MFInput,  MFState, MFBoundary)) == CMfailed) ||
 			        ((_MDOutCropSMoistIDs    [cropID] = MFVarGetID (cropSMoistName,    "mm",     MFOutput, MFState, MFInitial))  == CMfailed) ||
 			        ((_MDOutCropActSMoistIDs [cropID] = MFVarGetID (cropActSMoistName, "mm",     MFOutput, MFState, MFInitial))  == CMfailed)) return (CMfailed);
 			}
-            sprintf (cropSMoistName,    "CropSoilMoist_%s",    "Bare"); // Output Soil Moisture
-            sprintf (cropActSMoistName, "CropActSoilMoist_%s", "Bare"); // Output Active Soil Moisture
+            snprintf (cropSMoistName,    sizeof(cropSMoistName),    "CropSoilMoist_%s",    "Bare"); // Output Soil Moisture
+            snprintf (cropActSMoistName, sizeof(cropActSMoistName), "CropActSoilMoist_%s", "Bare"); // Output Active Soil Moisture
             if (((_MDOutCropSMoistIDs    [cropID] = MFVarGetID (cropSMoistName,    "mm",     MFOutput, MFState, MFInitial))  == CMfailed) ||
                 ((_MDOutCropActSMoistIDs [cropID] = MFVarGetID (cropActSMoistName, "mm",     MFOutput, MFState, MFInitial))  == CMfailed)) return (CMfailed);
 			if (MFModelAddFunction (_MDIrrGrossDemand) == CMfailed) return (CMfailed);
