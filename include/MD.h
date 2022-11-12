@@ -354,7 +354,8 @@ extern "C" {
 #define MDVarWTemp_HeatFlux                     "RiverHeatFlux"
 #define MDVarWTemp_HeatFluxNoEquil              "RiverHeatFluxNoEquil"
 #define MDVarWTemp_River                        "RiverTemperature"
-#define MDVarWTemp_RiverNoEquil                 "RiverTemperatureNoEquil"
+#define MDVarWTemp_RiverBottom                  "RiverTemperatureBottom"
+#define MDVarWTemp_RiverTop                     "RiverTemperatureTop"
 
 // Varying Parameters
 #define MDVarParam_Albedo                       "Albedo"
@@ -500,10 +501,13 @@ int MDRouting_RiverWidthDef ();
 
 int MDReservoir_OperationDef ();
 int MDReservoir_ReleaseDef ();
+int MDReservoir_ReleaseBottomDef ();
+int MDReservoir_ReleaseExtractableDef ();
+int MDReservoir_ReleaseSpillwayDef ();
+int MDReservoir_StorageDef ();
 int MDReservoir_TargetLowFlowDef ();
 int MDReservoir_TargetHighFlowDef ();
-int MDReservoir_ExtractableReleaseDef ();
-int MDReservoir_UptakeDef    ();
+int MDReservoir_UptakeDef ();
 
 int MDSediment_BQARTpreprocessDef ();
 int MDSediment_BedloadFluxDef ();
@@ -518,6 +522,8 @@ int MDSediment_WaterDensityDef ();
 int MDWTemp_GrdWaterDef ();
 int MDWTemp_RunoffDef ();
 int MDWTemp_RiverDef ();
+int MDWTemp_RiverTopDef ();
+int MDWTemp_RiverBottomDef ();
 int MDWTemp_ThermalInputsDef ();
 int MDWTemp_SurfRunoffDef ();
 

@@ -120,7 +120,7 @@ int MDRouting_DischargeUptakeDef () {
 					_MDRiverUptakeFraction = sscanf (optStr,"%f",&par) == 1 ? par : _MDRiverUptakeFraction;
 				}
 				if (((_MDOutIrrigation_UptakeRiverID        = MDIrrigation_UptakeRiverDef ())       == CMfailed) ||
-					((_MDInIrrigation_ExtractableReleaseID  = MDReservoir_ExtractableReleaseDef ()) == CMfailed) ||
+					((_MDInIrrigation_ExtractableReleaseID  = MDReservoir_ReleaseExtractableDef ()) == CMfailed) ||
 					((_MDInIrrigation_UptakeExternalID      = MFVarGetID (MDVarIrrigation_UptakeExternal,      "mm",   MFInput,  MFFlux,   MFBoundary)) == CMfailed) ||
                     ((_MDOutIrrigation_UptakeExcessID       = MFVarGetID (MDVarIrrigation_UptakeExcess,        "mm",   MFOutput, MFFlux,   MFBoundary)) == CMfailed))
 					return (CMfailed);
