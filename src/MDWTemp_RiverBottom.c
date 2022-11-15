@@ -33,10 +33,10 @@ static void _MDWTempRiverBottom (int itemID) {
 // Model
     float dt = MFModelGet_dt (); // Model time step in seconds
 
-    if (riverTempTop > 4.0)
-        riverTempBottom = storage > 0.0 ? (storage * 0.1 * 1e9 / dt * 4.0 + discharge * riverTempTop) / (0.1 * 1e9 / dt + discharge) : riverTempTop;
+/*    if ((storage > 0.0) && (riverTempTop > 4.0))
+        riverTempBottom = (storage * 0.1 * 1e9 / dt * 4.0 + discharge * riverTempTop) / (storage * 0.1 * 1e9 / dt + discharge);
     else
-        riverTempBottom = riverTempTop;
+*/        riverTempBottom = riverTempTop;
     MFVarSetFloat(_MDOutWTemp_RiverBottomID, itemID, riverTempBottom);
 }
 
