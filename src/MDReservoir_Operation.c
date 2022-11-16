@@ -191,7 +191,7 @@ static void _MDReservoirSNL (int itemID) {
 		resStorage = prevResStorage + (discharge - resRelease) * dt / 1e9;
 		if (resStorage > resCapacity) {
 			resReleaseSpillway = (resStorage - resCapacity) * 1e9 / dt;
-			resReleasebottom = resRelease - resReleaseSpillway;
+			resReleasebottom   = resRelease - resReleaseSpillway;
 			resStorage  = resCapacity; // This guarantees that the reservoir storage cannot exceed the reservoir capacity
 		} else if (resStorage < 0.03 * resCapacity) { // ARIEL EDITS (fraction of rescapacity) from 0.1 to 0.03
 			resRelease  = (prevResStorage - 0.03 * resCapacity) * 1e9 / dt + discharge;
