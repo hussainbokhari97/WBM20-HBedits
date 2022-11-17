@@ -122,12 +122,11 @@ static void _MDReservoirSNL (int itemID) {
 	float alpha;                // monthly constant per dam 
 	float releaseAdj;           // monthly constant per dam 
 	// Output
-	float resStorage    = 0.0;  // Reservoir storage [km3]
-	float resStorageChg = 0.0;  // Reservoir storage change [km3/dt]
-	float resRelease    = 0.0;  // Reservoir release [m3/s] 
+	float resStorage;           // Reservoir storage [km3]
+	float resStorageChg;        // Reservoir storage change [km3/dt]
+	float resReleaseBottom;     // Reservoir release [m3/s] 
 	float resReleaseExtract;    // Reservoir extractable release [m3/s]
-	float releaseTarget = 0.0;  // Target reservoir release [m3/s]
-	float resReleasebottom;
+	float resReleaseTarget;     // Target reservoir release [m3/s]
 	float resReleaseSpillway;   // gets calculated further down, otherwise 0
 	// Local
 	float resInflow;            // Reservoir inflow [m3/s] 
@@ -137,9 +136,9 @@ static void _MDReservoirSNL (int itemID) {
 	float initial_krls;  
 	float waterDemandMeanMonthly;
 
+	resReleaseTarget   =
 	resReleaseSpillway = 0.0;
-	resReleasebottom   =  // equals total release, unless there is Spill
-	resRelease         =
+	resReleaseBottom   =
 	resInflow          =
 	discharge          = MFVarGetFloat (_MDInRouting_DischargeID,      itemID, 0.0);
 	resReleaseExtract  = MFVarGetFloat (_MDOutResReleaseExtractableID, itemID, 0.0);
@@ -171,7 +170,7 @@ static void _MDReservoirSNL (int itemID) {
 		waterDemandMeanDaily   = demandFactor * natFlowMeanDaily;
 		waterDemandMeanMonthly = demandFactor * natFlowMeanMonthly;                               
 		// rough interpretation/goal for a release target    
-		releaseTarget = natFlowMeanDaily + waterDemandMeanDaily - waterDemandMeanMonthly; 
+		resReleaseTarget = natFlowMeanDaily + waterDemandMeanDaily - waterDemandMeanMonthly; 
 		// krls before adjustment
 		initial_krls = (resInitStorage / (alpha * resCapacity * storageRatio));
 		// condition when storage is above 75% of normal or max
@@ -184,33 +183,31 @@ static void _MDReservoirSNL (int itemID) {
 		if ((resInflow >= natFlowMeanMonthly) && (resInitStorage < res_cap_25)) krls = (1 + incMult * increment3) * initial_krls;
 		if ((resInflow <  natFlowMeanMonthly) && (resInitStorage < res_cap_25)) krls = (1 + increment3) * initial_krls;
 		// adjustment to consider inflow on given day (should help with extremes)
-		resRelease = 0.5 * ((krls * releaseTarget) + (releaseAdj * resInflow));
+		resReleaseBottom = 0.5 * ((krls * resReleaseTarget) + (releaseAdj * resInflow));
 		// assume 5% envrionemntal flow minimum, and makes sure there is no negative flow.
-		if (resRelease < 0.05 * resInflow) resRelease = resInflow * 0.05;
+		if (resReleaseBottom < 0.05 * resInflow) resReleaseBottom = resInflow * 0.05;
 	// MAIN RULES finish
-		resStorage = prevResStorage + (discharge - resRelease) * dt / 1e9;
+		resStorage = prevResStorage + (discharge - resReleaseBottom) * dt / 1e9;
 		if (resStorage > resCapacity) {
 			resReleaseSpillway = (resStorage - resCapacity) * 1e9 / dt;
-			resReleasebottom   = resRelease - resReleaseSpillway;
 			resStorage  = resCapacity; // This guarantees that the reservoir storage cannot exceed the reservoir capacity
 		} else if (resStorage < 0.03 * resCapacity) { // ARIEL EDITS (fraction of rescapacity) from 0.1 to 0.03
-			resRelease  = (prevResStorage - 0.03 * resCapacity) * 1e9 / dt + discharge;
+			resReleaseBottom  = (prevResStorage > 0.03 * resCapacity ? prevResStorage - 0.03 * resCapacity > 0.0 : 0.0) * 1e9 / dt + discharge;
 			resStorage  = 0.03 * resCapacity;
-			resReleasebottom = resRelease;
 		}
 		resStorageChg = resStorage - prevResStorage;
-		resReleaseExtract = resRelease > discharge ? resRelease - discharge : 0.0;
+		resReleaseExtract = resReleaseBottom + resReleaseSpillway > discharge ? resReleaseBottom + resReleaseSpillway - discharge : 0.0;
 	}
 	/// BALAZS TODO -> MODEL SHOULD OUTPUT Spill, BOTTOM RELEASE, AND TOTAL RELEASE. 
 	MFVarSetFloat (_MDOutResStorageInitialID,     itemID, resInitStorage);
 	MFVarSetFloat (_MDOutResStorageID,            itemID, resStorage); 
 	MFVarSetFloat (_MDOutResStorageChgID,         itemID, resStorageChg); 
 	MFVarSetFloat (_MDOutResInflowID,             itemID, resInflow);
-	MFVarSetFloat (_MDOutResReleaseID,            itemID, resRelease);
+	MFVarSetFloat (_MDOutResReleaseID,            itemID, resReleaseBottom + resReleaseSpillway);
+	MFVarSetFloat (_MDOutResReleaseBottomID,      itemID, resReleaseBottom);
 	MFVarSetFloat (_MDOutResReleaseExtractableID, itemID, resReleaseExtract);
-	MFVarSetFloat (_MDOutResReleaseTargetID,      itemID, releaseTarget); // for Debuging only
-	MFVarSetFloat (_MDOutResReleaseBottomID,      itemID, resReleasebottom);
 	MFVarSetFloat (_MDOutResReleaseSpillwayID,    itemID, resReleaseSpillway);
+	MFVarSetFloat (_MDOutResReleaseTargetID,      itemID, resReleaseTarget); // for Debuging only
 }
 
 enum { MDhelp, MDwisser, MDsnl };

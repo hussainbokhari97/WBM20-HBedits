@@ -42,7 +42,7 @@ static void _MDWTempRiver (int itemID) {
 // Routed
     float heatFlux        = MFVarGetFloat (_MDOutWTemp_HeatFluxID,        itemID, 0.0); // Heat flux degC * m3/s
 // Output
-    float equilTemp;        // Equilibrium temperatur degC
+    float equilTemp;      // Equilibrium temperatur degC
     float equilTempDiff;  // Equilibrium temperature change in degC
     float wTempRiver;     // River temprature in degC
 // Model
@@ -56,7 +56,7 @@ static void _MDWTempRiver (int itemID) {
         float wTempRiverBottom         = MFVarGetFloat (_MDInWTemp_RiverBottomID,         itemID, 0.0);
 
         if (reservoirReleaseBottom + reservoirReleaseSpillway > 0.0)
-            wTempRiver = wTempRiverBottom * reservoirReleaseBottom + wTempRiverTop * reservoirReleaseSpillway
+            wTempRiver = (wTempRiverBottom * reservoirReleaseBottom + wTempRiverTop * reservoirReleaseSpillway)
                        / (reservoirReleaseBottom + reservoirReleaseSpillway);
         else wTempRiver = wTempRiverTop;
         equilTemp = wTempRiver;
