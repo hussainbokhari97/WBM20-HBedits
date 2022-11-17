@@ -49,7 +49,7 @@ static void _MDWTempRiver (int itemID) {
     float dt              = MFModelGet_dt ();          // Model time step in seconds
 // Local
 
-    if (storage > 0.0001) {
+    if (storage > 0.0001) { // Stratified reservoir release
     // Input
         float reservoirReleaseBottom   = MFVarGetFloat (_MDInReservoir_ReleaseBottomID,   itemID, 0.0);
         float reservoirReleaseSpillway = MFVarGetFloat (_MDInReservoir_ReleaseSpillwayID, itemID, 0.0);

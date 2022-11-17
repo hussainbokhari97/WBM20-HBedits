@@ -54,10 +54,9 @@ static void _MDReservoirWisser (int itemID) {
 	float resStorage    = 0.0;   // Reservoir storage [km3]
 	float resStorageChg = 0.0;   // Reservoir storage change [km3/dt]
 	float resInflow;             // Reservoir release [m3/s] 
-	float resRelease;            // Reservoir release [m3/s] 
+	float resReleaseBottom;      // Reservoir release at the bottom [m3/s]
 	float resReleaseExtract;     // Reservoir extractable release [m3/s]
 	float resReleaseSpillway;    // Reservoir release via spillway [m3/s]
-	float resReleaseBottom;      // Reservoir release at the bottom [m3/s]
 // local
 	float prevResStorage;        // Reservoir storage from the previous time step [km3]
 	float dt = MFModelGet_dt (); // Time step length [s]
@@ -65,8 +64,6 @@ static void _MDReservoirWisser (int itemID) {
 	float drySeasonPct = 0.60; // RJS 071511
 	float wetSeasonPct = 0.16; // RJS 071511
 
-	resRelease    =	
-	resInflow     =
 	discharge     = MFVarGetFloat (_MDInRouting_DischargeID,      itemID, 0.0);
 	resReleaseExtract = MFVarGetFloat (_MDOutResReleaseExtractableID, itemID, 0.0);
 
@@ -80,28 +77,27 @@ static void _MDReservoirWisser (int itemID) {
 			prevResStorage = 0.0;
 		}
 		resReleaseSpillway = 0.0;
-		resRelease = resReleaseBottom = discharge > meanDischarge ? wetSeasonPct * discharge : drySeasonPct * discharge  + (meanDischarge - discharge);
+		resReleaseBottom = resReleaseBottom = discharge > meanDischarge ? wetSeasonPct * discharge : drySeasonPct * discharge  + (meanDischarge - discharge);
 
- 		resStorage = prevResStorage + (discharge - resUptake - resRelease) * dt / 1e9;
+ 		resStorage = prevResStorage + (discharge - resUptake - resReleaseBottom) * dt / 1e9;
 		if (resStorage > resCapacity) {
 			resReleaseSpillway = (resStorage - resCapacity) * 1e9 / dt;
-			resRelease        += resReleaseSpillway;
 			resStorage         = resCapacity;
 		}
 		else if (resStorage < 0.0) {
-			resRelease  = resReleaseBottom = prevResStorage * 1e9 / dt + discharge;
+			resReleaseBottom  = prevResStorage * 1e9 / dt + discharge;
 			resStorage  = 0.0;
 		}
 		resStorageChg  = resStorage - prevResStorage;
-		resReleaseExtract = resRelease > discharge ? resRelease - discharge : 0.0;
+		resReleaseExtract = resReleaseBottom + resReleaseSpillway > discharge ? resReleaseBottom + resReleaseSpillway - discharge : 0.0;
 	}
 	MFVarSetFloat (_MDOutResStorageID,            itemID, resStorage);
 	MFVarSetFloat (_MDOutResStorageChgID,         itemID, resStorageChg);
 	MFVarSetFloat (_MDOutResInflowID,             itemID, resInflow);
-	MFVarSetFloat (_MDOutResReleaseID,            itemID, resRelease);
+	MFVarSetFloat (_MDOutResReleaseID,            itemID, resReleaseBottom + resReleaseSpillway);
 	MFVarSetFloat (_MDOutResReleaseExtractableID, itemID, resReleaseExtract);
-	MFVarSetFloat (_MDOutResReleaseBottomID,      itemID, resRelease);
-	MFVarSetFloat (_MDOutResReleaseSpillwayID,    itemID, resRelease);
+	MFVarSetFloat (_MDOutResReleaseBottomID,      itemID, resReleaseBottom);
+	MFVarSetFloat (_MDOutResReleaseSpillwayID,    itemID, resReleaseSpillway);
 }
 
 static void _MDReservoirSNL (int itemID) {
