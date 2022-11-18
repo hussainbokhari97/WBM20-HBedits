@@ -106,17 +106,7 @@ static void _MDReservoirSNL (int itemID) {
 	float natFlowMeanMonthly;   // Naturalized long-term mean monthly inflow [m3/s]
 	float natFlowMeanDaily;     // Naturalized long-term mean daily inflow [m3/s]
 	float resCapacity;          // Reservoir capacity [km3]
-	float resInitStorage;       // Reference storage dictatink actual release ratio [km3]
-	float storageRatio;         // constant per dam hussain check   
-	float storageRatio25;       // constant per dam hussain check
-	float storageRatio75;       // constant per dam hussain check
-	float demandFactor;         // monthly constant per dam
-	float incMult;              // monthly constant per dam 
-	float increment1;           // monthly constant per dam 
-	float increment2;           // monthly constant per dam 
-	float increment3;           // monthly constant per dam 
-	float alpha;                // monthly constant per dam 
-	float releaseAdj;           // monthly constant per dam 
+	float prevResStorage;       // Reference storage dictatink actual release ratio [km3]
 	// Output
 	float resStorage;           // Reservoir storage [km3]
 	float resStorageChg;        // Reservoir storage change [km3/dt]
@@ -127,7 +117,6 @@ static void _MDReservoirSNL (int itemID) {
 	// Local
 	float resInflow;            // Reservoir inflow [m3/s] 
 	float waterDemandMeanDaily;
-	float prevResStorage;       // Previous reservoir storage [km3]
 	float krls;                 // release ratio
 	float initial_krls;  
 	float waterDemandMeanMonthly;
@@ -140,16 +129,26 @@ static void _MDReservoirSNL (int itemID) {
 	resReleaseExtract  = MFVarGetFloat (_MDOutResReleaseExtractableID, itemID, 0.0);
 	resCapacity        = MFVarGetFloat (_MDInResCapacityID,            itemID, 0.0);
 	if (resCapacity > 0.0001) { // TODO Arbitrary limit!!!!
-		float res_cap_25;
-		float res_cap_75;
+		// Inputs
+		float storageRatio;         // constant per dam hussain check   
+		float demandFactor;         // monthly constant per dam
+		float incMult;              // monthly constant per dam 
+		float increment1;           // monthly constant per dam 
+		float increment2;           // monthly constant per dam 
+		float increment3;           // monthly constant per dam 
+		float alpha;                // monthly constant per dam 
+		float releaseAdj;           // monthly constant per dam 
+		float resCapacity25;
+		float resCapacity75;
+		// Local
+		float deadStorage = 0.3 * resCapacity;
 		float dt = MFModelGet_dt ();  // Time step length [s]
 			prevResStorage = MFVarGetFloat (_MDOutResStorageID,           itemID, 0.0);
 		natFlowMeanMonthly = MFVarGetFloat (_MDInResNatFlowMeanMonthlyID, itemID, 0.0);
 		  natFlowMeanDaily = MFVarGetFloat (_MDInResNatFlowMeanDailyID,   itemID, 0.0);
-    	    resInitStorage = MFVarGetFloat (_MDOutResStorageInitialID,    itemID, 0.0);
-	          storageRatio = MFVarGetFloat (_MDInResStorageRatioID,       itemID, 0.0);
-    	    storageRatio25 = MFVarGetFloat (_MDInResStorageRatio25ID,     itemID, 0.0);
-    	    storageRatio75 = MFVarGetFloat (_MDInResStorageRatio75ID,     itemID, 0.0);
+ 	          storageRatio = MFVarGetFloat (_MDInResStorageRatioID,       itemID, 0.0);
+    	     resCapacity25 = MFVarGetFloat (_MDInResStorageRatio25ID,     itemID, 0.0) * resCapacity;
+    	     resCapacity75 = MFVarGetFloat (_MDInResStorageRatio75ID,     itemID, 0.0) * resCapacity;
     	      demandFactor = MFVarGetFloat (_MDInResDemandFactorID,       itemID, 0.0);
     	           incMult = MFVarGetFloat (_MDInResIncMultID,            itemID, 0.0);
     	        increment1 = MFVarGetFloat (_MDInResIncrement1ID,         itemID, 0.0);
@@ -157,10 +156,8 @@ static void _MDReservoirSNL (int itemID) {
     	        increment3 = MFVarGetFloat (_MDInResIncrement3ID,         itemID, 0.0);
     	             alpha = MFVarGetFloat (_MDInResAlphaID,              itemID, 0.0);
 			    releaseAdj = MFVarGetFloat (_MDInResReleaseAdjID,         itemID, 0.0);
-		res_cap_25 = resCapacity * storageRatio25;
-		res_cap_75 = resCapacity * storageRatio75;
 		// ARIEL EDITED THIS TO INCULDE "{}" -- not sure it's needed, so please remove if not.
-		if (resInitStorage > resCapacity) {resInitStorage = resCapacity; } // This could only happen before the model updates the initial storage
+		if (prevResStorage <= 0.0) {prevResStorage = resCapacity; } // This could only happen before the model updates the initial storage
         
 	// MAIN RULES begin ---->
 		waterDemandMeanDaily   = demandFactor * natFlowMeanDaily;
@@ -168,34 +165,44 @@ static void _MDReservoirSNL (int itemID) {
 		// rough interpretation/goal for a release target    
 		resReleaseTarget = natFlowMeanDaily + waterDemandMeanDaily - waterDemandMeanMonthly; 
 		// krls before adjustment
-		initial_krls = (resInitStorage / (alpha * resCapacity * storageRatio));
+		initial_krls = (prevResStorage / (alpha * resCapacity * storageRatio));
 		// condition when storage is above 75% of normal or max
-		if ((resInflow >= natFlowMeanMonthly) && (resInitStorage >= res_cap_75)) krls = (1 + incMult * increment1) * initial_krls;
-		if ((resInflow <  natFlowMeanMonthly) && (resInitStorage >= res_cap_75)) krls = (1 + increment1) * initial_krls;
+		if ((resInflow >= natFlowMeanMonthly) && (prevResStorage >= resCapacity75)) krls = (1 + incMult * increment1) * initial_krls;
+		if ((resInflow <  natFlowMeanMonthly) && (prevResStorage >= resCapacity75)) krls = (1 + increment1) * initial_krls;
 		// condition when storage is 25-75% of normal or max 
-		if ((resInflow >= natFlowMeanMonthly) && (res_cap_75 > resInitStorage >= res_cap_25)) krls = (1 + incMult * increment2) * initial_krls;
-		if ((resInflow <  natFlowMeanMonthly) && (res_cap_75 > resInitStorage >= res_cap_25)) krls = (1 + increment2) * initial_krls;
+		if ((resInflow >= natFlowMeanMonthly) && (resCapacity75 > prevResStorage >= resCapacity25)) krls = (1 + incMult * increment2) * initial_krls;
+		if ((resInflow <  natFlowMeanMonthly) && (resCapacity75 > prevResStorage >= resCapacity25)) krls = (1 + increment2) * initial_krls;
 		// condition when storage is below 25% of normal or max 
-		if ((resInflow >= natFlowMeanMonthly) && (resInitStorage < res_cap_25)) krls = (1 + incMult * increment3) * initial_krls;
-		if ((resInflow <  natFlowMeanMonthly) && (resInitStorage < res_cap_25)) krls = (1 + increment3) * initial_krls;
+		if ((resInflow >= natFlowMeanMonthly) && (prevResStorage < resCapacity25)) krls = (1 + incMult * increment3) * initial_krls;
+		if ((resInflow <  natFlowMeanMonthly) && (prevResStorage < resCapacity25)) krls = (1 + increment3) * initial_krls;
 		// adjustment to consider inflow on given day (should help with extremes)
 		resReleaseBottom = 0.5 * ((krls * resReleaseTarget) + (releaseAdj * resInflow));
 		// assume 5% envrionemntal flow minimum, and makes sure there is no negative flow.
 		if (resReleaseBottom < 0.05 * resInflow) resReleaseBottom = resInflow * 0.05;
 	// MAIN RULES finish
 		resStorage = prevResStorage + (discharge - resReleaseBottom) * dt / 1e9;
-		if (resStorage > resCapacity) {
+		if (resStorage > resCapacity) {                 // The reservoir over flows FBM
 			resReleaseSpillway = (resStorage - resCapacity) * 1e9 / dt;
-			resStorage  = resCapacity; // This guarantees that the reservoir storage cannot exceed the reservoir capacity
-		} else if (resStorage < 0.03 * resCapacity) { // ARIEL EDITS (fraction of rescapacity) from 0.1 to 0.03
-			resReleaseBottom  = (prevResStorage > 0.03 * resCapacity ? prevResStorage - 0.03 * resCapacity > 0.0 : 0.0) * 1e9 / dt + discharge;
-			resStorage  = 0.03 * resCapacity;
+			resStorage  = resCapacity;                  // This guarantees that the reservoir storage cannot exceed the reservoir capacity
+		} else if (resStorage < deadStorage) {          // Ther reservoir empties out FBM
+			if (prevResStorage > deadStorage) {         // Normally, the storage should stop at dead storage FBM
+				resReleaseBottom  = (prevResStorage - deadStorage) * 1e9 / dt + discharge;
+				resStorage        = deadStorage;	
+			} else {                                    // The reservoir is bellow dead storage during spinup FBM
+				if (discharge > (deadStorage - prevResStorage) * 1e9 / dt) { // The discharge is more than missing volume to reach dead storage FBM
+					resReleaseBottom = discharge - (deadStorage - prevResStorage) * 1e9 / dt;
+					resStorage       = deadStorage;
+				} else {                                // The discharge is less than the missing volume to reach dead storage FBM
+					resReleaseBottom = 0.0;
+					resStorage       = prevResStorage + discharge * dt / 1e9;
+				}
+			}
 		}
 		resStorageChg = resStorage - prevResStorage;
 		resReleaseExtract = resReleaseBottom + resReleaseSpillway > discharge ? resReleaseBottom + resReleaseSpillway - discharge : 0.0;
 	}
 	/// BALAZS TODO -> MODEL SHOULD OUTPUT Spill, BOTTOM RELEASE, AND TOTAL RELEASE. 
-	MFVarSetFloat (_MDOutResStorageInitialID,     itemID, resInitStorage);
+	MFVarSetFloat (_MDOutResStorageInitialID,     itemID, prevResStorage);
 	MFVarSetFloat (_MDOutResStorageID,            itemID, resStorage); 
 	MFVarSetFloat (_MDOutResStorageChgID,         itemID, resStorageChg); 
 	MFVarSetFloat (_MDOutResInflowID,             itemID, resInflow);
