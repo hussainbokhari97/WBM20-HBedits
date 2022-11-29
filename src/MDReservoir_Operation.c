@@ -128,7 +128,6 @@ static void _MDReservoirSNL (int itemID) {
 	resCapacity        = MFVarGetFloat (_MDInResCapacityID,            itemID, 0.0);
 	if (resCapacity > 0.0001) { // TODO Arbitrary limit!!!!
 		// Inputs
-		float storageRatio;         // constant per dam hussain check   
 		float demandFactor;         // monthly constant per dam
 		float incMult;              // monthly constant per dam 
 		float increment1;           // monthly constant per dam 
@@ -136,10 +135,11 @@ static void _MDReservoirSNL (int itemID) {
 		float increment3;           // monthly constant per dam 
 		float alpha;                // monthly constant per dam 
 		float releaseAdj;           // monthly constant per dam 
+		float storageRatio;         // ratio of the normal vs maximum storage (from NID)
 		float resCapacity25;
 		float resCapacity75;
 		// Local
-		float deadStorage = 0.3 * resCapacity;
+		float deadStorage = 0.03 * resCapacity;
 		float dt = MFModelGet_dt ();  // Time step length [s]
 			prevResStorage = MFVarGetFloat (_MDOutResStorageID,           itemID, 0.0);
 		natFlowMeanMonthly = MFVarGetFloat (_MDInResNatFlowMeanMonthlyID, itemID, 0.0);
@@ -163,7 +163,7 @@ static void _MDReservoirSNL (int itemID) {
 		// rough interpretation/goal for a release target    
 		resReleaseTarget = natFlowMeanDaily + waterDemandMeanDaily - waterDemandMeanMonthly; 
 		// krls before adjustment
-		initial_krls = (prevResStorage / (alpha * resCapacity * storageRatio));
+		initial_krls = (prevResStorage / (alpha * storageRatio * resCapacity));
 		// condition when storage is above 75% of normal or max
 		if ((resInflow >= natFlowMeanMonthly) && (prevResStorage >= resCapacity75)) krls = (1 + incMult * increment1) * initial_krls;
 		if ((resInflow <  natFlowMeanMonthly) && (prevResStorage >= resCapacity75)) krls = (1 + increment1) * initial_krls;
