@@ -524,6 +524,7 @@ int MDWTemp_RunoffDef ();
 int MDWTemp_RiverDef ();
 int MDWTemp_RiverTopDef ();
 int MDWTemp_RiverBottomDef ();
+int MDWTemp_ReservoirBottomDef ();
 int MDWTemp_ThermalInputsDef ();
 int MDWTemp_SurfRunoffDef ();
 
