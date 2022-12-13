@@ -1,7 +1,10 @@
 cmake_minimum_required(VERSION 3.10)
 project(WBM20)
 
-set(CMAKE_C_FLAGS   "${CMAKE_C_FLAGS} -g")
+enable_language(Fortran)
+set(CMAKE_Fortran_SOURCE_FILE_EXTENSIONS f90)
+set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -g")
+set(CMAKE_C_FLAGS   "${CMAKE_C_FLAGS}   -g")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -g")
 
 if(${GHAASDIR})
@@ -12,7 +15,7 @@ else(${GHAASDIR})
     link_directories(/usr/local/share/ghaas/lib)
 endif(${GHAASDIR})
 
-FILE(GLOB sources src/*.c)
+FILE(GLOB sources src/*.c src/*.f90)
 add_executable(WBM20 ${sources})
 
 if(${CMAKE_HOST_APPLE})
