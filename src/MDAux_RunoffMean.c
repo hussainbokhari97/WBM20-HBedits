@@ -19,11 +19,11 @@ static int _MDInAux_StepCounterID = MFUnset;
 static int _MDOutAux_RunoffMeanID     = MFUnset;
 
 static void _MDAux_MeanRunoff (int itemID) {
-	int   nSteps     = MFVarGetInt   (_MDInAux_StepCounterID, itemID, 0);
+	int   tStep      = MFVarGetInt   (_MDInAux_StepCounterID, itemID, 0);
 	float runoff     = MFVarGetFloat (_MDInCore_RunoffID,     itemID, 0.0);
 	float runoffMean = MFVarGetFloat (_MDOutAux_RunoffMeanID, itemID, 0.0);
 
-	runoffMean  = (float) (((double) runoffMean * (double) nSteps + runoff) / ((double) (nSteps + 1)));
+	runoffMean  = (float) (((double) runoffMean * (double) tStep + runoff) / ((double) (tStep + 1)));
 	MFVarSetFloat (_MDOutAux_RunoffMeanID, itemID, runoffMean);
 }
 

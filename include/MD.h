@@ -500,6 +500,7 @@ int MDRouting_RiverShapeExponentDef ();
 int MDRouting_RiverWidthDef ();
 
 int MDReservoir_OperationDef ();
+int MDReservoir_InflowDef ();
 int MDReservoir_ReleaseDef ();
 int MDReservoir_ReleaseBottomDef ();
 int MDReservoir_ReleaseExtractableDef ();

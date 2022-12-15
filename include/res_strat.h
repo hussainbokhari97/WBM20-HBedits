@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #define MAX_DEPTH 250
 #define NLAYER_MAX 30
+
 struct reservoir_geometry
 {
     double depth;            // Reservoir mean depth, taken from in GRanD database, (m)
@@ -24,58 +25,6 @@ struct reservoir_geometry
     int n_depth;
     int gm_j;
 };
-
-struct reservoir_geometry read_geom(float lat, float lon)
-{
-    struct reservoir_geometry resgeo;
-    char fname[100];
-    FILE *fptr;
-    int gm_j;
-    float depth;
-    float d_ht;
-    float M_L;
-    float M_W;
-    float V_err;
-    float Ar_err;
-    float C_v;
-    float C_a;
-    float V_df;
-    float A_df;
-    float forc[10 * 365 * 24][6];
-    int n_depth;
-    int i = 0;
-    int j = 0;
-    fptr = fopen("data/inputs/geometry/28.4375_-98.1875.txt", "r");
-    if (NULL == fptr)
-    {
-        printf("File Cannot be opened\n");
-    }
-    else
-    {
-        printf("OPENED RES GEOMETRY FILE\n");
-    }
-
-    fscanf(fptr, "%d %f %f %f %f %f %f %f %f %f %f %d",
-           &gm_j, &depth, &d_ht, &M_L, &M_W,
-           &V_err, &Ar_err, &C_v, &C_a, &V_df,
-           &A_df, &n_depth);
-    fclose(fptr);
-
-    resgeo.gm_j = gm_j;
-    resgeo.depth = depth;
-    resgeo.d_ht = d_ht;
-    resgeo.M_L = M_L;
-    resgeo.M_W = M_W;
-    resgeo.V_err = V_err;
-    resgeo.Ar_err = Ar_err;
-    resgeo.C_v = C_v;
-    resgeo.C_a = C_a;
-    resgeo.V_df = V_df;
-    resgeo.A_df = A_df;
-    resgeo.n_depth = n_depth;
-
-    return resgeo;
-}
 
 // Define subroutines from Fotran
 void rgeom(struct reservoir_geometry *rgeom);

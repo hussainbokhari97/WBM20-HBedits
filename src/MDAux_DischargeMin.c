@@ -19,9 +19,9 @@ static int _MDInAux_StepCounterID = MFUnset;
 static int _MDOutAux_DischargeMinID = MFUnset;
 
 static void _MDAux_DischargeMin (int itemID) {
-	int   nSteps     = MFVarGetInt   (_MDInAux_StepCounterID,       itemID, 0);
+	int   tStep      = MFVarGetInt   (_MDInAux_StepCounterID,       itemID, 0);
 	float discharge  = MFVarGetFloat (_MDOutAux_DischargeMinID, itemID, 0.0);
-	float accumDisch = nSteps > 0 ? MFVarGetFloat (_MDInAux_AccumRunoffID, itemID, 0.0) : discharge;
+	float accumDisch = tStep > 0 ? MFVarGetFloat (_MDInAux_AccumRunoffID, itemID, 0.0) : discharge;
 
 	discharge  = discharge < accumDisch ? discharge : accumDisch;
 	MFVarSetFloat (_MDOutAux_DischargeMinID, itemID, discharge);

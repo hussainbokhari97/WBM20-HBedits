@@ -19,11 +19,11 @@ static int _MDInAux_AirTemperatureID      = MFUnset;
 static int _MDOutAux_AirTemperatureMeanID = MFUnset;
 
 static void _MDAux_AirTemperatureMean (int itemID) {
-	int   nSteps      = MFVarGetInt   (_MDInAux_StepCounterID,         itemID,   0);
+	int   tStep       = MFVarGetInt   (_MDInAux_StepCounterID,         itemID,   0);
 	float airTemp     = MFVarGetFloat (_MDInAux_AirTemperatureID,      itemID, 0.0);
 	float airTempMean = MFVarGetFloat (_MDOutAux_AirTemperatureMeanID, itemID, 0.0);
 
-	airTempMean = (float) (((double) airTempMean * (double) nSteps + airTemp) / ((double) (nSteps + 1)));
+	airTempMean = (float) (((double) airTempMean * (double) tStep + airTemp) / ((double) (tStep + 1)));
 	MFVarSetFloat (_MDOutAux_AirTemperatureMeanID, itemID, airTempMean);
 }
 

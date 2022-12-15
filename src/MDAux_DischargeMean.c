@@ -19,11 +19,11 @@ static int _MDInAux_AccumRunoffID    = MFUnset;
 static int _MDOutAux_DischargeMeanID = MFUnset;
 
 static void _MDAux_DischargeMean (int itemID) {
-	int   nSteps     = MFVarGetInt   (_MDInAux_StepCounterID,    itemID,   0);
+	int   tStep      = MFVarGetInt   (_MDInAux_StepCounterID,    itemID,   0);
 	float accumDisch = MFVarGetFloat (_MDInAux_AccumRunoffID,    itemID, 0.0);
 	float dischMean  = MFVarGetFloat (_MDOutAux_DischargeMeanID, itemID, 0.0);
 
-	dischMean  = (float) (((double) dischMean * (double) nSteps + accumDisch) / ((double) (nSteps + 1)));
+	dischMean  = (float) (((double) dischMean * (double) tStep + accumDisch) / ((double) (tStep + 1)));
 	MFVarSetFloat (_MDOutAux_DischargeMeanID, itemID, dischMean);
 }
 
