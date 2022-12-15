@@ -96,9 +96,12 @@ static void _MDWTempReservoirBottom (int itemID) {
         dV [layer] = MFVarGetFloat (_MDStateStrat_dV [layer], itemID, 0.0);
         vZt[layer] = MFVarGetFloat (_MDStateStrat_vZt[layer], itemID, 0.0);
     }
+    airTemp      += 273.15;
+    riverTempTop += 273.15;
     stratify(tStep + 1, &lme_error, &riverTempTop, &inflow, &release,
              &cosZen, &radAbsorption, &solarRad, &humidityRel, &airTemp, &windSpeed,
              &resGeom, (double **) &dZ, (double **) &tZ, (double **) &mZn, (double **) &aD, (double **) &dV, (double **) &vZt, &s_tin, &m_cal);
+    riverTempBottom -= 273.15;
     MFVarSetFloat(_MDOutWTemp_ReservoirBottomID, itemID, riverTempBottom);
     for (layer = 0; layer < NLAYER_MAX; ++layer) {
         MFVarSetFloat (_MDStateStrat_dZ [layer], itemID, dZ [layer]);
