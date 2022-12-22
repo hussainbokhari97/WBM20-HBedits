@@ -16,8 +16,8 @@ dominik.wisser@unh.edu
 static int _MDOutIrrigation_UptakeRiverID = MFUnset;
 
 int MDIrrigation_UptakeRiverDef () {
-	int optID = MFoff;
 	const char *optStr;
+	int optID = MFoff;
 
 	if (_MDOutIrrigation_UptakeRiverID != MFUnset) return (_MDOutIrrigation_UptakeRiverID);
 	if ((optStr = MFOptionGet (MDVarIrrigation_UptakeRiver)) != (char *) NULL) optID = CMoptLookup (MFswitchOptions, optStr, true);
