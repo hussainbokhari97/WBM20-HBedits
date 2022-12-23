@@ -23,32 +23,14 @@ static int _MDOutWTemp_RiverBottomID = MFUnset;
 
 #define MinTemp 1.0
 
-static void _MDWTempRiverBottom (int itemID) {
-// Input
-    float discharge       = MFVarGetFloat (_MDInRouting_DischargeID, itemID, 0.0); // Discharge in m3/s 
-    float storage         = _MDInReservoir_StorageID != MFUnset ?  MFVarGetFloat (_MDInReservoir_StorageID, itemID, 0.0) : 0.0;
-   	float riverTempTop    = MFVarGetFloat (_MDInWTemp_RiverTopID,    itemID, 0.0); // Runoff temperature degC
-// Output
-    float riverTempBottom; // River bottom temprature in degC
-// Model
-    float dt = MFModelGet_dt (); // Model time step in seconds
-
-/*    if ((storage > 0.0) && (riverTempTop > 4.0))
-        riverTempBottom = (storage * 0.1 * 1e9 / dt * 4.0 + discharge * riverTempTop) / (storage * 0.1 * 1e9 / dt + discharge);
-    else
-*/        riverTempBottom = riverTempTop;
-    MFVarSetFloat(_MDOutWTemp_RiverBottomID, itemID, riverTempBottom);
-}
-
 int MDWTemp_RiverBottomDef () {
 	if (_MDOutWTemp_RiverBottomID != MFUnset) return (_MDOutWTemp_RiverBottomID);
 
 	MFDefEntering ("River bottom temperature");
 	if (((_MDInRouting_DischargeID  = MDRouting_DischargeDef ()) == CMfailed) ||
-        ((_MDInReservoir_StorageID  = MDReservoir_StorageDef ()) == CMfailed) ||
         ((_MDInWTemp_RiverTopID     = MDWTemp_RiverTopDef ())    == CMfailed) ||
-        ((_MDOutWTemp_RiverBottomID = _MDInReservoir_StorageID == MFUnset ? _MDInWTemp_RiverTopID :
-                                      MDWTemp_ReservoirBottomDef ()) == CMfailed)) return (CMfailed);
-	   MFDefLeaving ("River bottom temperature");
-	   return (_MDOutWTemp_RiverBottomID);
+        ((_MDInReservoir_StorageID  = MDReservoir_StorageDef ()) == CMfailed) ||
+        ((_MDOutWTemp_RiverBottomID = _MDInReservoir_StorageID != MFUnset ? MDWTemp_ReservoirBottomDef () : _MDInWTemp_RiverTopID) == CMfailed)) return (CMfailed);
+	MFDefLeaving ("River bottom temperature");
+	return (_MDOutWTemp_RiverBottomID);
 }

@@ -102,7 +102,7 @@ static void _MDWTempReservoirBottom (int itemID) {
         stratify(tStep + 1, &lme_error, &riverTempTop, &inflow, &release,
                  &cosZen, &radAbsorption, &solarRad, &humidityRel, &airTemp, &windSpeed,
                  &resGeom, (double **) &dZ, (double **) &tZ, (double **) &mZn, (double **) &aD, (double **) &dV, (double **) &vZt, &s_tin, &m_cal);
-        riverTempBottom -= 273.15;
+        riverTempBottom = tZ[resGeom.n_depth - 1] + 273.15;
         MFVarSetFloat(_MDOutWTemp_ReservoirBottomID, itemID, riverTempBottom);
         for (layer = 0; layer < NLAYER_MAX; ++layer) {
             MFVarSetFloat (_MDStateStrat_dZ [layer], itemID, dZ [layer]);
@@ -126,17 +126,15 @@ static void _MDWTempReservoirBottom (int itemID) {
 }
 
 int MDWTemp_ReservoirBottomDef () {
+    int i, optID = MFoff;
 	const char *optStr;
-	int optID = MFoff;
-    int i;
-    char stateName [64];
 	if (_MDOutWTemp_ReservoirBottomID != MFUnset) return (_MDOutWTemp_ReservoirBottomID);
 
 	if ((optStr = MFOptionGet ("ReservoirStratification")) != (char *) NULL) optID = CMoptLookup (MFswitchOptions, optStr, true);
 	switch (optID) {
 		default:
-		case MFhelp: MFOptionMessage (MDVarIrrigation_UptakeRiver, optStr, MFswitchOptions); return CMfailed;
-		case MFoff: _MDOutWTemp_ReservoirBottomID = _MDInWTemp_RiverTopID; break;
+		case MFhelp: MFOptionMessage ("ReservoirStratification", optStr, MFswitchOptions); return CMfailed;
+		case MFoff: _MDOutWTemp_ReservoirBottomID = MDWTemp_RiverTopDef (); break;
 		case MFon:
 	        MFDefEntering ("Reservoir bottom temperature");
     	    if (((_MDInAux_StepCounterID        = MDAux_StepCounterDef ())         == CMfailed) ||
@@ -147,7 +145,7 @@ int MDWTemp_ReservoirBottomDef () {
                 ((_MDInCommon_AirTemperatureID  = MDCommon_AirTemperatureDef ())   == CMfailed) ||
                 ((_MDInCommon_HumidityRelID     = MDCommon_HumidityRelativeDef ()) == CMfailed) ||
                 ((_MDInCommon_SolarRadID        = MDCommon_SolarRadDef ())         == CMfailed) ||
-                ((_MDInCommon_RadAbsortionID    = MFVarGetID ("RadiationAbsoption",   "W/m2",   MFInput,  MFState, MFBoundary)) == CMfailed) ||
+                ((_MDInCommon_RadAbsortionID    = MFVarGetID ("RadiationAbsorption",  "W/m2",   MFInput,  MFState, MFBoundary)) == CMfailed) ||
                 ((_MDInCommon_WindSpeedID       = MFVarGetID (MDVarCommon_WindSpeed,  "m/s",    MFInput,  MFState, MFBoundary)) == CMfailed) ||
                 ((_MDInStrat_GMjID              = MFVarGetID ("ReservoirGeometry",    MFNoUnit, MFInt,    MFState, MFBoundary)) == CMfailed) ||
                 ((_MDInStrat_DepthID            = MFVarGetID ("ReservoirMeanDepth",   "m",      MFInput,  MFState, MFBoundary)) == CMfailed) ||
@@ -163,16 +161,17 @@ int MDWTemp_ReservoirBottomDef () {
                 ((_MDOutWTemp_ReservoirBottomID = MFVarGetID (MDVarWTemp_RiverBottom, "degC",   MFOutput, MFState, MFBoundary)) == CMfailed) ||
                 (MFModelAddFunction (_MDWTempReservoirBottom) == CMfailed)) return (CMfailed);
             for (i = 0; i < NLAYER_MAX; ++i) {
-                if ((snprintf (stateName,strlen(stateName), "dZ%02d", i) == 0) || ((_MDStateStrat_dZ  [i] = MFVarGetID (stateName, MFNoUnit, MFInput,  MFState, MFBoundary)) == CMfailed) ||
-                    (snprintf (stateName,strlen(stateName), "tZ%02d", i) == 0) || ((_MDStateStrat_tZ  [i] = MFVarGetID (stateName, MFNoUnit, MFInput,  MFState, MFBoundary)) == CMfailed) ||
-                    (snprintf (stateName,strlen(stateName), "aD%02d", i) == 0) || ((_MDStateStrat_aD  [i] = MFVarGetID (stateName, MFNoUnit, MFInput,  MFState, MFBoundary)) == CMfailed) ||
-                    (snprintf (stateName,strlen(stateName),"mZn%02d", i) == 0) || ((_MDStateStrat_mZn [i] = MFVarGetID (stateName, MFNoUnit, MFInput,  MFState, MFBoundary)) == CMfailed) ||
-                    (snprintf (stateName,strlen(stateName), "dV%02d", i) == 0) || ((_MDStateStrat_dV  [i] = MFVarGetID (stateName, MFNoUnit, MFInput,  MFState, MFBoundary)) == CMfailed) ||
-                    (snprintf (stateName,strlen(stateName),"vZt%02d", i) == 0) || ((_MDStateStrat_vZt [i] = MFVarGetID (stateName, MFNoUnit, MFInput,  MFState, MFBoundary)) == CMfailed))
+                char stateName [6][64];
+                if ((snprintf (stateName[0],sizeof(stateName[0]), "dZ%02d", i) == 0) || ((_MDStateStrat_dZ  [i] = MFVarGetID (stateName[0], MFNoUnit, MFFloat, MFState, MFInitial)) == CMfailed) ||
+                    (snprintf (stateName[1],sizeof(stateName[1]), "tZ%02d", i) == 0) || ((_MDStateStrat_tZ  [i] = MFVarGetID (stateName[1], MFNoUnit, MFFloat, MFState, MFInitial)) == CMfailed) ||
+                    (snprintf (stateName[2],sizeof(stateName[2]), "aD%02d", i) == 0) || ((_MDStateStrat_aD  [i] = MFVarGetID (stateName[2], MFNoUnit, MFFloat, MFState, MFInitial)) == CMfailed) ||
+                    (snprintf (stateName[3],sizeof(stateName[3]),"mZn%02d", i) == 0) || ((_MDStateStrat_mZn [i] = MFVarGetID (stateName[3], MFNoUnit, MFFloat, MFState, MFInitial)) == CMfailed) ||
+                    (snprintf (stateName[4],sizeof(stateName[4]), "dV%02d", i) == 0) || ((_MDStateStrat_dV  [i] = MFVarGetID (stateName[4], MFNoUnit, MFFloat, MFState, MFInitial)) == CMfailed) ||
+                    (snprintf (stateName[5],sizeof(stateName[5]),"vZt%02d", i) == 0) || ((_MDStateStrat_vZt [i] = MFVarGetID (stateName[5], MFNoUnit, MFFloat, MFState, MFInitial)) == CMfailed))
                     return (CMfailed);
             }
     	    MFDefLeaving ("Reservoir bottom temperature");
-            break;
+        break;
 	}
 	return (_MDOutWTemp_ReservoirBottomID);
 }

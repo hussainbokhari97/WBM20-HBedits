@@ -9,7 +9,7 @@ struct reservoir_geometry
     double d_ht;             // Dam height (m)
     double A_cf;             // Area correcting factor for error from geometry estimation
     double V_cf;             // Volume correcting factor for error from geometry estimation
-    double M_L;              //  Mean lake length (km)
+    double M_L;              // Mean lake length (km)
     double M_W;              // Mean lake width (km)
     double V_err;            // Volume error (.) (+ve difference means underestimation)
     double Ar_err;           // Area error(&) (+ve difference means underestimation)

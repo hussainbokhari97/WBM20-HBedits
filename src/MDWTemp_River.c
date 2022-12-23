@@ -107,8 +107,8 @@ int MDWTemp_RiverDef () {
           ((_MDInReservoir_ReleaseSpillwayID = MDReservoir_ReleaseSpillwayDef ())         == CMfailed))) ||
         ((_MDInCommon_HumidityDewPointID    = MDCommon_HumidityDewPointTemperatureDef ()) == CMfailed) ||
         ((_MDInCommon_SolarRadID            = MDCommon_SolarRadDef ())                    == CMfailed) ||
-        ((_MDInWTemp_RiverBottomID          = MDWTemp_RiverBottomDef ())                  == CMfailed) ||
         ((_MDInWTemp_RiverTopID             = MDWTemp_RiverTopDef ())                     == CMfailed) ||
+        ((_MDInWTemp_RiverBottomID          = MDWTemp_RiverBottomDef ())                  == CMfailed) ||
         ((_MDInRouting_RiverWidthID         = MDRouting_RiverWidthDef ())                 == CMfailed) ||
         ((_MDInCommon_WindSpeedID           = MFVarGetID (MDVarCommon_WindSpeed,        "m/s",       MFInput,  MFState, MFBoundary)) == CMfailed) ||
         ((_MDOutWTemp_HeatFluxID            = MFVarGetID (MDVarWTemp_HeatFlux,          "degC*m3/s", MFRoute,  MFState, MFInitial))  == CMfailed) ||
