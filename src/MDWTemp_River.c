@@ -39,8 +39,6 @@ static void _MDWTempRiver (int itemID) {
     float discharge       = MFVarGetFloat (_MDInRouting_DischargeID,      itemID, 0.0); // Outflowing discharge in m3/s
     float storage         = _MDInReservoir_StorageID != MFUnset ? MFVarGetFloat (_MDInReservoir_StorageID, itemID, 0.0) : 0.0;
     float wTempRiverTop   = MFVarGetFloat (_MDInWTemp_RiverTopID,         itemID, 0.0); // Outflowing discharge in m3/s
-// Routed
-    float heatFlux        = MFVarGetFloat (_MDOutWTemp_HeatFluxID,        itemID, 0.0); // Heat flux degC * m3/s
 // Output
     float equilTemp;      // Equilibrium temperatur degC
     float equilTempDiff;  // Equilibrium temperature change in degC
@@ -49,7 +47,7 @@ static void _MDWTempRiver (int itemID) {
     float dt              = MFModelGet_dt ();          // Model time step in seconds
 // Local
 
-    if (storage > 0.0001) { // Stratified reservoir release
+    if (storage > 0.0001) { // Reservoir release
     // Input
         float reservoirReleaseBottom   = MFVarGetFloat (_MDInReservoir_ReleaseBottomID,   itemID, 0.0);
         float reservoirReleaseSpillway = MFVarGetFloat (_MDInReservoir_ReleaseSpillwayID, itemID, 0.0);
@@ -61,7 +59,7 @@ static void _MDWTempRiver (int itemID) {
         else wTempRiver = wTempRiverTop;
         equilTemp = wTempRiver;
         equilTempDiff = 0.0;
-    } else {
+    } else { // Riverine flow
     // Input
         float dewpointTemp = MFVarGetFloat (_MDInCommon_HumidityDewPointID, itemID, 0.0); // Dewpoint temperature in degC
      	float solarRad     = MFVarGetFloat (_MDInCommon_SolarRadID,         itemID, 0.0); // Solar radiation in W/m2 averaged over the day
@@ -102,13 +100,13 @@ int MDWTemp_RiverDef () {
 	MFDefEntering ("Route river temperature");
 	if (((_MDInRouting_DischargeID          = MDRouting_DischargeDef ())                  == CMfailed) ||
         ((_MDInReservoir_StorageID          = MDReservoir_StorageDef ())                  == CMfailed) ||
+        ((_MDInWTemp_RiverTopID             = MDWTemp_RiverTopDef ())                     == CMfailed) ||
         ((_MDInReservoir_StorageID != MFUnset) &&
+         ((_MDInWTemp_RiverBottomID          = MDWTemp_RiverBottomDef ())                 == CMfailed)   ||
          (((_MDInReservoir_ReleaseBottomID   = MDReservoir_ReleaseBottomDef ())           == CMfailed)   ||
           ((_MDInReservoir_ReleaseSpillwayID = MDReservoir_ReleaseSpillwayDef ())         == CMfailed))) ||
         ((_MDInCommon_HumidityDewPointID    = MDCommon_HumidityDewPointTemperatureDef ()) == CMfailed) ||
         ((_MDInCommon_SolarRadID            = MDCommon_SolarRadDef ())                    == CMfailed) ||
-        ((_MDInWTemp_RiverTopID             = MDWTemp_RiverTopDef ())                     == CMfailed) ||
-        ((_MDInWTemp_RiverBottomID          = MDWTemp_RiverBottomDef ())                  == CMfailed) ||
         ((_MDInRouting_RiverWidthID         = MDRouting_RiverWidthDef ())                 == CMfailed) ||
         ((_MDInCommon_WindSpeedID           = MFVarGetID (MDVarCommon_WindSpeed,        "m/s",       MFInput,  MFState, MFBoundary)) == CMfailed) ||
         ((_MDOutWTemp_HeatFluxID            = MFVarGetID (MDVarWTemp_HeatFlux,          "degC*m3/s", MFRoute,  MFState, MFInitial))  == CMfailed) ||

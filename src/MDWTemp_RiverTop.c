@@ -58,7 +58,7 @@ int MDWTemp_RiverTopDef () {
 
 	if (_MDOutWTemp_RiverTopID != MFUnset) return (_MDOutWTemp_RiverTopID);
 
-	MFDefEntering ("River temperature");
+	MFDefEntering ("River top temperature");
 	if (((_MDInCore_RunoffFlowID         = MDCore_RunoffFlowDef ())                    == CMfailed) ||
         ((_MDInRouting_DischargeID       = MDRouting_DischargeDef ())                  == CMfailed) ||
         ((_MDInWTemp_RunoffID            = MDWTemp_RunoffDef ())                       == CMfailed) ||
@@ -66,6 +66,6 @@ int MDWTemp_RiverTopDef () {
         ((_MDInWTemp_HeatFluxID          = MFVarGetID (MDVarWTemp_HeatFlux,     "degC*m3/s", MFRoute,  MFState, MFInitial))  == CMfailed) ||
         ((_MDOutWTemp_RiverTopID         = MFVarGetID (MDVarWTemp_RiverTop,     "degC",      MFOutput, MFState, MFBoundary)) == CMfailed) ||
         (MFModelAddFunction (_MDWTempRiverTop) == CMfailed)) return (CMfailed);
-	   MFDefLeaving ("River temperature");
-	   return (_MDOutWTemp_RiverTopID);
+	MFDefLeaving ("River top temperature");
+	return (_MDOutWTemp_RiverTopID);
 }

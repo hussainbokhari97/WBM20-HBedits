@@ -106,14 +106,14 @@ static void _MDReservoirSNL (int itemID) {
 	float natFlowMeanMonthly;       // Naturalized long-term mean monthly inflow [m3/s]
 	float natFlowMeanDaily;         // Naturalized long-term mean daily inflow [m3/s]
 	float resCapacity;              // Reservoir capacity [km3]
-	float prevResStorage = 0.0;     // Reference storage dictatink actual release ratio [km3]
+	float prevResStorage;           // Reference storage dictatink actual release ratio [km3]
 	// Output
-	float resStorage         = 0.0; // Reservoir storage [km3]
-	float resStorageChg      = 0.0; // Reservoir storage change [km3/dt]
-	float resReleaseBottom;         // Reservoir release [m3/s] 
+	float resStorage;               // Reservoir storage [km3]
+	float resStorageChg;            // Reservoir storage change [km3/dt]
+	float resReleaseTarget;         // Target reservoir release [m3/s]
+	float resReleaseSpillway;       // gets calculated further down, otherwise 0
 	float resReleaseExtract;        // Reservoir extractable release [m3/s]
-	float resReleaseTarget   = 0.0; // Target reservoir release [m3/s]
-	float resReleaseSpillway = 0.0; // gets calculated further down, otherwise 0
+	float resReleaseBottom;         // Reservoir release [m3/s] 
 	// Local
 	float resInflow;                // Reservoir inflow [m3/s] 
 	float waterDemandMeanDaily;
@@ -198,6 +198,8 @@ static void _MDReservoirSNL (int itemID) {
 		}
 		resStorageChg = resStorage - prevResStorage;
 		resReleaseExtract = resReleaseBottom + resReleaseSpillway > discharge ? resReleaseBottom + resReleaseSpillway - discharge : 0.0;
+	} else { // River flow
+		prevResStorage = resStorage = resStorageChg = resReleaseTarget = resReleaseSpillway = 0.0;
 	}
 	MFVarSetFloat (_MDOutResStorageInitialID,     itemID, prevResStorage);
 	MFVarSetFloat (_MDOutResStorageID,            itemID, resStorage); 
