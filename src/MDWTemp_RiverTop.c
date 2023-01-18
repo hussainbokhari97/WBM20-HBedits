@@ -16,7 +16,6 @@ bfekete@gc.cuny.edu
 
 // Input
 static int _MDInRouting_Discharge0ID = MFUnset;
-static int _MDInRouting_DischargeID  = MFUnset;
 static int _MDInCore_RunoffFlowID    = MFUnset;
 static int _MDInWTemp_RunoffID       = MFUnset;
 // Route
@@ -29,7 +28,6 @@ static int _MDOutWTemp_RiverTopID    = MFUnset;
 static void _MDWTempRiverTop (int itemID) {
 // Input
     float discharge0      = MFVarGetFloat (_MDInRouting_Discharge0ID,     itemID, 0.0); // Outflowing discharge in m3/s 
-    float discharge       = MFVarGetFloat (_MDInRouting_DischargeID,      itemID, 0.0); // Outflowing discharge in m3/s 
     float runoffFlow      = MFVarGetFloat (_MDInCore_RunoffFlowID,        itemID, 0.0); // RO volume in m3/s
    	float runoffTemp      = MFVarGetFloat (_MDInWTemp_RunoffID,           itemID, 0.0); // Runoff temperature degC
 // Routed
@@ -43,7 +41,7 @@ static void _MDWTempRiverTop (int itemID) {
 // Local
     float flowThreshold = cellArea * 0.0001 / dt; // 0.1 mm/day over the the cell area
 
-    if ((discharge0 > runoffFlow) && (discharge0 > flowThreshold) && (discharge > flowThreshold)) { 
+    if ((discharge0 > runoffFlow) && (discharge0 > flowThreshold)) { 
         heatFlux   += runoffTemp * runoffFlow * dt;
         riverTempTop = heatFlux / (discharge0 * dt);
         if (riverTempTop > 50.0) {
@@ -60,7 +58,6 @@ int MDWTemp_RiverTopDef () {
 
 	MFDefEntering ("River top temperature");
 	if (((_MDInCore_RunoffFlowID         = MDCore_RunoffFlowDef ())                    == CMfailed) ||
-        ((_MDInRouting_DischargeID       = MDRouting_DischargeDef ())                  == CMfailed) ||
         ((_MDInWTemp_RunoffID            = MDWTemp_RunoffDef ())                       == CMfailed) ||
         ((_MDInRouting_Discharge0ID      = MFVarGetID (MDVarRouting_Discharge0, "m3/s",      MFInput,  MFState, MFInitial))  == CMfailed) ||
         ((_MDInWTemp_HeatFluxID          = MFVarGetID (MDVarWTemp_HeatFlux,     "degC*m3/s", MFRoute,  MFState, MFBoundary)) == CMfailed) ||
