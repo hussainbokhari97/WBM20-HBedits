@@ -41,7 +41,8 @@ static void _MDWTempRiverTop (int itemID) {
 // Local
     float flowThreshold = cellArea * 0.0001 / dt; // 0.1 mm/day over the the cell area
 
-    if ((discharge0 > runoffFlow) && (discharge0 > flowThreshold)) { 
+    if (flowThreshold < runoffFlow) flowThreshold = runoffFlow;
+    if (discharge0 > flowThreshold) { 
         heatFlux   += runoffTemp * runoffFlow * dt;
         riverTempTop = heatFlux / (discharge0 * dt);
         if (riverTempTop > 50.0) {
