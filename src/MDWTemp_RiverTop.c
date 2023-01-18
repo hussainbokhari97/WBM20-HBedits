@@ -31,7 +31,7 @@ static void _MDWTempRiverTop (int itemID) {
     float runoffFlow    = MFVarGetFloat (_MDInCore_RunoffFlowID,        itemID, 0.0); // RO volume in m3/s
    	float runoffTemp    = MFVarGetFloat (_MDInWTemp_RunoffID,           itemID, 0.0); // Runoff temperature degC
 // Routed
-    float heatFlux      = MFVarGetFloat (_MDInWTemp_HeatFluxID,        itemID, 0.0); // Heat flux degC * m3/s
+    float heatFlux      = MFVarGetFloat (_MDInWTemp_HeatFluxID,        itemID, 0.0); // Heat flux degC * m3
 // Output
     float riverTempTop; // River temprature in degC
 // Model
@@ -60,9 +60,9 @@ int MDWTemp_RiverTopDef () {
 	MFDefEntering ("River top temperature");
 	if (((_MDInCore_RunoffFlowID    = MDCore_RunoffFlowDef ()) == CMfailed) ||
         ((_MDInWTemp_RunoffID       = MDWTemp_RunoffDef ())    == CMfailed) ||
-        ((_MDInRouting_Discharge0ID = MFVarGetID (MDVarRouting_Discharge0, "m3/s",      MFInput,  MFState, MFInitial))  == CMfailed) ||
-        ((_MDInWTemp_HeatFluxID     = MFVarGetID (MDVarWTemp_HeatFlux,     "degC*m3/s", MFRoute,  MFState, MFBoundary)) == CMfailed) ||
-        ((_MDOutWTemp_RiverTopID    = MFVarGetID (MDVarWTemp_RiverTop,     "degC",      MFOutput, MFState, MFBoundary)) == CMfailed) ||
+        ((_MDInRouting_Discharge0ID = MFVarGetID (MDVarRouting_Discharge0, "m3/s",    MFInput,  MFState, MFInitial))  == CMfailed) ||
+        ((_MDInWTemp_HeatFluxID     = MFVarGetID (MDVarWTemp_HeatFlux,     "degC*m3", MFRoute,  MFState, MFBoundary)) == CMfailed) ||
+        ((_MDOutWTemp_RiverTopID    = MFVarGetID (MDVarWTemp_RiverTop,     "degC",    MFOutput, MFState, MFBoundary)) == CMfailed) ||
         (MFModelAddFunction (_MDWTempRiverTop) == CMfailed)) return (CMfailed);
 	MFDefLeaving ("River top temperature");
 	return (_MDOutWTemp_RiverTopID);
