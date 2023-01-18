@@ -63,7 +63,7 @@ int MDWTemp_RiverTopDef () {
         ((_MDInRouting_DischargeID       = MDRouting_DischargeDef ())                  == CMfailed) ||
         ((_MDInWTemp_RunoffID            = MDWTemp_RunoffDef ())                       == CMfailed) ||
         ((_MDInRouting_Discharge0ID      = MFVarGetID (MDVarRouting_Discharge0, "m3/s",      MFInput,  MFState, MFInitial))  == CMfailed) ||
-        ((_MDInWTemp_HeatFluxID          = MFVarGetID (MDVarWTemp_HeatFlux,     "degC*m3/s", MFRoute,  MFState, MFInitial))  == CMfailed) ||
+        ((_MDInWTemp_HeatFluxID          = MFVarGetID (MDVarWTemp_HeatFlux,     "degC*m3/s", MFRoute,  MFState, MFBoundary)) == CMfailed) ||
         ((_MDOutWTemp_RiverTopID         = MFVarGetID (MDVarWTemp_RiverTop,     "degC",      MFOutput, MFState, MFBoundary)) == CMfailed) ||
         (MFModelAddFunction (_MDWTempRiverTop) == CMfailed)) return (CMfailed);
 	MFDefLeaving ("River top temperature");

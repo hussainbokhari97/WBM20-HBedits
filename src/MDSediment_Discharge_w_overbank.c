@@ -81,7 +81,7 @@ int MDSediment_DischargeBFDef () {
 				((_MDInFlowCoefficientID = MFVarGetID (MDVarSediment_FlowCoefficient, "m3/s",   MFInput,  MFState, MFBoundary)) == CMfailed) ||
 				((_MDOutOverBankQID      = MFVarGetID (MDVarSediment_OverBankQ,       "m3/s",   MFOutput, MFState, MFInitial))  == CMfailed) ||
 				((_MDOutPCQdifferenceID  = MFVarGetID (MDVarSediment_PCQdifference,   MFNoUnit, MFOutput, MFState, MFInitial))  == CMfailed) ||
-				((_MDOutDischargeID      = MFVarGetID (MDVarRouting_Discharge,        "m3/s",   MFRoute,  MFState, MFInitial))  == CMfailed) ||
+				((_MDOutDischargeID      = MFVarGetID (MDVarRouting_Discharge,        "m3/s",   MFRoute,  MFState, MFBoundary)) == CMfailed) ||
 				(MFModelAddFunction (_MDDischargeBF) == CMfailed)) return (CMfailed);
 			break;
 	}

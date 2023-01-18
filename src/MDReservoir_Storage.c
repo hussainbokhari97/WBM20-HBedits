@@ -22,16 +22,16 @@ int MDReservoir_StorageDef () {
 
 	if (_MDOutResStorageID != MFUnset) return (_MDOutResStorageID);
 
-	MFDefEntering ("Reservoir release");
 	if ((optStr = MFOptionGet (MDOptConfig_Reservoirs)) != (char *) NULL) optID = CMoptLookup (MFswitchOptions, optStr, true);
  	switch (optID) {
 		default:
 		case MFhelp: MFOptionMessage (MDOptConfig_Reservoirs, optStr, MFswitchOptions); return (CMfailed);
 		case MFoff: break; 
 		case MFon:
+			MFDefEntering ("Reservoir release");
 			_MDOutResStorageID = MDReservoir_OperationDef () == CMfailed ? CMfailed : MFVarGetID (MDVarReservoir_Storage, "km3", MFOutput, MFState, MFInitial);
+			MFDefLeaving ("Reservoir release");
 			break;
 	}
-	MFDefLeaving ("Reservoir release");
 	return (_MDOutResStorageID); 
 }
