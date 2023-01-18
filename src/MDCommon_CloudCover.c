@@ -6,9 +6,7 @@ Copyright 1994-2007, University of New Hampshire
 
 MDCommon_CloudCover.c
 
-amiara@ccny.cuny.edu
-
-Converting solar radiation to cloud cover fraction (for use in water temperature model)
+bfekete@gc.cuny.edu
 
 *******************************************************************************/
 

@@ -2,9 +2,9 @@
 
 GHAAS Water Balance/Transport Model
 Global Hydrological Archive and Analysis System
-Copyright 1994-2022, UNH - ASRC/CUNY
+Copyright 1994-2023, UNH - ASRC/CUNY
 
-MDAux_MaxDischarge.c
+MDAux_DischargeMin.c
 
 bfekete@gc.cuny.edu
 
