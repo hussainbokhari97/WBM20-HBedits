@@ -101,8 +101,8 @@ int MDWTemp_RiverDef () {
         ((_MDInRouting_RiverWidthID         = MDRouting_RiverWidthDef ())                 == CMfailed) ||
         ((_MDInReservoir_StorageID          = MDReservoir_StorageDef ())                  == CMfailed) ||
         ((_MDInReservoir_StorageID != MFUnset) &&
-         (((_MDInWTemp_RiverBottomID         = MDWTemp_RiverBottomDef ())                 == CMfailed)   ||
-          ((_MDInReservoir_ReleaseBottomID   = MDReservoir_ReleaseBottomDef ())           == CMfailed)   ||
+         (((_MDInWTemp_RiverBottomID         = MDWTemp_RiverBottomDef ())                 == CMfailed) ||
+          ((_MDInReservoir_ReleaseBottomID   = MDReservoir_ReleaseBottomDef ())           == CMfailed) ||
           ((_MDInReservoir_ReleaseSpillwayID = MDReservoir_ReleaseSpillwayDef ())         == CMfailed))) ||
         ((_MDInCommon_WindSpeedID           = MFVarGetID (MDVarCommon_WindSpeed,        "m/s",       MFInput,  MFState, MFBoundary)) == CMfailed) ||
         ((_MDOutWTemp_HeatFluxID            = MFVarGetID (MDVarWTemp_HeatFlux,          "degC*m3/s", MFRoute,  MFState, MFBoundary)) == CMfailed) ||
