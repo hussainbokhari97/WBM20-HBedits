@@ -88,7 +88,7 @@ static void _MDWTempRiver (int itemID) {
     MFVarSetFloat(_MDOutWTemp_EquilTemp,         itemID, equilTemp);
     MFVarSetFloat(_MDOutWTemp_EquilTempDiff,     itemID, equilTempDiff);
     MFVarSetFloat(_MDOutWTemp_RiverID,           itemID, wTempRiver);
-    MFVarSetFloat(_MDOutWTemp_HeatFluxID,        itemID, discharge);
+    MFVarSetFloat(_MDOutWTemp_HeatFluxID,        itemID, wTempRiver * discharge * dt);
 }
 
 int MDWTemp_RiverDef () {
