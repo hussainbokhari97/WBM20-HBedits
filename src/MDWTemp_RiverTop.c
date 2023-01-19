@@ -23,8 +23,6 @@ static int _MDInWTemp_HeatFluxID     = MFUnset;
 // Output
 static int _MDOutWTemp_RiverTopID    = MFUnset;
 
-#define MinTemp 1.0
-
 static void _MDWTempRiverTop (int itemID) {
 // Input
     float discharge0    = MFVarGetFloat (_MDInRouting_Discharge0ID,     itemID, 0.0); // Outflowing discharge in m3/s 
@@ -35,21 +33,21 @@ static void _MDWTempRiverTop (int itemID) {
 // Output
     float riverTempTop; // River temprature in degC
 // Model
-    float dt            = MFModelGet_dt ();          // Model time step in seconds
+    float dt            = MFModelGet_dt    ();       // Model time step in seconds
     float channelLength = MFModelGetLength (itemID); // Channel length in m
-    float cellArea      = MFModelGetArea (itemID);   // Cell area in m2
+    float cellArea      = MFModelGetArea   (itemID); // Cell area in m2
 // Local
     float flowThreshold = cellArea * 0.0001 / dt; // 0.1 mm/day over the the cell area
 
     if (flowThreshold < runoffFlow) flowThreshold = runoffFlow;
-    if (discharge0 > flowThreshold) { 
+/*    if (discharge0 > flowThreshold) { 
         heatFlux   += runoffTemp * runoffFlow * dt;
         riverTempTop = heatFlux / (discharge0 * dt);
         if (riverTempTop > 50.0) {
             CMmsgPrint (CMmsgWarning, "Day: %3d Cell: %10ld River Temperature: %6.1f\n", MFDateGetDayOfYear (), itemID, riverTempTop);
             riverTempTop = runoffTemp;
         }
-    } else riverTempTop = runoffTemp;
+    } else */riverTempTop = runoffTemp;
     MFVarSetFloat(_MDOutWTemp_RiverTopID, itemID, riverTempTop);
 }
 

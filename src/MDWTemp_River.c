@@ -47,7 +47,7 @@ static void _MDWTempRiver (int itemID) {
     float equilTempDiff;  // Equilibrium temperature change in degC
     float wTempRiver;     // River temprature in degC
 // Model
-    float dt              = MFModelGet_dt ();          // Model time step in seconds
+    float dt              = MFModelGet_dt    ();       // Model time step in seconds
     float channelLength   = MFModelGetLength (itemID); // Channel length in m
     float cellArea        = MFModelGetArea   (itemID); // Cell area in m2
 // Local
@@ -86,7 +86,8 @@ static void _MDWTempRiver (int itemID) {
     MFVarSetFloat(_MDOutWTemp_EquilTemp,         itemID, equilTemp);
     MFVarSetFloat(_MDOutWTemp_EquilTempDiff,     itemID, equilTempDiff);
     MFVarSetFloat(_MDOutWTemp_RiverID,           itemID, wTempRiver);
-    MFVarSetFloat(_MDOutWTemp_HeatFluxID,        itemID, wTempRiver * discharge * dt); // Route
+//  MFVarSetFloat(_MDOutWTemp_HeatFluxID,        itemID, wTempRiver * discharge * dt); // Route
+    MFVarSetFloat(_MDOutWTemp_HeatFluxID,        itemID, 1.0); // Route
 }
 
 int MDWTemp_RiverDef () {
@@ -94,21 +95,21 @@ int MDWTemp_RiverDef () {
 	if (_MDOutWTemp_RiverID != MFUnset) return (_MDOutWTemp_RiverID);
 
 	MFDefEntering ("Route river temperature");
-	if (((_MDInRouting_DischargeID          = MDRouting_DischargeDef ())                  == CMfailed) ||
-        ((_MDInWTemp_RiverTopID             = MDWTemp_RiverTopDef ())                     == CMfailed) ||
-        ((_MDInCommon_HumidityDewPointID    = MDCommon_HumidityDewPointTemperatureDef ()) == CMfailed) ||
+	if (((_MDInCommon_HumidityDewPointID    = MDCommon_HumidityDewPointTemperatureDef ()) == CMfailed) ||
         ((_MDInCommon_SolarRadID            = MDCommon_SolarRadDef ())                    == CMfailed) ||
         ((_MDInRouting_RiverWidthID         = MDRouting_RiverWidthDef ())                 == CMfailed) ||
+        ((_MDInRouting_DischargeID          = MDRouting_DischargeDef ())                  == CMfailed) ||
+        ((_MDInWTemp_RiverTopID             = MDWTemp_RiverTopDef ())                     == CMfailed) ||
         ((_MDInReservoir_StorageID          = MDReservoir_StorageDef ())                  == CMfailed) ||
         ((_MDInReservoir_StorageID != MFUnset) &&
          (((_MDInWTemp_RiverBottomID         = MDWTemp_RiverBottomDef ())                 == CMfailed) ||
           ((_MDInReservoir_ReleaseBottomID   = MDReservoir_ReleaseBottomDef ())           == CMfailed) ||
           ((_MDInReservoir_ReleaseSpillwayID = MDReservoir_ReleaseSpillwayDef ())         == CMfailed))) ||
-        ((_MDInCommon_WindSpeedID           = MFVarGetID (MDVarCommon_WindSpeed,        "m/s",       MFInput,  MFState, MFBoundary)) == CMfailed) ||
-        ((_MDOutWTemp_HeatFluxID            = MFVarGetID (MDVarWTemp_HeatFlux,          "degC*m3/s", MFRoute,  MFState, MFBoundary)) == CMfailed) ||
-        ((_MDOutWTemp_EquilTemp   	        = MFVarGetID (MDVarWTemp_EquilTemp,         "degC",      MFOutput, MFState, MFBoundary)) == CMfailed) ||
-        ((_MDOutWTemp_EquilTempDiff   	    = MFVarGetID (MDVarWTemp_EquilTempDiff,     "degC",      MFOutput, MFState, MFBoundary)) == CMfailed) ||
-        ((_MDOutWTemp_RiverID               = MFVarGetID (MDVarWTemp_River,             "degC",      MFOutput, MFState, MFBoundary)) == CMfailed) ||
+        ((_MDInCommon_WindSpeedID           = MFVarGetID (MDVarCommon_WindSpeed,    "m/s",     MFInput,  MFState, MFBoundary)) == CMfailed) ||
+        ((_MDOutWTemp_HeatFluxID            = MFVarGetID (MDVarWTemp_HeatFlux,      "degC*m3", MFRoute,  MFState, MFBoundary)) == CMfailed) ||
+        ((_MDOutWTemp_EquilTemp   	        = MFVarGetID (MDVarWTemp_EquilTemp,     "degC",    MFOutput, MFState, MFBoundary)) == CMfailed) ||
+        ((_MDOutWTemp_EquilTempDiff   	    = MFVarGetID (MDVarWTemp_EquilTempDiff, "degC",    MFOutput, MFState, MFBoundary)) == CMfailed) ||
+        ((_MDOutWTemp_RiverID               = MFVarGetID (MDVarWTemp_River,         "degC",    MFOutput, MFState, MFBoundary)) == CMfailed) ||
         (MFModelAddFunction (_MDWTempRiver) == CMfailed)) return (CMfailed);
 	   MFDefLeaving ("Route river temperature");
 	   return (_MDOutWTemp_RiverID);

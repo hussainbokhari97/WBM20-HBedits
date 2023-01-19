@@ -352,7 +352,6 @@ extern "C" {
 #define MDVarWTemp_EquilTemp                    "RiverEquilibriumTemp"
 #define MDVarWTemp_EquilTempDiff                "RiverEquilibriumTempDiff"
 #define MDVarWTemp_HeatFlux                     "RiverHeatFlux"
-#define MDVarWTemp_HeatFluxNoEquil              "RiverHeatFluxNoEquil"
 #define MDVarWTemp_River                        "RiverTemperature"
 #define MDVarWTemp_RiverBottom                  "RiverTemperatureBottom"
 #define MDVarWTemp_RiverTop                     "RiverTemperatureTop"
