@@ -36,8 +36,8 @@ static int _MDOutWTemp_RiverID              = MFUnset;
 
 static void _MDWTempRiver (int itemID) {
 // Input
-    float discharge     = MFVarGetFloat (_MDInRouting_DischargeID,      itemID, 0.0); // Outflowing discharge in m3/s
-    float wTempRiverTop = MFVarGetFloat (_MDInWTemp_RiverTopID,         itemID, 0.0); // Outflowing discharge in m3/s
+    float discharge     = MFVarGetFloat (_MDInRouting_DischargeID,       itemID, 0.0); // Outflowing discharge in m3/s
+    float wTempRiverTop = MFVarGetFloat (_MDInWTemp_RiverTopID,          itemID, 0.0); // Outflowing discharge in m3/s
     float dewpointTemp  = MFVarGetFloat (_MDInCommon_HumidityDewPointID, itemID, 0.0); // Dewpoint temperature in degC
     float solarRad      = MFVarGetFloat (_MDInCommon_SolarRadID,         itemID, 0.0); // Solar radiation in W/m2 averaged over the day
     float windSpeed     = MFVarGetFloat (_MDInCommon_WindSpeedID,        itemID, 0.0); // Winds speed in m/s
@@ -71,23 +71,24 @@ static void _MDWTempRiver (int itemID) {
         } else wTempRiver = wTempRiverTop;
     } else wTempRiver = wTempRiverTop;
     equilTemp = wTempRiver;
-    windFunc = 9.2 + 0.46 * pow (windSpeed,2); // wind function
-    for (i = 0; i < 4; ++i) {
-        float meanTemp;
-        float beta;
-	    meanTemp  = (dewpointTemp + equilTemp) / 2; // mean of rivertemp initial and dew point
-	    beta      = 0.35 + 0.015 * meanTemp + 0.0012 * pow (meanTemp, 2.0); //beta
-	    kay       = 4.50 + 0.050 * equilTemp + (beta + 0.47) * windFunc; // K in W/m2/degC
-	    equilTemp = dewpointTemp + solarRad / kay; // Solar radiation is in W/m2;
-    }
-    equilTempDiff = (equilTemp - wTempRiver) * (1.0 - exp (-kay * channelLength * channelWidth / (4181300 * discharge)));
-    wTempRiver   += equilTempDiff;
-    if (wTempRiver < MinTemp) { equilTempDiff += wTempRiver - MinTemp; wTempRiver = MinTemp; }
+    if (discharge > 0) {
+        windFunc = 9.2 + 0.46 * pow (windSpeed,2); // wind function
+        for (i = 0; i < 4; ++i) {
+            float meanTemp;
+            float beta;
+	        meanTemp  = (dewpointTemp + equilTemp) / 2; // mean of rivertemp initial and dew point
+	        beta      = 0.35 + 0.015 * meanTemp + 0.0012 * pow (meanTemp, 2.0); //beta
+	        kay       = 4.50 + 0.050 * equilTemp + (beta + 0.47) * windFunc; // K in W/m2/degC
+	        equilTemp = dewpointTemp + solarRad / kay; // Solar radiation is in W/m2;
+        }
+        equilTempDiff = (equilTemp - wTempRiver) * (1.0 - exp (-kay * channelLength * channelWidth / (4181300 * discharge)));
+        wTempRiver   += equilTempDiff;
+        if (wTempRiver < MinTemp) { equilTempDiff += wTempRiver - MinTemp; wTempRiver = MinTemp; }
+    } else equilTempDiff = 0.0;
     MFVarSetFloat(_MDOutWTemp_EquilTemp,         itemID, equilTemp);
     MFVarSetFloat(_MDOutWTemp_EquilTempDiff,     itemID, equilTempDiff);
     MFVarSetFloat(_MDOutWTemp_RiverID,           itemID, wTempRiver);
-//  MFVarSetFloat(_MDOutWTemp_HeatFluxID,        itemID, wTempRiver * discharge * dt); // Route
-    MFVarSetFloat(_MDOutWTemp_HeatFluxID,        itemID, 1.0); // Route
+    MFVarSetFloat(_MDOutWTemp_HeatFluxID,        itemID, discharge);
 }
 
 int MDWTemp_RiverDef () {

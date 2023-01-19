@@ -40,14 +40,14 @@ static void _MDWTempRiverTop (int itemID) {
     float flowThreshold = cellArea * 0.0001 / dt; // 0.1 mm/day over the the cell area
 
     if (flowThreshold < runoffFlow) flowThreshold = runoffFlow;
-/*    if (discharge0 > flowThreshold) { 
+    if (discharge0 > flowThreshold) { 
         heatFlux   += runoffTemp * runoffFlow * dt;
         riverTempTop = heatFlux / (discharge0 * dt);
         if (riverTempTop > 50.0) {
             CMmsgPrint (CMmsgWarning, "Day: %3d Cell: %10ld River Temperature: %6.1f\n", MFDateGetDayOfYear (), itemID, riverTempTop);
             riverTempTop = runoffTemp;
         }
-    } else */riverTempTop = runoffTemp;
+    } else riverTempTop = runoffTemp;
     MFVarSetFloat(_MDOutWTemp_RiverTopID, itemID, riverTempTop);
 }
 
