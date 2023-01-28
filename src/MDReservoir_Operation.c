@@ -44,15 +44,14 @@ static int _MDOutResReleaseSpillwayID    = MFUnset;
 static int _MDOutResReleaseTargetID      = MFUnset;
 
 static void _MDReservoirWisser (int itemID) {
-
 // Input
 	float discharge;             // Current discharge [m3/s]
 	float meanDischarge;         // Long-term mean annual discharge [m3/s]
 	float resCapacity;           // Reservoir capacity [km3]
 	float resUptake;             // Water uptake from reservoir [m3/s]
 // Output
-	float resStorage    = 0.0;   // Reservoir storage [km3]
-	float resStorageChg = 0.0;   // Reservoir storage change [km3/dt]
+	float resStorage;            // Reservoir storage [km3]
+	float resStorageChg;         // Reservoir storage change [km3/dt]
 	float resInflow;             // Reservoir release [m3/s] 
 	float resReleaseBottom;      // Reservoir release at the bottom [m3/s]
 	float resReleaseExtract;     // Reservoir extractable release [m3/s]
@@ -61,11 +60,11 @@ static void _MDReservoirWisser (int itemID) {
 	float prevResStorage;        // Reservoir storage from the previous time step [km3]
 	float dt = MFModelGet_dt (); // Time step length [s]
 // Parameters
-	float drySeasonPct = 0.60; // RJS 071511
-	float wetSeasonPct = 0.16; // RJS 071511
+	float drySeasonPct = 0.60;   // RJS 071511
+	float wetSeasonPct = 0.16;   // RJS 071511
 
-	discharge     = MFVarGetFloat (_MDInRouting_DischargeID,      itemID, 0.0);
-	resReleaseExtract = MFVarGetFloat (_MDOutResReleaseExtractableID, itemID, 0.0);
+	discharge = resInflow = MFVarGetFloat (_MDInRouting_DischargeID,      itemID, 0.0);
+	resReleaseExtract     = MFVarGetFloat (_MDOutResReleaseExtractableID, itemID, 0.0);
 
 	if ((resCapacity = MFVarGetFloat (_MDInResCapacityID, itemID, 0.0)) > 0.0001) { // TODO Arbitrary limit      
 		 meanDischarge = MFVarGetFloat (_MDInAux_MeanDischargeID,      itemID, discharge);
@@ -90,6 +89,10 @@ static void _MDReservoirWisser (int itemID) {
 		}
 		resStorageChg  = resStorage - prevResStorage;
 		resReleaseExtract = resReleaseBottom + resReleaseSpillway > discharge ? resReleaseBottom + resReleaseSpillway - discharge : 0.0;
+	} else {
+		resStorage = resStorageChg = 0.0;
+		resReleaseBottom   = discharge;
+		resReleaseSpillway = 0.0;
 	}
 	MFVarSetFloat (_MDOutResStorageID,            itemID, resStorage);
 	MFVarSetFloat (_MDOutResStorageChgID,         itemID, resStorageChg);
@@ -179,20 +182,23 @@ static void _MDReservoirSNL (int itemID) {
 		if (resReleaseBottom < 0.05 * resInflow) resReleaseBottom = resInflow * 0.05;
 	// MAIN RULES finish
 		resStorage = prevResStorage + (discharge - resReleaseBottom) * dt / 1e9;
-		if (resStorage > resCapacity) {                 // The reservoir over flows FBM
+		if (resStorage > resCapacity) {              // The reservoir over flows FBM
 			resReleaseSpillway = (resStorage - resCapacity) * 1e9 / dt;
-			resStorage  = resCapacity;                  // This guarantees that the reservoir storage cannot exceed the reservoir capacity
-		} else if (resStorage < deadStorage) {          // Ther reservoir empties out FBM
-			if (prevResStorage > deadStorage) {         // Normally, the storage should stop at dead storage FBM
-				resReleaseBottom  = (prevResStorage - deadStorage) * 1e9 / dt + discharge;
-				resStorage        = deadStorage;	
-			} else {                                    // The reservoir is bellow dead storage during spinup FBM
-				if (discharge > (deadStorage - prevResStorage) * 1e9 / dt) { // The discharge is more than missing volume to reach dead storage FBM
-					resReleaseBottom = discharge - (deadStorage - prevResStorage) * 1e9 / dt;
-					resStorage       = deadStorage;
-				} else {                                // The discharge is less than the missing volume to reach dead storage FBM
-					resReleaseBottom = 0.0;
-					resStorage       = prevResStorage + discharge * dt / 1e9;
+			resStorage  = resCapacity;               // This guarantees that the reservoir storage cannot exceed the reservoir capacity
+		} else {
+			resReleaseSpillway = 0.0;
+			if (resStorage < deadStorage) {          // Ther reservoir empties out FBM
+				if (prevResStorage > deadStorage) {  // Normally, the storage should stop at dead storage FBM
+					resReleaseBottom  = (prevResStorage - deadStorage) * 1e9 / dt + discharge;
+					resStorage        = deadStorage;	
+				} else {                             // The reservoir is bellow dead storage during spinup FBM
+					if (discharge > (deadStorage - prevResStorage) * 1e9 / dt) { // The discharge is more than missing volume to reach dead storage FBM
+						resReleaseBottom = discharge - (deadStorage - prevResStorage) * 1e9 / dt;
+						resStorage       = deadStorage;
+					} else {                         // The discharge is less than the missing volume to reach dead storage FBM
+						resReleaseBottom = 0.0;
+						resStorage       = prevResStorage + discharge * dt / 1e9;
+					}
 				}
 			}
 		}
