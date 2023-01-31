@@ -46,6 +46,7 @@ static int _MDStateStrat_dV  [NLAYER_MAX] = { MFUnset, MFUnset, MFUnset, MFUnset
 static int _MDStateStrat_vZt [NLAYER_MAX] = { MFUnset, MFUnset, MFUnset, MFUnset, MFUnset, MFUnset, MFUnset, MFUnset, MFUnset, MFUnset, MFUnset, MFUnset, MFUnset, MFUnset, MFUnset, MFUnset, MFUnset, MFUnset, MFUnset, MFUnset, MFUnset, MFUnset, MFUnset, MFUnset, MFUnset, MFUnset, MFUnset, MFUnset, MFUnset, MFUnset };
 // Output
 static int _MDOutWTemp_ReservoirBottomID = MFUnset;
+static int _MDOutWTemp_ReservoirNLayerID = MFUnset;
 
 #define MinTemp 1.0
 
@@ -77,7 +78,7 @@ static void _MDWTempReservoirBottom (int itemID) {
     double cosZen = cos ((lambda + sigma) * M_PI / 360.0);
 
 	tStep           = MFVarGetInt   (_MDInAux_StepCounterID,   itemID, 0);
-    resGeom.gm_j    = MFVarGetInt   (_MDInStrat_GMjID,         itemID, 0);
+    resGeom.gm_j    = (int) (MFVarGetFloat (_MDInStrat_GMjID,  itemID, 0.0));
     if (resGeom.gm_j != 0) { // Reservoir has ResGeo geometry to compute stratification
         resGeom.depth   = MFVarGetFloat (_MDInStrat_DepthID,       itemID, 0.0);
         resGeom.d_ht    = MFVarGetFloat (_MDInStrat_HeightID,      itemID, 0.0);
@@ -88,7 +89,7 @@ static void _MDWTempReservoirBottom (int itemID) {
         resGeom.C_v     = MFVarGetFloat (_MDInStrat_VolumeCoeffID, itemID, 0.0);
         resGeom.C_a     = MFVarGetFloat (_MDInStrat_AreaCoeffID,   itemID, 0.0);
         resGeom.V_df    = MFVarGetFloat (_MDInStrat_VolumeDiffID,  itemID, 0.0);
-        resGeom.A_df    = MFVarGetFloat (_MDInStrat_VolumeDiffID,  itemID, 0.0);
+        resGeom.A_df    = MFVarGetFloat (_MDInStrat_AreaDiffID,    itemID, 0.0);
         for (layer = 0; layer < NLAYER_MAX; ++layer) {
             dZ [layer] = MFVarGetFloat (_MDStateStrat_dZ [layer], itemID, 0.0);
             tZ [layer] = MFVarGetFloat (_MDStateStrat_tZ [layer], itemID, 0.0);
@@ -103,24 +104,26 @@ static void _MDWTempReservoirBottom (int itemID) {
                  &cosZen, &radAbsorption, &solarRad, &humidityRel, &airTemp, &windSpeed,
                  &resGeom, (double **) &dZ, (double **) &tZ, (double **) &mZn, (double **) &aD, (double **) &dV, (double **) &vZt, &s_tin, &m_cal);
         riverTempBottom = tZ[resGeom.n_depth - 1] + 273.15;
-        MFVarSetFloat(_MDOutWTemp_ReservoirBottomID, itemID, riverTempBottom);
+        MFVarSetFloat (_MDOutWTemp_ReservoirBottomID, itemID, lme_error == 0 ? riverTempBottom : riverTempTop);
+        MFVarSetFloat (_MDOutWTemp_ReservoirNLayerID, itemID, (float) (resGeom.n_depth > 0 ? (float) resGeom.n_depth : 1.0));
         for (layer = 0; layer < NLAYER_MAX; ++layer) {
             MFVarSetFloat (_MDStateStrat_dZ [layer], itemID, dZ [layer]);
             MFVarSetFloat (_MDStateStrat_tZ [layer], itemID, tZ [layer]);
-            MFVarGetFloat (_MDStateStrat_aD [layer], itemID, aD [layer]);
-            MFVarGetFloat (_MDStateStrat_mZn[layer], itemID, mZn[layer]);
-            MFVarGetFloat (_MDStateStrat_dV [layer], itemID, dV [layer]);
-            MFVarGetFloat (_MDStateStrat_vZt[layer], itemID, vZt[layer]);
+            MFVarSetFloat (_MDStateStrat_aD [layer], itemID, aD [layer]);
+            MFVarSetFloat (_MDStateStrat_mZn[layer], itemID, mZn[layer]);
+            MFVarSetFloat (_MDStateStrat_dV [layer], itemID, dV [layer]);
+            MFVarSetFloat (_MDStateStrat_vZt[layer], itemID, vZt[layer]);
         }
     } else { // Reservoir does not have geometry to compute stratification
-        MFVarSetFloat(_MDOutWTemp_ReservoirBottomID, itemID, riverTempTop);
+        MFVarSetFloat (_MDOutWTemp_ReservoirBottomID, itemID, riverTempTop);
+        MFVarSetFloat (_MDOutWTemp_ReservoirNLayerID, itemID, 0.0);
         for (layer = 0; layer < NLAYER_MAX; ++layer) {
             MFVarSetFloat (_MDStateStrat_dZ [layer], itemID, 0.0);
             MFVarSetFloat (_MDStateStrat_tZ [layer], itemID, 0.0);
-            MFVarGetFloat (_MDStateStrat_aD [layer], itemID, 0.0);
-            MFVarGetFloat (_MDStateStrat_mZn[layer], itemID, 0.0);
-            MFVarGetFloat (_MDStateStrat_dV [layer], itemID, 0.0);
-            MFVarGetFloat (_MDStateStrat_vZt[layer], itemID, 0.0);
+            MFVarSetFloat (_MDStateStrat_aD [layer], itemID, 0.0);
+            MFVarSetFloat (_MDStateStrat_mZn[layer], itemID, 0.0);
+            MFVarSetFloat (_MDStateStrat_dV [layer], itemID, 0.0);
+            MFVarSetFloat (_MDStateStrat_vZt[layer], itemID, 0.0);
         }
     }
 }
@@ -147,7 +150,7 @@ int MDWTemp_ReservoirBottomDef () {
                 ((_MDInCommon_SolarRadID        = MDCommon_SolarRadDef ())         == CMfailed) ||
                 ((_MDInCommon_RadAbsortionID    = MFVarGetID ("RadiationAbsorption",  "W/m2",   MFInput,  MFState, MFBoundary)) == CMfailed) ||
                 ((_MDInCommon_WindSpeedID       = MFVarGetID (MDVarCommon_WindSpeed,  "m/s",    MFInput,  MFState, MFBoundary)) == CMfailed) ||
-                ((_MDInStrat_GMjID              = MFVarGetID ("ReservoirGeometry",    MFNoUnit, MFInt,    MFState, MFBoundary)) == CMfailed) ||
+                ((_MDInStrat_GMjID              = MFVarGetID ("ReservoirGeometry",    MFNoUnit, MFInput,  MFState, MFBoundary)) == CMfailed) ||
                 ((_MDInStrat_DepthID            = MFVarGetID ("ReservoirMeanDepth",   "m",      MFInput,  MFState, MFBoundary)) == CMfailed) ||
                 ((_MDInStrat_HeightID           = MFVarGetID ("ReservoirDamHeight",   "m",      MFInput,  MFState, MFBoundary)) == CMfailed) ||
                 ((_MDInStrat_LengthID           = MFVarGetID ("ReservoirLength",      "km",     MFInput,  MFState, MFBoundary)) == CMfailed) ||
@@ -159,6 +162,7 @@ int MDWTemp_ReservoirBottomDef () {
                 ((_MDInStrat_VolumeDiffID       = MFVarGetID ("ReservoirVolumeDiff",  "mcm",    MFInput,  MFState, MFBoundary)) == CMfailed) ||
                 ((_MDInStrat_AreaDiffID         = MFVarGetID ("ReservoirAreaDiff",    "km2",    MFInput,  MFState, MFBoundary)) == CMfailed) ||
                 ((_MDOutWTemp_ReservoirBottomID = MFVarGetID (MDVarWTemp_RiverBottom, "degC",   MFOutput, MFState, MFBoundary)) == CMfailed) ||
+                ((_MDOutWTemp_ReservoirNLayerID = MFVarGetID ("ReservoirNLayers",     MFNoUnit, MFOutput, MFState, MFBoundary)) == CMfailed) ||
                 (MFModelAddFunction (_MDWTempReservoirBottom) == CMfailed)) return (CMfailed);
             for (i = 0; i < NLAYER_MAX; ++i) {
                 char stateName [6][64];

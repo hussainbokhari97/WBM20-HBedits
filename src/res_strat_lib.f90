@@ -267,7 +267,7 @@ contains
          resgeo%ddz_max = 2.*resgeo%d_res
       end if
       ! resgeo%ddz_min = max(resgeo%ddz_max*0.25, 2.0_r8)
-      print *, "MAX=", resgeo%ddz_max, "MIN=", resgeo%ddz_min
+      ! FBM print *, "MAX=", resgeo%ddz_max, "MIN=", resgeo%ddz_min
    end subroutine layer_thickness
 
    subroutine setup_solve(a, b, c, r, A_cf, V_cf, phi_o, sh_net, a_d, df_eff, t_z, phi_z, rho_z, d_v, dd_z)
@@ -680,7 +680,7 @@ contains
                   ! m = i
                end if
                if (m == 0) then
-                  print *, "RESETTING M"
+                  ! FBM print *, "RESETTING M"
                   m = 1
                end if
                ! Merge layers
@@ -770,7 +770,7 @@ contains
 
                if (n_depth < 1) then
                   lme_error = 1
-                  print *, 'QUIT LAYER MASS/ENERGY SUBROUTINE NDEPTH < 1', n_depth
+                  ! FBM print *, 'QUIT LAYER MASS/ENERGY SUBROUTINE NDEPTH < 1', n_depth
                   return
                end if
                ! Quit the loop over layers so only one layer is modified per outer loop
@@ -859,17 +859,17 @@ contains
           (sum(m_zn) <= zero) .or. &
           (n_depth >= nlayer_max)) then
          lme_error = 1
-         print *, '------QUIT LAYER MASS/ENERGY SUBROUTINE-----'
-         print *, '                      s_t', s_t
-         print *, '                    s_tin', s_tin
-         print *, '                     V_df', V_df
-         print *, '                    d_res', d_res
-         print *, '                  n_depth', n_depth
-         print *, '                  t_z_sfc', t_z(n_depth)
-         print *, '                sum(m_zn)', sum(m_zn)
-         print *, '               nlayer_max', nlayer_max
-         print *, '0.0050*(s_tin + V_df*1e6)', 0.0050*(s_tin + V_df*1e6)
-         print *, '----------------------------------------------'
+         ! FBM print *, '------QUIT LAYER MASS/ENERGY SUBROUTINE-----'
+         ! FBM print *, '                      s_t', s_t
+         ! FBM print *, '                    s_tin', s_tin
+         ! FBM print *, '                     V_df', V_df
+         ! FBM print *, '                    d_res', d_res
+         ! FBM print *, '                  n_depth', n_depth
+         ! FBM print *, '                  t_z_sfc', t_z(n_depth)
+         ! FBM print *, '                sum(m_zn)', sum(m_zn)
+         ! FBM print *, '               nlayer_max', nlayer_max
+         ! FBM print *, '0.0050*(s_tin + V_df*1e6)', 0.0050*(s_tin + V_df*1e6)
+         ! FBM print *, '----------------------------------------------'
          return
       end if
 
