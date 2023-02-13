@@ -142,6 +142,7 @@ static void _MDReservoirSNL (int itemID) {
 		float resCapacity25;
 		float resCapacity75;
 		// Local
+		float increment;
 		float deadStorage = 0.03 * resCapacity;
 		float dt = MFModelGet_dt ();  // Time step length [s]
 			prevResStorage = MFVarGetFloat (_MDOutResStorageID,           itemID, 0.0);
@@ -168,14 +169,10 @@ static void _MDReservoirSNL (int itemID) {
 		// krls before adjustment
 		initial_krls = (prevResStorage / (alpha * storageRatio * resCapacity));
 		// condition when storage is above 75% of normal or max
-		if ((resInflow >= natFlowMeanMonthly) && (prevResStorage >= resCapacity75)) krls = (1 + incMult * increment1) * initial_krls;
-		if ((resInflow <  natFlowMeanMonthly) && (prevResStorage >= resCapacity75)) krls = (1 + increment1) * initial_krls;
-		// condition when storage is 25-75% of normal or max 
-		if ((resInflow >= natFlowMeanMonthly) && (resCapacity75 < prevResStorage >= resCapacity25)) krls = (1 + incMult * increment2) * initial_krls;
-		if ((resInflow <  natFlowMeanMonthly) && (resCapacity75 < prevResStorage >= resCapacity25)) krls = (1 + increment2) * initial_krls;
-		// condition when storage is below 25% of normal or max 
-		if ((resInflow >= natFlowMeanMonthly) && (prevResStorage < resCapacity25)) krls = (1 + incMult * increment3) * initial_krls;
-		if ((resInflow <  natFlowMeanMonthly) && (prevResStorage < resCapacity25)) krls = (1 + increment3) * initial_krls;
+		if      (prevResStorage >= resCapacity75) increment = increment1;
+		else if (prevResStorage >= resCapacity25) increment = increment2;
+		else increment = increment3;
+		krls = 1 + (resInflow >= natFlowMeanMonthly ? incMult * increment : 1.0) * initial_krls; 
 		// adjustment to consider inflow on given day (should help with extremes)
 		resReleaseBottom = 0.5 * ((krls * resReleaseTarget) + (releaseAdj * resInflow));
 		// assume 5% envrionemntal flow minimum, and makes sure there is no negative flow.
