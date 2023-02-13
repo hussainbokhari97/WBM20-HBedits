@@ -171,8 +171,8 @@ static void _MDReservoirSNL (int itemID) {
 		if ((resInflow >= natFlowMeanMonthly) && (prevResStorage >= resCapacity75)) krls = (1 + incMult * increment1) * initial_krls;
 		if ((resInflow <  natFlowMeanMonthly) && (prevResStorage >= resCapacity75)) krls = (1 + increment1) * initial_krls;
 		// condition when storage is 25-75% of normal or max 
-		if ((resInflow >= natFlowMeanMonthly) && (resCapacity75 > prevResStorage >= resCapacity25)) krls = (1 + incMult * increment2) * initial_krls;
-		if ((resInflow <  natFlowMeanMonthly) && (resCapacity75 > prevResStorage >= resCapacity25)) krls = (1 + increment2) * initial_krls;
+		if ((resInflow >= natFlowMeanMonthly) && (resCapacity75 < prevResStorage >= resCapacity25)) krls = (1 + incMult * increment2) * initial_krls;
+		if ((resInflow <  natFlowMeanMonthly) && (resCapacity75 < prevResStorage >= resCapacity25)) krls = (1 + increment2) * initial_krls;
 		// condition when storage is below 25% of normal or max 
 		if ((resInflow >= natFlowMeanMonthly) && (prevResStorage < resCapacity25)) krls = (1 + incMult * increment3) * initial_krls;
 		if ((resInflow <  natFlowMeanMonthly) && (prevResStorage < resCapacity25)) krls = (1 + increment3) * initial_krls;
