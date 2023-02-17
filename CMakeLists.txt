@@ -3,7 +3,7 @@ project(WBM20)
 
 enable_language(Fortran)
 set(CMAKE_Fortran_SOURCE_FILE_EXTENSIONS f90)
-set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -g")
+set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -g -O3")
 set(CMAKE_C_FLAGS   "${CMAKE_C_FLAGS}   -g")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -g")
 
