@@ -172,7 +172,10 @@ static void _MDReservoirSNL (int itemID) {
 		if      (prevResStorage >= resCapacity75) increment = increment1;
 		else if (prevResStorage >= resCapacity25) increment = increment2;
 		else increment = increment3;
-		krls = 1 + (resInflow >= natFlowMeanMonthly ? incMult : 1.0) * increment * initial_krls; 
+		// condition based on inflow
+		if (resInflow >= natFlowMeanMonthly) krls = (1 + incMult * increment) * initial_krls;
+		else krls = (1 + increment) * initial_krls;
+		
 		// adjustment to consider inflow on given day (should help with extremes)
 		resReleaseBottom = 0.5 * ((krls * resReleaseTarget) + (releaseAdj * resInflow));
 		// assume 5% envrionemntal flow minimum, and makes sure there is no negative flow.
