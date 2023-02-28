@@ -1195,15 +1195,15 @@ contains
          m_ev = zero
       end if
       ! Avoid extraction of water from reservoir beyond 20% volume of the total storage
-      !if ((s_t <= 0.10*(s_tin + V_df*1e6) .and. ou_f > in_f) .or. &
-      !    ! Avoid extra inflow of water if the reservoir storage exceeded total dam storage (taken to be initial storage)
-      !    (s_t >= (s_tin + V_df*1e6) .and. in_f > ou_f) .or. &
-      !    ! Avoid reservoir level from exceeding dam height
-      !    (d_res >= d_ht .and. in_f > ou_f) .or. &
-      !    ! Avoid extraction of water from shallow reservoirs beyond 5m depth for numerical stability until reservoir operation is calibrated
-      !    ((d_res < 5. .and. n_depth <= 3) .and. ou_f > in_f)) then
-      !   ou_f = in_f
-      !end if
+      if ((s_t <= 0.10*(s_tin + V_df*1e6) .and. ou_f > in_f) .or. &
+          ! Avoid extra inflow of water if the reservoir storage exceeded total dam storage (taken to be initial storage)
+          (s_t >= (s_tin + V_df*1e6) .and. in_f > ou_f) .or. &
+          ! Avoid reservoir level from exceeding dam height
+          (d_res >= d_ht .and. in_f > ou_f) .or. &
+          ! Avoid extraction of water from shallow reservoirs beyond 5m depth for numerical stability until reservoir operation is calibrated
+          ((d_res < 5. .and. n_depth <= 3) .and. ou_f > in_f)) then
+          ou_f = in_f
+      end if
 
    end subroutine flow_contrib
 

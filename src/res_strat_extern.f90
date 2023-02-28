@@ -51,11 +51,13 @@ contains
       real(r8), intent(inout) :: s_tin              ! Initial total storage (m^3)
       call rgeom(resgeo, dav)
       call layer_thickness(resgeo)
-      call stratify_internal(ti, lme_error, in_t, in_f, ou_f, &
+      ! We reapeat the same input 24 times to simulate the hourly time steps
+      do k = 1, 24
+         call stratify_internal(ti, lme_error, in_t, in_f, ou_f, &
                              coszen, lw_abs, s_w, rh, t_air, u_2, &
                              resgeo, d_z, t_z, &
                              m_zn, a_d, d_v, v_zt, s_tin, m_cal, dav)
-
+      end do
    end subroutine stratify
 
    subroutine stratify_internal(ti, lme_error, in_t, in_f, ou_f, &
