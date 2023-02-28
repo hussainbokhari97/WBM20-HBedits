@@ -104,7 +104,7 @@ static void _MDWTempReservoirBottom (int itemID) {
                                                      &cosZen, &radAbsorption, &solarRad, &humidityRel, &airTemp, &windSpeed,
                                                      &resGeom, (double **) &dZ, (double **) &tZ, (double **) &mZn, (double **) &aD, (double **) &dV, (double **) &vZt, &s_tin, &m_cal);
         riverTempBottom = tZ[resGeom.n_depth - 1] - 273.15;
-        MFVarSetFloat (_MDOutWTemp_ReservoirBottomID, itemID, lme_error == 0 ? riverTempBottom : riverTempTop);
+        MFVarSetFloat (_MDOutWTemp_ReservoirBottomID, itemID, lme_error == 0 ? riverTempBottom : (riverTempTop - 273.15));
         MFVarSetFloat (_MDOutWTemp_ReservoirNLayerID, itemID, (float) (resGeom.n_depth > 0 ? (float) resGeom.n_depth : 1.0));
         for (layer = 0; layer < NLAYER_MAX; ++layer) {
             MFVarSetFloat (_MDStateStrat_dZ [layer], itemID, dZ [layer]);
