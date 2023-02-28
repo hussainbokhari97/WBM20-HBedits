@@ -49,6 +49,9 @@ contains
       real(r8), intent(inout) :: v_zt(nlayer_max)   ! Total reservoir volume at depth z from surface(m3)
 
       real(r8), intent(inout) :: s_tin              ! Initial total storage (m^3)
+
+      integer :: k                                  ! Generic counter for loop
+
       call rgeom(resgeo, dav)
       call layer_thickness(resgeo)
       ! We reapeat the same input 24 times to simulate the hourly time steps
