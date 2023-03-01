@@ -25,6 +25,7 @@ static int _MDInReservoir_ReleaseBottomID   = MFUnset;
 static int _MDInReservoir_ReleaseSpillwayID = MFUnset;
 static int _MDInWTemp_RiverTopID            = MFUnset;
 static int _MDInWTemp_RiverBottomID         = MFUnset;
+static int _MDInWetBulbTempID               = MFUnset;
 // Route
 static int _MDOutWTemp_HeatFluxID           = MFUnset;
 // Output
@@ -102,6 +103,7 @@ int MDWTemp_RiverDef () {
         ((_MDInRouting_DischargeID          = MDRouting_DischargeDef ())                  == CMfailed) ||
         ((_MDInWTemp_RiverTopID             = MDWTemp_RiverTopDef ())                     == CMfailed) ||
         ((_MDInReservoir_StorageID          = MDReservoir_StorageDef ())                  == CMfailed) ||
+        ((_MDInWetBulbTempID                = MDCommon_WetBulbTempDef ())                 == CMfailed) ||
         ((_MDInReservoir_StorageID != MFUnset) &&
          (((_MDInWTemp_RiverBottomID         = MDWTemp_RiverBottomDef ())                 == CMfailed) ||
           ((_MDInReservoir_ReleaseBottomID   = MDReservoir_ReleaseBottomDef ())           == CMfailed) ||
