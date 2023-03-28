@@ -170,7 +170,7 @@ int MDWTemp_ReservoirBottomDef () {
                 ((_MDInStrat_AreaDiffID         = MFVarGetID ("ReservoirAreaDiff",    "km2",    MFInput,  MFState, MFBoundary)) == CMfailed) ||
                 ((_MDOutWTemp_ReservoirBottomID = MFVarGetID (MDVarWTemp_RiverBottom, "degC",   MFOutput, MFState, MFBoundary)) == CMfailed) ||
                 ((_MDOutWTemp_ReservoirNLayerID = MFVarGetID ("ReservoirNLayers",     MFNoUnit, MFOutput, MFState, MFBoundary)) == CMfailed) ||
-                ((_MDStateStrat_s_tin           = MFVarGetID ("ReservoirStratInitStorage","km3",MFInput,  MFState, MFInitial))  == CMfailed) ||
+                ((_MDStateStrat_s_tin           = MFVarGetID ("ReservoirStratInitStorage","km3",MFOutput,  MFState, MFInitial))  == CMfailed) ||
                 ((_MDStateStrat_m_cal           = MFVarGetID ("ReservoirMassBalance",   "km3",  MFOutput, MFState, MFBoundary)) == CMfailed) ||
                 (MFModelAddFunction (_MDWTempReservoirBottom) == CMfailed)) return (CMfailed);
             for (i = 0; i < NLAYER_MAX; ++i) {
