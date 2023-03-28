@@ -105,8 +105,9 @@ static void _MDWTempReservoirBottom (int itemID) {
         airTemp      += 273.15;
         riverTempTop += 273.15;
         stratify(tStep + 1, &lme_error, &riverTempTop, &inflow, &release,
-                                                     &cosZen, &radAbsorption, &solarRad, &humidityRel, &airTemp, &windSpeed,
-                                                     &resGeom, (double **) &dZ, (double **) &tZ, (double **) &mZn, (double **) &aD, (double **) &dV, (double **) &vZt, &s_tin, &m_cal);
+                 &cosZen, &radAbsorption, &solarRad, &humidityRel, &airTemp, &windSpeed,
+                 &resGeom, (double **) &dZ, (double **) &tZ, (double **) &mZn, (double **) &aD, (double **) &dV,
+                 (double **) &vZt, &s_tin, &m_cal);
         riverTempBottom = tZ[resGeom.n_depth - 1] - 273.15;
         MFVarSetFloat (_MDOutWTemp_ReservoirBottomID, itemID, lme_error == 0 ? riverTempBottom : (riverTempTop - 273.15));
         MFVarSetFloat (_MDOutWTemp_ReservoirNLayerID, itemID, (float) (resGeom.n_depth > 0 ? (float) resGeom.n_depth : 1.0));
@@ -169,6 +170,8 @@ int MDWTemp_ReservoirBottomDef () {
                 ((_MDInStrat_AreaDiffID         = MFVarGetID ("ReservoirAreaDiff",    "km2",    MFInput,  MFState, MFBoundary)) == CMfailed) ||
                 ((_MDOutWTemp_ReservoirBottomID = MFVarGetID (MDVarWTemp_RiverBottom, "degC",   MFOutput, MFState, MFBoundary)) == CMfailed) ||
                 ((_MDOutWTemp_ReservoirNLayerID = MFVarGetID ("ReservoirNLayers",     MFNoUnit, MFOutput, MFState, MFBoundary)) == CMfailed) ||
+                ((_MDStateStrat_s_tin           = MFVarGetID ("ReservoirStratInitStorage","km3",MFInput,  MFState, MFInitial))  == CMfailed) ||
+                ((_MDStateStrat_m_cal           = MFVarGetID ("ReservoirMassBalance",   "km3",  MFOutput, MFState, MFBoundary)) == CMfailed) ||
                 (MFModelAddFunction (_MDWTempReservoirBottom) == CMfailed)) return (CMfailed);
             for (i = 0; i < NLAYER_MAX; ++i) {
                 char stateName [6][64];
