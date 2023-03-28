@@ -44,6 +44,8 @@ static int _MDStateStrat_aD  [NLAYER_MAX] = { MFUnset, MFUnset, MFUnset, MFUnset
 static int _MDStateStrat_mZn [NLAYER_MAX] = { MFUnset, MFUnset, MFUnset, MFUnset, MFUnset, MFUnset, MFUnset, MFUnset, MFUnset, MFUnset, MFUnset, MFUnset, MFUnset, MFUnset, MFUnset, MFUnset, MFUnset, MFUnset, MFUnset, MFUnset, MFUnset, MFUnset, MFUnset, MFUnset, MFUnset, MFUnset, MFUnset, MFUnset, MFUnset, MFUnset };
 static int _MDStateStrat_dV  [NLAYER_MAX] = { MFUnset, MFUnset, MFUnset, MFUnset, MFUnset, MFUnset, MFUnset, MFUnset, MFUnset, MFUnset, MFUnset, MFUnset, MFUnset, MFUnset, MFUnset, MFUnset, MFUnset, MFUnset, MFUnset, MFUnset, MFUnset, MFUnset, MFUnset, MFUnset, MFUnset, MFUnset, MFUnset, MFUnset, MFUnset, MFUnset };
 static int _MDStateStrat_vZt [NLAYER_MAX] = { MFUnset, MFUnset, MFUnset, MFUnset, MFUnset, MFUnset, MFUnset, MFUnset, MFUnset, MFUnset, MFUnset, MFUnset, MFUnset, MFUnset, MFUnset, MFUnset, MFUnset, MFUnset, MFUnset, MFUnset, MFUnset, MFUnset, MFUnset, MFUnset, MFUnset, MFUnset, MFUnset, MFUnset, MFUnset, MFUnset };
+static int _MDStateStrat_s_tin            = MFUnset;
+static int _MDStateStrat_m_cal            = MFUnset;
 // Output
 static int _MDOutWTemp_ReservoirBottomID = MFUnset;
 static int _MDOutWTemp_ReservoirNLayerID = MFUnset;
@@ -80,6 +82,8 @@ static void _MDWTempReservoirBottom (int itemID) {
 	tStep           = MFVarGetInt   (_MDInAux_StepCounterID,   itemID, 0);
     resGeom.gm_j    = (int) (MFVarGetFloat (_MDInStrat_GMjID,  itemID, 0.0));
     if (resGeom.gm_j != 0) { // Reservoir has ResGeo geometry to compute stratification
+        s_tin           = MFVarGetFloat (_MDStateStrat_s_tin,      itemID, 0.0);
+        m_cal           = MFVarGetFloat (_MDStateStrat_m_cal,      itemID, 0.0);
         resGeom.depth   = MFVarGetFloat (_MDInStrat_DepthID,       itemID, 0.0);
         resGeom.d_ht    = MFVarGetFloat (_MDInStrat_HeightID,      itemID, 0.0);
         resGeom.M_L     = MFVarGetFloat (_MDInStrat_LengthID,      itemID, 0.0);
@@ -106,6 +110,8 @@ static void _MDWTempReservoirBottom (int itemID) {
         riverTempBottom = tZ[resGeom.n_depth - 1] - 273.15;
         MFVarSetFloat (_MDOutWTemp_ReservoirBottomID, itemID, lme_error == 0 ? riverTempBottom : (riverTempTop - 273.15));
         MFVarSetFloat (_MDOutWTemp_ReservoirNLayerID, itemID, (float) (resGeom.n_depth > 0 ? (float) resGeom.n_depth : 1.0));
+        MFVarSetFloat (_MDStateStrat_s_tin, itemID, s_tin);
+        MFVarSetFloat (_MDStateStrat_m_cal, itemID, m_cal);
         for (layer = 0; layer < NLAYER_MAX; ++layer) {
             MFVarSetFloat (_MDStateStrat_dZ [layer], itemID, dZ [layer]);
             MFVarSetFloat (_MDStateStrat_tZ [layer], itemID, tZ [layer]);
