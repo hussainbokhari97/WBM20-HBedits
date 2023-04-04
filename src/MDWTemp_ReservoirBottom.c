@@ -139,14 +139,14 @@ static void _MDWTempReservoirBottom (int itemID) {
                  (double **) &vZt, &s_tin, &m_cal);
 
         //CMmsgPrint (CMmsgDebug, "\toutcoming values: tStep=%d s_tin=%f, m_cal=%f\n",tStep,s_tin,m_cal);
-        if (lme_error != 0) {CMmsgPrint (CMmsgUsrError, "stratify error code at tStep=%d for CellID %d: lme_error=%d\n",tStep,itemID,lme_error);}
+        if (lme_error != 0) {CMmsgPrint (CMmsgUsrError, "stratify error code at tStep=%d for CellID %d: lme_error=%d\n",tStep,itemID+1,lme_error);}
 
         riverTempBottom = tZ[resGeom.n_depth - 1] - 273.15;
         MFVarSetFloat (_MDOutWTemp_ReservoirBottomID, itemID, lme_error == 0 ? riverTempBottom : (riverTempTop - 273.15));
         MFVarSetFloat (_MDOutWTemp_ReservoirNLayerID, itemID, (float) (resGeom.n_depth > 0 ? (float) resGeom.n_depth : 1.0));
         MFVarSetFloat (_MDStateStrat_s_tin, itemID, s_tin);
         MFVarSetFloat (_MDStateStrat_m_cal, itemID, m_cal);
-        MFVarSetFloat (_MDStateStrat_error,   itemID, lme_error);
+        MFVarSetFloat (_MDStateStrat_error, itemID, lme_error);
 
         //MFVarSetFloat (_MDStateStrat_resGeom_d_res, itemID, resGeom.d_res);
         //MFVarSetFloat (_MDStateStrat_resGeom_ddz_min, itemID, resGeom.ddz_min);
