@@ -126,13 +126,13 @@ contains
       end if
 
       if (resgeo%n_depth .ne. n_depth_new) then
-         ! print *, "************************************************"
-         ! print *, "  INPUT N DEPTH =/= COMPUTED N_DEPTH"
-         ! print *, "             DEPTH= ", resgeo%depth
-         ! print *, "        N_DEPTH IN=", resgeo%n_depth
-         ! print *, "          COMPUTED=", n_depth_new
-         ! print *, "              DIFF=", n_depth_new - resgeo%n_depth
-         ! print *, "************************************************"
+         !print *, "************************************************"
+         !print *, "  INPUT N DEPTH =/= COMPUTED N_DEPTH"
+         !print *, "             DEPTH= ", resgeo%depth
+         !print *, "        N_DEPTH IN=", resgeo%n_depth
+         !print *, "          COMPUTED=", n_depth_new
+         !print *, "              DIFF=", n_depth_new - resgeo%n_depth
+         !print *, "************************************************"
          resgeo%n_depth = n_depth_new
       end if
 
@@ -1537,7 +1537,8 @@ contains
       ! Avoid Numerical instability for multiple reservoir runs
       do j = 1, n_depth
          if (ieee_is_nan(t_z(j))) then
-            write (*, *) 'check reservoir data'
+            !write (*, *) 'check reservoir data'
+            lme_error = 1
             return
          end if
       end do

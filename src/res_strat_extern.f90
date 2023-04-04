@@ -52,8 +52,25 @@ contains
 
       integer :: k                                  ! Generic counter for loop
 
+      !print *, "Time Step ", ti
+      !print *, "     Before ResGeo: ", resgeo%depth, resgeo%d_ht, resgeo%A_cf, resgeo%V_cf, &
+      !        resgeo%M_L, resgeo%M_W, resgeo%V_err, resgeo%Ar_err, resgeo%C_v, &
+      !        resgeo%C_a, resgeo%V_df, resgeo%A_df, resgeo%d_res, resgeo%dd_z(1), &
+      !        resgeo%ddz_min, resgeo%ddz_max, resgeo%n_depth, resgeo%gm_j
+
+      ! FC moved the call to the C code (for initial time step)
+      !if (ti == 1) then
       call rgeom(resgeo, dav)
+      !print *, "     After ResGeo: ", resgeo%depth, resgeo%d_ht, resgeo%A_cf, resgeo%V_cf, &
+      !        resgeo%M_L, resgeo%M_W, resgeo%V_err, resgeo%Ar_err, resgeo%C_v, &
+      !        resgeo%C_a, resgeo%V_df, resgeo%A_df, resgeo%d_res, resgeo%dd_z(1), &
+      !        resgeo%ddz_min, resgeo%ddz_max, resgeo%n_depth, resgeo%gm_j
       call layer_thickness(resgeo)
+      !print *, "     After thickness: ", resgeo%depth, resgeo%d_ht, resgeo%A_cf, resgeo%V_cf, &
+      !        resgeo%M_L, resgeo%M_W, resgeo%V_err, resgeo%Ar_err, resgeo%C_v, &
+      !        resgeo%C_a, resgeo%V_df, resgeo%A_df, resgeo%d_res, resgeo%dd_z(1), &
+      !        resgeo%ddz_min, resgeo%ddz_max, resgeo%n_depth, resgeo%gm_j
+      !end if
       ! We reapeat the same input 24 times to simulate the hourly time steps
       do k = 1, 24
          call stratify_internal(ti, lme_error, in_t, in_f, ou_f, &
