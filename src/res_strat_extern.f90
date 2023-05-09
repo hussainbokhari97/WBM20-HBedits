@@ -49,35 +49,18 @@ contains
       real(r8), intent(inout) :: v_zt(nlayer_max)   ! Total reservoir volume at depth z from surface(m3)
 
       real(r8), intent(inout) :: s_tin              ! Initial total storage (m^3)
+      integer(C_INT), parameter :: forcing_dtime = 24 ! Input forcing dtime is 24hrs from WBM always
 
-      integer :: k                                  ! Generic counter for loop
+      ! Set our s_dtime such that there is 60s per subtimestep
+      s_dtime = 3600*forcing_dtime/dtime
 
-      !print *, "Time Step ", ti
-      !print *, "     Before ResGeo: ", resgeo%depth, resgeo%d_ht, resgeo%A_cf, resgeo%V_cf, &
-      !        resgeo%M_L, resgeo%M_W, resgeo%V_err, resgeo%Ar_err, resgeo%C_v, &
-      !        resgeo%C_a, resgeo%V_df, resgeo%A_df, resgeo%d_res, resgeo%dd_z(1), &
-      !        resgeo%ddz_min, resgeo%ddz_max, resgeo%n_depth, resgeo%gm_j
-
-      ! FC moved the call to the C code (for initial time step)
-      !if (ti == 1) then
-      call rgeom(resgeo, dav)
-      !print *, "     After ResGeo: ", resgeo%depth, resgeo%d_ht, resgeo%A_cf, resgeo%V_cf, &
-      !        resgeo%M_L, resgeo%M_W, resgeo%V_err, resgeo%Ar_err, resgeo%C_v, &
-      !        resgeo%C_a, resgeo%V_df, resgeo%A_df, resgeo%d_res, resgeo%dd_z(1), &
-      !        resgeo%ddz_min, resgeo%ddz_max, resgeo%n_depth, resgeo%gm_j
-      call layer_thickness(resgeo)
-      !print *, "     After thickness: ", resgeo%depth, resgeo%d_ht, resgeo%A_cf, resgeo%V_cf, &
-      !        resgeo%M_L, resgeo%M_W, resgeo%V_err, resgeo%Ar_err, resgeo%C_v, &
-      !        resgeo%C_a, resgeo%V_df, resgeo%A_df, resgeo%d_res, resgeo%dd_z(1), &
-      !        resgeo%ddz_min, resgeo%ddz_max, resgeo%n_depth, resgeo%gm_j
-      !end if
-      ! We reapeat the same input 24 times to simulate the hourly time steps
-      do k = 1, 24
-         call stratify_internal(ti, lme_error, in_t, in_f, ou_f, &
+      call rgeom(resgeo)
+      call depth_area_vol(resgeo, dav)
+      call stratify_internal(ti, lme_error, in_t, in_f, ou_f, &
                              coszen, lw_abs, s_w, rh, t_air, u_2, &
                              resgeo, d_z, t_z, &
                              m_zn, a_d, d_v, v_zt, s_tin, m_cal, dav)
-      end do
+
    end subroutine stratify
 
    subroutine stratify_internal(ti, lme_error, in_t, in_f, ou_f, &
@@ -140,6 +123,7 @@ contains
       d_zsb = zero
 
       if (ti == 1) then
+         call layer_thickness(resgeo)
          call init_subtimestep(m_zn, t_air, resgeo, dav, d_z, a_d, v_zt, d_v, &
                                rho_z, t_z, s_tin)
       else
