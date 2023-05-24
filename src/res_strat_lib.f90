@@ -2,11 +2,16 @@ module constants
    use ISO_C_BINDING
    ! -------- Constants -------- !
    integer(C_INT), parameter :: r8 = C_DOUBLE
+   ! integer(C_INT), parameter :: r8 = C_LONG_DOUBLE
    integer(C_INT), parameter :: nlayer_max = 30         ! Maximum number of layers
    integer(C_INT), parameter :: yr_max = 10             ! Maximum number of years simulated
    integer(C_INT), parameter :: dtime = 60              ! time step (sec)
-   integer(C_INT), parameter :: s_dtime = 3600/dtime    ! 3600/dtime    ! number of sub hourly time step
+   integer(C_INT) :: s_dtime = 3600/dtime               ! number of sub hourly time step
    integer(C_INT), parameter :: d_nn = 250              ! Number of vertical depth descretization to establish depth-area-volume relationship
+
+   logical:: DEBUG = .false.                            ! Print debugging statements
+   logical :: use_evap = .false.                        ! Turn on / off evaporation from volume / sfc temperature computations
+
    real(r8), parameter :: t_frz = 273.15_r8             ! freezing temperature (K)
    real(r8), parameter :: rho_w = 1.e3_r8               ! Water density (kg/m3)
    real(r8), parameter :: rho_a = 1.177_r8              ! Air density (kg/m3)
@@ -17,7 +22,7 @@ module constants
    real(r8), parameter :: le = 2.501e6_r8               ! latent heat of vaporaization (kcal/kg)
    real(r8), parameter :: grav = 9.8062_r8
    real(r8), parameter :: zero = 0.0_r8
-   real(r8), parameter :: missing_value = -9999_r8
+   real(r8), parameter :: missing_value = -9999._r8
 
 end module
 
@@ -53,10 +58,10 @@ module rstrat_types
 
    end type
 
-   type, bind(C) :: res_dav
-      real(r8) :: d_zi(d_nn + 1)    ! Initial depth for reservoir geometry
-      real(r8) :: a_di(d_nn + 1)    ! Initial area for reservoir geometry
-      real(r8) :: v_zti(d_nn + 1)   ! Initial volume for reservoir geometry
+   type :: res_dav
+      real(r8), allocatable :: d_zi(:)    ! Initial depth for reservoir geometry
+      real(r8), allocatable :: a_di(:)    ! Initial area for reservoir geometry
+      real(r8), allocatable :: v_zti(:)   ! Initial volume for reservoir geometry
    end type
 
 end module
@@ -85,18 +90,12 @@ contains
       mean = sum/size(data)
    end function
 
-   subroutine rgeom(resgeo, dav)
+   subroutine rgeom(resgeo)
 
       ! Calculate reservoir layer average area (km2)
       implicit none
       type(reservoir_geometry), intent(inout) :: resgeo
-      type(res_dav), intent(inout) :: dav
       integer(C_INT) :: n_depth_new
-      real(r8) :: a_dd(d_nn + 1), a_zi(d_nn + 1), C_aa(d_nn + 1)
-      real(r8) :: dd_in ! (d_nn)
-      real(r8) :: ar_f = 1.0e6  ! Factor to convert area to m^2
-      real(r8) :: pi = 2.0*asin(1.0_r8)
-      integer :: j, k
 
       !     Depth -> N Layers
       !        <3 -> 1
@@ -126,19 +125,17 @@ contains
       end if
 
       if (resgeo%n_depth .ne. n_depth_new) then
-         !print *, "************************************************"
-         !print *, "  INPUT N DEPTH =/= COMPUTED N_DEPTH"
-         !print *, "             DEPTH= ", resgeo%depth
-         !print *, "        N_DEPTH IN=", resgeo%n_depth
-         !print *, "          COMPUTED=", n_depth_new
-         !print *, "              DIFF=", n_depth_new - resgeo%n_depth
-         !print *, "************************************************"
+         if (DEBUG) then
+            print *, "************************************************"
+            print *, "  INPUT N DEPTH =/= COMPUTED N_DEPTH"
+            print *, "             DEPTH= ", resgeo%depth
+            print *, "        N_DEPTH IN=", resgeo%n_depth
+            print *, "          COMPUTED=", n_depth_new
+            print *, "              DIFF=", n_depth_new - resgeo%n_depth
+            print *, "************************************************"
+         end if
          resgeo%n_depth = n_depth_new
       end if
-
-      dav%v_zti = zero
-      dav%a_di = zero
-      dav%d_zi = zero
 
       if (resgeo%d_ht <= zero) resgeo%d_ht = resgeo%depth
       resgeo%d_res = 0.95*resgeo%d_ht
@@ -147,40 +144,64 @@ contains
       if (resgeo%M_W <= zero) resgeo%M_W = 1.
       if (resgeo%M_L <= zero) resgeo%M_L = 1.
 
-      ! Uniform subsurface layer depth for initialization and limit maximum layer thickness
-      dd_in = resgeo%d_res/d_nn !bottom layers evenly descritized
+   end subroutine rgeom
+
+   subroutine depth_area_vol(resgeo, dav)
+      implicit none
+      type(reservoir_geometry), intent(inout) :: resgeo
+      type(res_dav), intent(inout) :: dav
+      real(r8) :: a_dd(d_nn + 1), a_zi(d_nn + 1)
+      real(r8) :: dd_in
+      real(r8) :: ar_f = 1.0e6  ! Factor to convert area to m^2
+      real(r8) :: pi = 2.0*asin(1.0_r8)
+      real(r8) :: d_res ! Reservoir depth
+      integer :: j, k
+
+      ! resgeo member d_res (resgeo%d_res) is re-computed each subtimestep
+      ! re-compute here as 0.95 * dam_height, since it throws off calculations
+      ! if the depth-area-vol computation is re-done each time.
+      d_res = 0.95*resgeo%d_ht
+
+      if (allocated(dav%v_zti)) then
+         deallocate (dav%v_zti)
+      end if
+      if (allocated(dav%a_di)) then
+         deallocate (dav%a_di)
+      end if
+      if (allocated(dav%d_zi)) then
+         deallocate (dav%d_zi)
+      end if
+      allocate (dav%v_zti(d_nn + 1))
+      allocate (dav%a_di(d_nn + 1))
+      allocate (dav%d_zi(d_nn + 1))
+      dav%v_zti = zero
+      dav%a_di = zero
+      dav%d_zi = zero
 
       ! Area and volume correcting factors for relative error as compared to GRanD
-      if (resgeo%A_df >= 0) then
-         resgeo%A_cf = 1.+(abs(resgeo%Ar_err)/100.)
-      elseif (resgeo%A_df < 0) then
-         resgeo%A_cf = 1.-(abs(resgeo%Ar_err)/100.)
-      end if
+      resgeo%A_cf = 1.+(resgeo%Ar_err/100.)
+      resgeo%V_cf = 1.+(resgeo%V_err/100.)
 
-      if (resgeo%V_df >= 0) then
-         resgeo%V_cf = 1.+(abs(resgeo%V_err)/100.)
-      elseif (resgeo%V_df < 0) then
-         resgeo%V_cf = 1.-(abs(resgeo%V_err)/100.)
-      end if
-      C_aa(:) = 1.0_r8*resgeo%C_a
+      ! Uniform subsurface layer depth for initialization and limit maximum layer thickness
+      dd_in = d_res/(d_nn*1.0_r8) !bottom layers evenly descritized
 
       ! Calculate depth area
       ! **************** Curved Lake Bottom ****************
       do j = 1, d_nn
          if (resgeo%gm_j == 1) then
-            a_dd(j) = C_aa(j)*resgeo%M_L*resgeo%M_W*(1 - ((dd_in*(j - 1))/resgeo%d_res)**2.)
+            a_dd(j) = resgeo%C_a*resgeo%M_L*resgeo%M_W*(1 - ((dd_in*(j - 1))/d_res)**2.)
          else if (resgeo%gm_j == 3) then
-            a_dd(j) = C_aa(j)*resgeo%M_L*resgeo%M_W*(1 - ((dd_in*(j - 1))/resgeo%d_res)**2.)* &
-                      ((resgeo%d_res - (dd_in*(j - 1)))/resgeo%d_res)**0.5
+            a_dd(j) = resgeo%C_a*resgeo%M_L*resgeo%M_W*(1 - ((dd_in*(j - 1))/d_res)**2.)* &
+                      ((d_res - (dd_in*(j - 1)))/d_res)**0.5
          else if (resgeo%gm_j == 5) then
-            a_dd(j) = C_aa(j)*pi*0.25*resgeo%M_L*resgeo%M_W*(1 - ((dd_in*(j - 1))/resgeo%d_res)**2.)* &
-                      ((resgeo%d_res - (dd_in*(j - 1)))/resgeo%d_res)**0.5
+            a_dd(j) = resgeo%C_a*pi*0.25*resgeo%M_L*resgeo%M_W*(1 - ((dd_in*(j - 1))/d_res)**2.)* &
+                      ((d_res - (dd_in*(j - 1)))/d_res)**0.5
          else if (resgeo%gm_j == 2) then
-            a_dd(j) = C_aa(j)*resgeo%M_L*resgeo%M_W*(1 - ((dd_in*(j - 1))/resgeo%d_res)**2.)* &
-                      (1 - ((dd_in*(j - 1))/resgeo%d_res))
+            a_dd(j) = resgeo%C_a*resgeo%M_L*resgeo%M_W*(1 - ((dd_in*(j - 1))/d_res)**2.)* &
+                      (1 - ((dd_in*(j - 1))/d_res))
          else if (resgeo%gm_j == 4) then
-            a_dd(j) = C_aa(j)*(2./3.)*resgeo%M_L*resgeo%M_W*(1 - ((dd_in*(j - 1))/resgeo%d_res)**2.)* &
-                      (1 - ((dd_in*(j - 1)))/resgeo%d_res)
+            a_dd(j) = resgeo%C_a*(2./3.)*resgeo%M_L*resgeo%M_W*(1 - ((dd_in*(j - 1))/d_res)**2.)* &
+                      (1 - ((dd_in*(j - 1)))/d_res)
          end if
          a_dd(d_nn + 1) = 0.1_r8  ! Bottom area given non-zero value
       end do
@@ -212,7 +233,8 @@ contains
       dav%v_zti = resgeo%V_cf*dav%v_zti    ! Volume corrected for error
       resgeo%A_cf = 1._r8
       resgeo%V_cf = 1._r8
-   end subroutine rgeom
+
+   end subroutine depth_area_vol
 
    subroutine layer_thickness(resgeo) bind(C, name="layer_thickness")
       ! Initialize layer thickness if not prescribed
@@ -267,7 +289,9 @@ contains
          resgeo%ddz_max = 2.*resgeo%d_res
       end if
       ! resgeo%ddz_min = max(resgeo%ddz_max*0.25, 2.0_r8)
-      ! FBM print *, "MAX=", resgeo%ddz_max, "MIN=", resgeo%ddz_min
+      if (DEBUG) then
+         print *, "DDZ_MAX=", resgeo%ddz_max, "DDZ_MIN=", resgeo%ddz_min
+      end if
    end subroutine layer_thickness
 
    subroutine setup_solve(a, b, c, r, A_cf, V_cf, phi_o, sh_net, a_d, df_eff, t_z, phi_z, rho_z, d_v, dd_z)
@@ -294,7 +318,6 @@ contains
       b = zero
       c = zero
       r = zero
-
       do j = 1, n_depth
          if (j == 1 .and. n_depth > 1) then
             m1(j) = 2*dtime/(0.5_r8*A_cf*(a_d(j) + a_d(j + 1))*dd_z(j))
@@ -400,9 +423,11 @@ contains
 
       ! Evaporation calculated as in Wu et al, 2012
       kl = 0.211 + 0.103*U_2*F
-      ! Line commented by Fabio with group consensus
-      !evap = max(kl*133.322368*(es - ea)/100., zero)    ! in mm/d; ea and es converted from mmHg to hpa
-      evap = zero
+      if (use_evap) then
+         evap = max(kl*133.322368*(es - ea)/100., zero)    ! in mm/d; ea and es converted from mmHg to hpa
+      else
+         evap = zero
+      end if
       if (t_z(n_depth) > t_frz) then
          lt_heat = rho_w*evap*le/(86.4e6)               ! latent heat (w/m^2)
       else
@@ -425,23 +450,41 @@ contains
       real(r8), intent(in) :: rho_z(nlayer_max), a_d(nlayer_max), v_zt(nlayer_max)
       real(r8), intent(in) :: dv_in(nlayer_max), dv_ou(nlayer_max), dd_z(nlayer_max)
       real(r8), intent(inout) :: drhodz(nlayer_max)
-      real(r8) :: q_adv(nlayer_max)      ! Layer flow rate (m^3/s)
 
       real(r8), intent(inout) :: df_eff(nlayer_max), d_z(nlayer_max)
 
-      real(r8) :: Fr(nlayer_max)    ! Froude number squared and inverted for diffusion coeff. calculation
-      real(r8) :: dis_ad(nlayer_max)
+      real(r8), allocatable :: Fr(:)      ! Froude number squared and inverted for diffusion coeff. calculation
+      real(r8), allocatable :: dis_ad(:)  ! rate of dissipation-inflow/outflow
+      real(r8), allocatable :: q_adv(:)   ! Layer flow rate (m^3/s)
+      real(r8), allocatable :: l_vel(:)   !
+      real(r8), allocatable :: bv_f(:)    ! Brunt-Visala frequency [s**-2]
+      real(r8), allocatable :: ri(:)      ! Richardson number
+      real(r8), allocatable :: k_ad(:)    ! Effective advective kinetic energy (kg.m^2/s^2)
+
       real(r8) :: c_d               ! Drag coefficient
-      real(r8) :: cfw, cfa, l_vel(nlayer_max)!
+      real(r8) :: cfw, cfa
       real(r8) :: tau               ! Shear stress at surface
       real(r8) :: s_vel             ! Shear velocity at surface
       real(r8) :: dis_w             ! Rate of dissipation due to wind
-      real(r8) :: bv_f(nlayer_max)  ! Brunt-Visala frequency [s**-2]
-      real(r8) :: ri(nlayer_max)    ! Richardson number
       real(r8) :: k_ew              ! Effective wind
       real(r8) :: k_m               ! Molecular diffusivity
-      real(r8) :: k_ad(nlayer_max)  ! Effective advective kinetic energy (kg.m^2/s^2)
+      integer :: k
 
+      allocate (Fr(n_depth))
+      allocate (q_adv(n_depth))
+      allocate (dis_ad(n_depth))
+      allocate (l_vel(n_depth))
+      allocate (bv_f(n_depth))
+      allocate (ri(n_depth))
+      allocate (k_ad(n_depth))
+
+      Fr(:) = zero
+      q_adv(:) = zero
+      dis_ad(:) = zero
+      l_vel(:) = zero
+      bv_f(:) = zero
+      ri(:) = zero
+      k_ad(:) = zero
       ! *********************************************************************************************************************************
       !         Calculation of effective diffusion coefficient
       if (u_2 >= 15.) then
@@ -458,7 +501,6 @@ contains
       k_m = 0.57/(c_w*rho_w)                            ! molecular diffusivity
       df_eff(1) = zero                                  ! bottom interface
       df_eff(n_depth + 1) = zero                        ! air interface
-
       q_adv(2:n_depth) = max((dv_in(2:n_depth) + dv_ou(2:n_depth)), zero)
 
       ! Advection driven kinetic energy
@@ -476,12 +518,19 @@ contains
       ! Calculate Froude number
       l_vel(2:n_depth) = q_adv(2:n_depth)*M_L/(A_cf*a_d(2:n_depth)*dd_z(2:n_depth))
       Fr(2:n_depth) = (grav*dd_z(2:n_depth)*drhodz(2:n_depth)/rho_w)/l_vel(2:n_depth)**2.
-      ! if (q_adv(j) <= 0. .or. drhodz(j) <= 0.) Fr(j) = 0.
 
       ! Calculate diffusion coefficients
       df_eff(2:n_depth) = min(max(dtime**2.*((cfw*dis_w/(1 + ri(2:n_depth))) &
                                              + (0.5*cfa*(dis_ad(2:n_depth) + dis_ad(1:n_depth - 1)) &
                                                 /(1 + Fr(2:n_depth)))), k_m), 5.56e-03_r8)
+
+      deallocate (Fr)
+      deallocate (q_adv)
+      deallocate (dis_ad)
+      deallocate (l_vel)
+      deallocate (bv_f)
+      deallocate (ri)
+      deallocate (k_ad)
 
    end subroutine diffusion_coeff
 
@@ -497,6 +546,9 @@ contains
       integer, intent(in) :: ww, ti
       real(r8), intent(in) :: V_cf, A_cf, m_ev, v_evap
       real(r8), intent(in) :: dm_in(nlayer_max), &
+                              d_zi(d_nn + 1), &
+                              a_di(d_nn + 1), &
+                              v_zti(d_nn + 1), &
                               ddz_min, &
                               V_df, &
                               in_t, &
@@ -515,9 +567,6 @@ contains
                                  v_zt(nlayer_max), &
                                  enr_1(nlayer_max), &
                                  phi_z(nlayer_max), &
-                                 d_zi(d_nn + 1), &
-                                 a_di(d_nn + 1), &
-                                 v_zti(d_nn + 1), &
                                  m_cal, &
                                  num_fac, &
                                  s_t, &
@@ -541,44 +590,45 @@ contains
                   v_mix, &              ! Total volume of mixed layer(m3)
                   sh_mix, &             ! net short wave radiation in mixed layer
                   rho_r, &              ! Density of inflow water  (kg/m3)
-                  m_zo(nlayer_max), &   ! Reservoir beginning mass at depth z (kg)
-                  fac_1(nlayer_max), &  ! Factor for calculation of triadiagonal matrices elements
-                  phi_x(nlayer_max), &  ! radiation absorbed by mixed layer (W/m^2)
-                  enr_in(nlayer_max), & ! Layer Energy from inflow
-                  enr_ou(nlayer_max), & ! Layer energy from outflow
-                  dm_ou(nlayer_max), &  ! initial mass removed from depth z (kg)
-                  dm_nt(nlayer_max), &  ! net mass added at depth z (kg)
-                  dv_nt(nlayer_max), &
                   enr_err1              ! Energy error (w) before stratification
+
+      real(r8), allocatable :: m_zo(:), &    ! Reservoir beginning mass at depth z (kg)
+                               fac_1(:), &   ! Factor for calculation of triadiagonal matrices elements
+                               phi_x(:), &   ! radiation absorbed by mixed layer (W/m^2)
+                               enr_in(:), &  ! Layer Energy from inflow
+                               enr_ou(:), &  ! Layer energy from outflow
+                               dm_ou(:), &   ! initial mass removed from depth z (kg)
+                               dm_nt(:)      ! net mass added at depth z (kg)
 
       lme_error = 0
       num_fac = 1.e6_r8
       rho_r = den(in_t)
+      allocate (m_zo(n_depth))
+
       if (ti == 1 .and. ww == 1) then
          m_zo = V_cf*d_v*rho_z
       else
          m_zo(1:n_depth) = m_zn(1:n_depth)
-         m_zo(n_depth + 1:) = zero
       end if
-
+      allocate (dm_ou(n_depth))
+      allocate (dm_nt(n_depth))
       dm_ou(1:n_depth) = dv_ou(1:n_depth)*rho_z(1:n_depth)*dtime
       dm_ou(n_depth + 1:) = zero
+
 999   continue
       if (n_depth > 1) then
          dm_nt(1:n_depth) = dm_in(1:n_depth) - dm_ou(1:n_depth)
-         dv_nt(1:n_depth) = dv_in(1:n_depth) - dv_ou(1:n_depth)
          dm_nt(n_depth - 1) = dm_nt(n_depth - 1) - m_ev
-         dv_nt(n_depth - 1) = dv_nt(n_depth - 1) - v_evap
       else if (n_depth == 1) then
          dm_nt(n_depth) = dm_in(n_depth) - dm_ou(n_depth) - m_ev
-         dv_nt(n_depth) = dv_in(n_depth) - dv_ou(n_depth) - v_evap
       end if
 
       ! Calculate layer mass (kg) and energy (w)
-
+      allocate (fac_1(n_depth))
       m_zn(1:n_depth) = m_zo(1:n_depth) + dm_nt(1:n_depth)
       fac_1(1:n_depth) = V_cf*d_v(1:n_depth)*rho_z(1:n_depth)*c_w/dtime
       enr_0(1:n_depth) = t_z(1:n_depth)*fac_1(1:n_depth)/num_fac
+      deallocate (fac_1)
       m_zn(n_depth + 1:) = zero
       enr_0(n_depth + 1:) = zero
       if (ti == 1 .and. ww == 1) then
@@ -662,6 +712,8 @@ contains
             dd_z(i) = d_z(i + 1) - d_z(i)
          end if
       end do
+      deallocate (dm_ou)
+      deallocate (dm_nt)
 
       ! Recalculate layer thickness and volume, and reservoir depth
       d_res = zero
@@ -682,7 +734,9 @@ contains
                   ! m = i
                end if
                if (m == 0) then
-                  ! FBM print *, "RESETTING M"
+                  if (DEBUG) then
+                     print *, "RESETTING M"
+                  end if
                   m = 1
                end if
                ! Merge layers
@@ -772,7 +826,9 @@ contains
 
                if (n_depth < 1) then
                   lme_error = 1
-                  ! FBM print *, 'QUIT LAYER MASS/ENERGY SUBROUTINE NDEPTH < 1', n_depth
+                  if (DEBUG) then
+                     print *, 'QUIT LAYER MASS/ENERGY SUBROUTINE NDEPTH < 1', n_depth
+                  end if
                   return
                end if
                ! Quit the loop over layers so only one layer is modified per outer loop
@@ -784,40 +840,40 @@ contains
       ! Check if layers are too big
       ! Calculate layer geometric properties to be halved
       do while (maxval(dd_z(1:n_depth)) >= ddz_max)
-      do i = 1, n_depth
-         do while (dd_z(i) >= ddz_max)
-            dd_zab = 0.5*dd_z(i)
-            m_ab = 0.5*m_zn(i)
-            e_ab = 0.5*enr_0(i)
-            d_vab = d_v(i)
-            tab = t_z(i)
-            dv_ouab = dv_ou(i)
-            dv_inab = dv_in(i)
+         do i = 1, n_depth
+            do while (dd_z(i) >= ddz_max)
+               dd_zab = 0.5*dd_z(i)
+               m_ab = 0.5*m_zn(i)
+               e_ab = 0.5*enr_0(i)
+               d_vab = d_v(i)
+               tab = t_z(i)
+               dv_ouab = dv_ou(i)
+               dv_inab = dv_in(i)
 
-            ! Re-number layers before dividing layer
-            d_z(n_depth + 2) = d_z(n_depth + 1)
-            v_zt(n_depth + 2) = v_zt(n_depth + 1)
-            a_d(n_depth + 2) = a_d(n_depth + 1)
-            m = i + 1
-            do j = m, n_depth
-               k = n_depth - j + i + 1
-               t_z(k + 1) = t_z(k)
-               dv_ou(k + 1) = dv_ou(k)
-               dv_in(k + 1) = dv_in(k)
-               d_z(k + 1) = d_z(k)
-               a_d(k + 1) = a_d(k)
-               v_zt(k + 1) = v_zt(k)
-               d_v(k + 1) = d_v(k)
-               dd_z(k + 1) = dd_z(k)
-               m_zn(k + 1) = m_zn(k)
-               enr_0(k + 1) = enr_0(k)
-            end do
+               ! Re-number layers before dividing layer
+               d_z(n_depth + 2) = d_z(n_depth + 1)
+               v_zt(n_depth + 2) = v_zt(n_depth + 1)
+               a_d(n_depth + 2) = a_d(n_depth + 1)
+               m = i + 1
+               do j = m, n_depth
+                  k = n_depth - j + i + 1
+                  t_z(k + 1) = t_z(k)
+                  dv_ou(k + 1) = dv_ou(k)
+                  dv_in(k + 1) = dv_in(k)
+                  d_z(k + 1) = d_z(k)
+                  a_d(k + 1) = a_d(k)
+                  v_zt(k + 1) = v_zt(k)
+                  d_v(k + 1) = d_v(k)
+                  dd_z(k + 1) = dd_z(k)
+                  m_zn(k + 1) = m_zn(k)
+                  enr_0(k + 1) = enr_0(k)
+               end do
 
-            ! Divide layer in half and calculate corresponding properties
-            dd_z(i) = dd_zab
-            dd_z(i + 1) = dd_zab
-            d_z(i + 1) = d_z(i) + dd_z(i)
-            do j = 2, d_nn + 1
+               ! Divide layer in half and calculate corresponding properties
+               dd_z(i) = dd_zab
+               dd_z(i + 1) = dd_zab
+               d_z(i + 1) = d_z(i) + dd_z(i)
+               do j = 2, d_nn + 1
                if (d_z(i + 1) > d_zi(j - 1) .and. d_z(i + 1) <= d_zi(j)) then
                   delta_z = (d_z(i + 1) - d_zi(j - 1))/(d_zi(j) - d_zi(j - 1))
                   a_d(i + 1) = delta_z*(a_di(j) - a_di(j - 1)) + a_di(j - 1)
@@ -827,22 +883,22 @@ contains
                   a_d(i + 1) = delta_z*(a_di(d_nn + 1) - a_di(d_nn)) + a_di(d_nn)
                   v_zt(i + 1) = delta_z*(v_zti(d_nn + 1) - v_zti(d_nn)) + v_zti(d_nn)
                end if
+               end do
+               d_v(i + 1) = d_vab - (v_zt(i + 1) - v_zt(i))
+               d_v(i) = v_zt(i + 1) - v_zt(i)
+               dv_ou(i + 1) = d_v(i + 1)*dv_ouab/(d_v(i) + d_v(i + 1))
+               dv_ou(i) = d_v(i)*dv_ouab/(d_v(i) + d_v(i + 1))
+               t_z(i) = tab
+               t_z(i + 1) = tab
+               m_zn(i) = m_ab
+               m_zn(i + 1) = m_ab
+               enr_0(i) = e_ab
+               enr_0(i + 1) = e_ab
+               dv_in(i + 1) = d_v(i + 1)*dv_inab/(d_v(i) + d_v(i + 1))
+               dv_in(i) = d_v(i)*dv_inab/(d_v(i) + d_v(i + 1))
+               n_depth = n_depth + 1
             end do
-            d_v(i + 1) = d_vab - (v_zt(i + 1) - v_zt(i))
-            d_v(i) = v_zt(i + 1) - v_zt(i)
-            dv_ou(i + 1) = d_v(i + 1)*dv_ouab/(d_v(i) + d_v(i + 1))
-            dv_ou(i) = d_v(i)*dv_ouab/(d_v(i) + d_v(i + 1))
-            t_z(i) = tab
-            t_z(i + 1) = tab
-            m_zn(i) = m_ab
-            m_zn(i + 1) = m_ab
-            enr_0(i) = e_ab
-            enr_0(i + 1) = e_ab
-            dv_in(i + 1) = d_v(i + 1)*dv_inab/(d_v(i) + d_v(i + 1))
-            dv_in(i) = d_v(i)*dv_inab/(d_v(i) + d_v(i + 1))
-            n_depth = n_depth + 1
          end do
-      end do
       end do
 
       ! Recalculate density after layer change
@@ -861,29 +917,28 @@ contains
           (sum(m_zn) <= zero) .or. &
           (n_depth >= nlayer_max)) then
          lme_error = 1
-         ! FBM print *, '------QUIT LAYER MASS/ENERGY SUBROUTINE-----'
-         ! FBM print *, '                      s_t', s_t
-         ! FBM print *, '                    s_tin', s_tin
-         ! FBM print *, '                     V_df', V_df
-         ! FBM print *, '                    d_res', d_res
-         ! FBM print *, '                  n_depth', n_depth
-         ! FBM print *, '                  t_z_sfc', t_z(n_depth)
-         ! FBM print *, '                sum(m_zn)', sum(m_zn)
-         ! FBM print *, '               nlayer_max', nlayer_max
-         ! FBM print *, '0.0050*(s_tin + V_df*1e6)', 0.0050*(s_tin + V_df*1e6)
-         ! FBM print *, '----------------------------------------------'
+         if (DEBUG) then
+            print *, '------QUIT LAYER MASS/ENERGY SUBROUTINE-----'
+            print *, '                      s_t', s_t
+            print *, '                    s_tin', s_tin
+            print *, '                     V_df', V_df
+            print *, '                    d_res', d_res
+            print *, '                  n_depth', n_depth
+            print *, '                  t_z_sfc', t_z(n_depth)
+            print *, '                sum(m_zn)', sum(m_zn)
+            print *, '               nlayer_max', nlayer_max
+            print *, '0.0050*(s_tin + V_df*1e6)', 0.0050*(s_tin + V_df*1e6)
+            print *, '----------------------------------------------'
+         end if
          return
       end if
 
       ! Calculate layer internal energy (w) due to inflow/outflow
-      do j = 1, nlayer_max
-         if (j <= n_depth) then
-            enr_in(j) = dv_in(j)*in_t*rho_r*c_w/num_fac         ! Energy from inflow
-            enr_ou(j) = dv_ou(j)*t_z(j)*rho_z(j)*c_w/num_fac    ! Energy loss due to outflow
-         else
-            enr_in(j) = zero
-            enr_ou(j) = zero
-         end if
+      allocate (enr_in(n_depth))
+      allocate (enr_ou(n_depth))
+      do j = 1, n_depth
+         enr_in(j) = dv_in(j)*in_t*rho_r*c_w/num_fac         ! Energy from inflow
+         enr_ou(j) = dv_ou(j)*t_z(j)*rho_z(j)*c_w/num_fac    ! Energy loss due to outflow
       end do
 
       enr_1(1:n_depth) = enr_0(1:n_depth) + enr_in(1:n_depth) - enr_ou(1:n_depth)
@@ -894,9 +949,12 @@ contains
 
       ! Check energy balance (w) after advective mixing
       enr_err1 = (sum(enr_1) - (sum(enr_0) + sum(enr_in) - sum(enr_ou)))*num_fac
+      deallocate (enr_in)
+      deallocate (enr_ou)
 
       !**********************************************
       ! Calculate solar energy absorbed at each layer
+      allocate (phi_x(n_depth + 1))
       phi_x(:) = zero
       phi_z(:) = zero
 
@@ -941,7 +999,7 @@ contains
             phi_z(j) = zero
          end do
       end if
-
+      deallocate (phi_x)
    end subroutine
 
    subroutine convective_mix(n_depth, rho_z, t_z, d_v, m_zn, enr_1, V_cf, num_fac)
@@ -1076,9 +1134,9 @@ contains
                                  t_z(nlayer_max), &
                                  d_v(nlayer_max), &
                                  m_zn(nlayer_max), &
-                                 V_cf, &
                                  num_fac
-      real(r8), intent(in) :: enr_1(nlayer_max)
+      real(r8), intent(in) :: enr_1(nlayer_max), &
+                              V_cf
 
       integer :: j, k, mixlow, mixtop, first_pass
       real(r8) :: enr_bc, &
@@ -1105,8 +1163,19 @@ contains
       do j = 1, n_depth
          rho_z(j) = den(t_z(j))
       end do
+      ! Initialise local variables
       enr_bc = zero
       enr_ac = zero
+      sumvol = zero
+      summas = zero
+      sumenr = zero
+      vlmxtp = zero
+      msmxtp = zero
+      enmxtp = zero
+      denmix = zero
+      vlmxlw = zero
+      msmxlw = zero
+      enmxlw = zero
 
       ! Check if instability exists
       k = 1
@@ -1123,7 +1192,12 @@ contains
          sumenr = enr_2(mixtop)
          tsum = t_z(mixtop)*m_zn(mixtop)
          first_pass = 0
-         do while (denmix < rho_z(mixtop + 1) .and. mixtop < n_depth .or. first_pass == 0)
+
+         ! Initialize denmix so that it's less than rho_z(mixtop + 1)
+         denmix = rho_z(mixtop + 1) - 1.0_r8
+
+         do while ((denmix < rho_z(mixtop + 1) .and. mixtop < n_depth) .or. first_pass == 0)
+            ! do while (denmix < rho_z(mixtop + 1) .and. mixtop < n_depth)
             mixtop = mixtop + 1
             vlmxtp = V_cf*d_v(mixtop)
             msmxtp = m_zn(mixtop)
@@ -1136,26 +1210,31 @@ contains
 
             ! Calculate density of mixed layer
             denmix = den(tmix)
-            first_pass = 1
+            first_pass = first_pass + 1
          end do
 
          ! Check if instability exists below mixed layer...and mix layers
-         do while (mixlow > 1 .and. rho_z(mixlow - 1) < denmix)
-            mixlow = mixlow - 1
+         if (mixlow >= 2) then
+            below: do while (mixlow > 1 .and. rho_z(mixlow - 1) < denmix)
+               mixlow = mixlow - 1
 
-            ! Calculate temperature of mixed layer
-            vlmxlw = V_cf*d_v(mixlow)
-            msmxlw = m_zn(mixlow)
-            enmxlw = enr_2(mixlow)
-            sumvol = sumvol + vlmxlw
-            summas = summas + msmxlw
-            sumenr = sumenr + enmxlw
-            tsum = tsum + t_z(mixlow)*msmxlw
-            tmix = tsum/summas
+               ! Calculate temperature of mixed layer
+               vlmxlw = V_cf*d_v(mixlow)
+               msmxlw = m_zn(mixlow)
+               enmxlw = enr_2(mixlow)
+               sumvol = sumvol + vlmxlw
+               summas = summas + msmxlw
+               sumenr = sumenr + enmxlw
+               tsum = tsum + t_z(mixlow)*msmxlw
+               tmix = tsum/summas
 
-            ! Calculate density of mixed layer
-            denmix = den(tmix)
-         end do
+               ! Calculate density of mixed layer
+               denmix = den(tmix)
+               if (mixlow <= 2) then
+                  exit below
+               end if
+            end do below
+         end if
 
          ! Set new layer temperature and density
          do j = mixlow, mixtop
@@ -1194,15 +1273,42 @@ contains
          v_evap = zero
          m_ev = zero
       end if
-      ! Avoid extraction of water from reservoir beyond 20% volume of the total storage
-      if ((s_t <= 0.10*(s_tin + V_df*1e6) .and. ou_f > in_f) .or. &
-          ! Avoid extra inflow of water if the reservoir storage exceeded total dam storage (taken to be initial storage)
-          (s_t >= (s_tin + V_df*1e6) .and. in_f > ou_f) .or. &
-          ! Avoid reservoir level from exceeding dam height
-          (d_res >= d_ht .and. in_f > ou_f) .or. &
-          ! Avoid extraction of water from shallow reservoirs beyond 5m depth for numerical stability until reservoir operation is calibrated
-          ((d_res < 5. .and. n_depth <= 3) .and. ou_f > in_f)) then
-          ou_f = in_f
+      ! if ((s_t <= 0.10*(s_tin + V_df*1e6) .and. ou_f > in_f) .or. &
+      !     ! Avoid extra inflow of water if the reservoir storage exceeded total dam storage (taken to be initial storage)
+      !     (s_t >= (s_tin + V_df*1e6) .and. in_f > ou_f) .or. &
+      !     ! Avoid reservoir level from exceeding dam height
+      !     (d_res >= d_ht .and. in_f > ou_f) .or. &
+      !     ! Avoid extraction of water from shallow reservoirs beyond 5m depth for numerical stability until
+      !     ! reservoir operation is calibrated
+      !     ((d_res < 5. .and. n_depth <= 3) .and. ou_f > in_f)) then
+      !    ou_f = in_f
+      ! end if
+
+      if (s_t <= 0.10*(s_tin + V_df*1e6) .and. ou_f > in_f) then
+         if (DEBUG) then
+            ! Avoid extraction of water from reservoir beyond 20% volume of the total storage
+            print *, "FC-A,", (s_t - 0.10*(s_tin + V_df*1e6))/s_t
+         end if
+         ou_f = in_f
+      else if (s_t >= (s_tin + V_df*1e6) .and. in_f > ou_f) then
+         if (DEBUG) then
+            ! Avoid extra inflow of water if the reservoir storage exceeded total dam storage
+            print *, "FC-B,", (s_t - (s_tin + V_df*1e6))/s_t
+         end if
+         ou_f = in_f
+      else if (d_res >= d_ht .and. in_f > ou_f) then
+         if (DEBUG) then
+            ! Avoid reservoir level from exceeding dam height
+            print *, "FC-C,", (d_res - d_ht)/d_res
+         end if
+         ou_f = in_f
+      else if ((d_res < 5. .and. n_depth <= 3) .and. ou_f > in_f) then
+         if (DEBUG) then
+            ! Avoid extraction of water from shallow reservoirs beyond 5m depth for numerical stability until
+            ! reservoir operation is calibrated
+            print *, "FC-D", d_res/(n_depth + 1e-16_r8)
+         end if
+         ou_f = in_f
       end if
 
    end subroutine flow_contrib
@@ -1406,6 +1512,9 @@ contains
                               ddz_min, &
                               ddz_max, &
                               A_cf, &
+                              d_zi(d_nn + 1), &
+                              a_di(d_nn + 1), &
+                              v_zti(d_nn + 1), &
                               V_cf
 
       real(r8), intent(inout) :: d_res, &
@@ -1414,9 +1523,6 @@ contains
                                  ou_f, &
                                  m_cal, &
                                  d_res_sub, &
-                                 d_zi(d_nn + 1), &
-                                 a_di(d_nn + 1), &
-                                 v_zti(d_nn + 1), &
                                  t_z(nlayer_max), &
                                  v_zt(nlayer_max), &
                                  d_v(nlayer_max), &
@@ -1537,14 +1643,12 @@ contains
       ! Avoid Numerical instability for multiple reservoir runs
       do j = 1, n_depth
          if (ieee_is_nan(t_z(j))) then
-            !write (*, *) 'check reservoir data'
-            lme_error = 1
+            write (*, *) 'check reservoir data'
             return
          end if
       end do
-
-      call convective_mix(n_depth, rho_z, t_z, d_v, m_zn, &
-                          enr_1, V_cf, num_fac)
+      call convective_mix_nogoto(n_depth, rho_z, t_z, d_v, m_zn, enr_1, V_cf, num_fac)
+      ! call convective_mix(n_depth, rho_z, t_z, d_v, m_zn, enr_1, V_cf, num_fac)
 
       deallocate (enr_1)
 
