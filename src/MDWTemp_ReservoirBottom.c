@@ -129,16 +129,16 @@ static void _MDWTempReservoirBottom (int itemID) {
             //layer_thickness(&resGeom);
         //}
 
-        //CMmsgPrint (CMmsgDebug, "\nCellID %d:\n",itemID);
-        //CMmsgPrint (CMmsgDebug, "\nCellID %d:\n",itemID);
-        //CMmsgPrint (CMmsgDebug, "\tincoming values: tStep=%d s_tin=%f, m_cal=%f\n",tStep,s_tin,m_cal);
+        CMmsgPrint (CMmsgDebug, "\nCellID %d:\n",itemID);
+        CMmsgPrint (CMmsgDebug, "\nCellID %d:\n",itemID);
+        CMmsgPrint (CMmsgDebug, "\tincoming values: tStep=%d s_tin=%f, m_cal=%f\n",tStep,s_tin,m_cal);
 
         stratify(tStep, &lme_error, &riverTempTop, &inflow, &release,
                  &cosZen, &radAbsorption, &solarRad, &humidityRel, &airTemp, &windSpeed,
                  &resGeom, (double **) &dZ, (double **) &tZ, (double **) &mZn, (double **) &aD, (double **) &dV,
                  (double **) &vZt, &s_tin, &m_cal);
 
-        //CMmsgPrint (CMmsgDebug, "\toutcoming values: tStep=%d s_tin=%f, m_cal=%f\n",tStep,s_tin,m_cal);
+        CMmsgPrint (CMmsgDebug, "\toutcoming values: tStep=%d s_tin=%f, m_cal=%f\n",tStep,s_tin,m_cal);
         if (lme_error != 0) {CMmsgPrint (CMmsgUsrError, "stratify error code at tStep=%d for CellID %d: lme_error=%d\n",tStep,itemID+1,lme_error);}
 
         riverTempBottom = tZ[resGeom.n_depth - 1] - 273.15;
