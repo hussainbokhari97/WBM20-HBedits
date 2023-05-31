@@ -27,8 +27,8 @@ struct reservoir_geometry
 };
 
 // Define subroutines from Fotran
-void rgeom(struct reservoir_geometry *rgeom);
-void layer_thickness(struct reservoir_geometry *rgeom);
+//void rgeom(struct reservoir_geometry *rgeom);
+//void layer_thickness(struct reservoir_geometry *rgeom);
 void stratify(int ti, int *lme_error, double *in_t, double *in_f, double *ou_f,
               double *coszen, double *lw_abs, double *s_w, double *rh, double *t_air,
               double *u_2, struct reservoir_geometry *resgeom,

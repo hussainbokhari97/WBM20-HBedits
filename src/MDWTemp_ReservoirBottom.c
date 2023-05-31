@@ -238,7 +238,7 @@ int MDWTemp_ReservoirBottomDef () {
                     (snprintf (stateName[2],sizeof(stateName[2]), "aD%02d", i) == 0) || ((_MDStateStrat_aD  [i] = MFVarGetID (stateName[2], MFNoUnit, MFFloat, MFState, MFInitial)) == CMfailed) ||
                     (snprintf (stateName[3],sizeof(stateName[3]),"mZn%02d", i) == 0) || ((_MDStateStrat_mZn [i] = MFVarGetID (stateName[3], MFNoUnit, MFFloat, MFState, MFInitial)) == CMfailed) ||
                     (snprintf (stateName[4],sizeof(stateName[4]), "dV%02d", i) == 0) || ((_MDStateStrat_dV  [i] = MFVarGetID (stateName[4], MFNoUnit, MFFloat, MFState, MFInitial)) == CMfailed) ||
-                    (snprintf (stateName[5],sizeof(stateName[5]),"vZt%02d", i) == 0) || ((_MDStateStrat_vZt [i] = MFVarGetID (stateName[5], MFNoUnit, MFFloat, MFState, MFInitial)) == CMfailed)) // ||
+                    (snprintf (stateName[5],sizeof(stateName[5]),"vZt%02d", i) == 0) || ((_MDStateStrat_vZt [i] = MFVarGetID (stateName[5], MFNoUnit, MFFloat, MFState, MFInitial)) == CMfailed) ||
                     (snprintf (stateName[6],sizeof(stateName[6]),"resGeom_dd_z%02d", i) == 0) || ((_MDStateStrat_resGeom_dd_z [i] = MFVarGetID (stateName[6], MFNoUnit, MFFloat, MFState, MFInitial)) == CMfailed))
                     return (CMfailed);
             }

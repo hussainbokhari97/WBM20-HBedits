@@ -236,7 +236,7 @@ contains
 
    end subroutine depth_area_vol
 
-   subroutine layer_thickness(resgeo) bind(C, name="layer_thickness")
+   subroutine layer_thickness(resgeo) ! bind(C, name="layer_thickness")
       ! Initialize layer thickness if not prescribed
       implicit none
       type(reservoir_geometry), intent(inout) :: resgeo
