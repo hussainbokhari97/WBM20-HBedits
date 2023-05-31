@@ -85,11 +85,15 @@ static void _MDWTempReservoirBottom (int itemID) {
     double s_tin;
     double m_cal;
     int lme_error;
+    int year = 0;
     int   day    = MFDateGetDayOfYear ();
 	float lambda = MFModelGetLatitude (itemID);
     float sigma  = -23.4 * cos (2.0 * M_PI * (day + 11.0) / 365.25);
     double cosZen = cos ((lambda + sigma) * M_PI / 360.0);
 
+    if (year != MFDateGetCurrentYear()) {
+        CMmsgPrint (CMmsgDebug, "\nInYear %d, OutYear %d\n",year,MFDateGetCurrentYear());
+    }
 	tStep           = MFVarGetInt   (_MDInAux_StepCounterID,   itemID, 0);
     resGeom.gm_j    = (int) (MFVarGetFloat (_MDInStrat_GMjID,  itemID, 0.0));
     resError        = MFVarGetInt   (_MDStateStrat_error,   itemID, 0);
