@@ -59,6 +59,7 @@ static void _MDReservoirWisser (int itemID) {
 // local
 	float prevResStorage;        // Reservoir storage from the previous time step [km3]
 	float dt = MFModelGet_dt (); // Time step length [s]
+	//float current_month = MFDateGetCurrentMonth (); Current Calendar Month
 // Parameters
 	float drySeasonPct = 0.60;   // RJS 071511
 	float wetSeasonPct = 0.16;   // RJS 071511
@@ -145,6 +146,7 @@ static void _MDReservoirSNL (int itemID) {
 		float increment;
 		float deadStorage = 0.03 * resCapacity;
 		float dt = MFModelGet_dt ();  // Time step length [s]
+		float current_month = MFDateGetCurrentMonth (); // Current Calendar Month
 			prevResStorage = MFVarGetFloat (_MDOutResStorageID,           itemID, 0.0);
 		natFlowMeanMonthly = MFVarGetFloat (_MDInResNatFlowMeanMonthlyID, itemID, 0.0);
 		  natFlowMeanDaily = MFVarGetFloat (_MDInResNatFlowMeanDailyID,   itemID, 0.0);
@@ -178,10 +180,67 @@ static void _MDReservoirSNL (int itemID) {
 		
 		// adjustment to consider inflow on given day (should help with extremes)
 		resReleaseBottom = 0.5 * ((krls * resReleaseTarget) + (releaseAdj * resInflow));
-		// assume 5% envrionemntal flow minimum, and makes sure there is no negative flow.
-		if (resReleaseBottom < 0.05 * resInflow) resReleaseBottom = resInflow * 0.05;
-	// MAIN RULES finish
 		resStorage = prevResStorage + (discharge - resReleaseBottom) * dt / 1e9;
+		
+	// MAIN RULES finish
+
+		// HB and AM created the following condition to catch low releases
+		current_month = MFDateGetCurrentMonth (); // Current Calendar Month
+		
+		if (resReleaseBottom < (0.2 * natFlowMeanMonthly)) {
+			if ((resStorage >= (0.75 * resCapacity)) && (resInflow > natFlowMeanMonthly)) {
+				resReleaseBottom = resReleaseBottom;
+			} else {
+				if ((current_month >= 4) && (current_month <= 8)) {
+					resReleaseBottom = 1.05 * resInflow;
+					resStorage = prevResStorage + (discharge - resReleaseBottom) * dt / 1e9;
+				} else {
+					resReleaseBottom = 0.95 * resInflow;
+					resStorage = prevResStorage + (discharge - resReleaseBottom) * dt / 1e9;
+				}
+			}
+		}
+
+		// assume 10% envrionemntal flow minimum, and makes sure there is no negative flow (changed from 0.05 to 0.1).
+		if (resReleaseBottom < 0.10 * resInflow) {
+			resReleaseBottom = resInflow * 0.10;
+			resStorage = prevResStorage + (discharge - resReleaseBottom) * dt / 1e9;
+		}
+
+		// HB and AM created two additional sets of if statements to catch high release peaks
+
+		// catching high releases
+		// if resReleaseBottom > 5 * natFlowMeanMonthly
+		// then if resStorageChg is positive (storage - prevstorage) and resStorage >= (0.9 * resCapacity) and resInflow > 2 * natFlowMeanMonthly
+		// continue or just resReleaseBottom = resReleaseBottom
+		// else, if 4 <= month <= 8, resReleaseBottom = 1.1 * resInflow, else resReleaseBottom = 0.9 * resInflow, recalculate storage at the end
+		
+		if (resReleaseBottom > 5 * natFlowMeanMonthly) {
+			if (((resStorage - prevResStorage) > 0) && (resStorage >= (0.9 * resCapacity)) && (resInflow > 2 * natFlowMeanMonthly)) {
+				resReleaseBottom = resReleaseBottom;
+			} else {
+				if ((current_month >= 4) && (current_month <= 8)){
+					resReleaseBottom = 1.05 * resInflow;
+					resStorage = prevResStorage + (discharge - resReleaseBottom) * dt / 1e9;
+				} else {
+					resReleaseBottom = 0.95 * resInflow;
+					resStorage = prevResStorage + (discharge - resReleaseBottom) * dt / 1e9;
+				}
+			}
+		}
+
+
+		
+		// HB and AM created an additional set of if statements to catch large storage dips
+		// if resStorageChg < (-0.09 * capacity)
+		// then resReleaseBottom = ((0.09 * rescapacity) * 1e9 / dt) + resInflow
+		// resStorage either recalculate or set to = prevResStorage - (0.09 * resCapacity)
+		if ((resStorage - prevResStorage) < (-0.09 * resCapacity)) {
+			resReleaseBottom = ((0.09 * resCapacity) * 1e9 / dt) + resInflow;
+			resStorage = prevResStorage - (0.09 * resCapacity);
+		}
+		
+		
 		if (resStorage > resCapacity) {              // The reservoir over flows FBM
 			resReleaseSpillway = (resStorage - resCapacity) * 1e9 / dt;
 			resStorage  = resCapacity;               // This guarantees that the reservoir storage cannot exceed the reservoir capacity
@@ -207,6 +266,7 @@ static void _MDReservoirSNL (int itemID) {
 	} else { // River flow
 		prevResStorage = resStorage = resStorageChg = resReleaseTarget = resReleaseSpillway = 0.0;
 	}
+
 	MFVarSetFloat (_MDOutResStorageInitialID,     itemID, prevResStorage);
 	MFVarSetFloat (_MDOutResStorageID,            itemID, resStorage); 
 	MFVarSetFloat (_MDOutResStorageChgID,         itemID, resStorageChg); 
