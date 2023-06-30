@@ -219,7 +219,7 @@ static void _MDReservoirSNL (int itemID) {
 			if (((resStorage - prevResStorage) > 0) && (resStorage >= (0.9 * resCapacity)) && (resInflow > 2 * natFlowMeanMonthly)) {
 				resReleaseBottom = resReleaseBottom;
 			} else {
-				if ((current_month >= 4) && (current_month <= 8)){
+				if ((current_month >= 4) && (current_month <= 8)) {
 					resReleaseBottom = 1.05 * resInflow;
 					resStorage = prevResStorage + (discharge - resReleaseBottom) * dt / 1e9;
 				} else {
