@@ -189,8 +189,6 @@ static void _MDReservoirSNL (int itemID) {
 		
 		if (resReleaseBottom < (0.2 * natFlowMeanMonthly)) {
 			if ((resStorage >= (0.75 * resCapacity)) && (resInflow > natFlowMeanMonthly)) {
-				resReleaseBottom = resReleaseBottom;
-			} else {
 				if ((current_month >= 4) && (current_month <= 8)) {
 					resReleaseBottom = 1.05 * resInflow;
 					resStorage = prevResStorage + (discharge - resReleaseBottom) * dt / 1e9;
@@ -198,6 +196,9 @@ static void _MDReservoirSNL (int itemID) {
 					resReleaseBottom = 0.95 * resInflow;
 					resStorage = prevResStorage + (discharge - resReleaseBottom) * dt / 1e9;
 				}
+
+			} else {
+				resReleaseBottom = resReleaseBottom;
 			}
 		}
 
