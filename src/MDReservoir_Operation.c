@@ -187,7 +187,7 @@ static void _MDReservoirSNL (int itemID) {
 		// HB and AM created the following condition to catch low releases
 		current_month = MFDateGetCurrentMonth (); // Current Calendar Month
 		
-		if (resReleaseBottom < (0.2 * natFlowMeanMonthly)) {
+		if (resReleaseBottom < (0.2 * resInflow)) {
 			if ((resStorage >= (0.75 * resCapacity)) && (resInflow > natFlowMeanMonthly)) {
 				if ((current_month >= 4) && (current_month <= 8)) {
 					resReleaseBottom = 1.05 * resInflow;
