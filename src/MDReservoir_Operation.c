@@ -186,21 +186,21 @@ static void _MDReservoirSNL (int itemID) {
 
 		// HB and AM created the following condition to catch low releases
 		current_month = MFDateGetCurrentMonth (); // Current Calendar Month
-		
-		if (resReleaseBottom < (0.2 * resInflow)) {
-			if ((resStorage >= (0.75 * resCapacity)) && (resInflow > natFlowMeanMonthly)) {
-				if ((current_month >= 4) && (current_month <= 8)) {
-					resReleaseBottom = 1.05 * resInflow;
-					resStorage = prevResStorage + (discharge - resReleaseBottom) * dt / 1e9;
-				} else {
-					resReleaseBottom = 0.95 * resInflow;
-					resStorage = prevResStorage + (discharge - resReleaseBottom) * dt / 1e9;
-				}
+		// low rls condition, decided to remove
+		//if (resReleaseBottom < (0.2 * resInflow)) {
+		//	if ((resStorage >= (0.75 * resCapacity)) && (resInflow > natFlowMeanMonthly)) {
+		//		if ((current_month >= 4) && (current_month <= 8)) {
+		//			resReleaseBottom = 1.05 * resInflow;
+		//			resStorage = prevResStorage + (discharge - resReleaseBottom) * dt / 1e9;
+		//		} else {
+		//			resReleaseBottom = 0.95 * resInflow;
+		//			resStorage = prevResStorage + (discharge - resReleaseBottom) * dt / 1e9;
+		//		}
 
-			} else {
-				resReleaseBottom = resReleaseBottom;
-			}
-		}
+		//	} else {
+		//		resReleaseBottom = resReleaseBottom;
+		//	}
+		//}
 
 		// assume 10% envrionemntal flow minimum, and makes sure there is no negative flow (changed from 0.05 to 0.1).
 		if (resReleaseBottom < 0.10 * resInflow) {
