@@ -216,8 +216,8 @@ static void _MDReservoirSNL (int itemID) {
 		// continue or just resReleaseBottom = resReleaseBottom
 		// else, if 4 <= month <= 8, resReleaseBottom = 1.1 * resInflow, else resReleaseBottom = 0.9 * resInflow, recalculate storage at the end
 		
-		if (resReleaseBottom > 5 * natFlowMeanMonthly) {
-			if (((resStorage - prevResStorage) > 0) && (resStorage >= (0.9 * resCapacity)) && (resInflow > 2 * natFlowMeanMonthly)) {
+		if (resReleaseBottom > 30 * natFlowMeanMonthly) {
+			if ((resInflow  > resReleaseBottom) && (resStorage >= resCapacity75)) {
 				resReleaseBottom = resReleaseBottom;
 			} else {
 				if ((current_month >= 4) && (current_month <= 8)) {
