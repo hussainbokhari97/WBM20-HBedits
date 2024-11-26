@@ -6,6 +6,8 @@ Copyright 1994-2023, UNH - ASRC/CUNY
 
 MDReservoir_Operation.c
 
+ResOps module developed to support reservoir and hydropower study in CONUS
+
 hbokhari@gc.cuny.edu
 bfekete@gc.cuny.edu
 
