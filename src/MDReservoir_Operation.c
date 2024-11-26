@@ -6,6 +6,7 @@ Copyright 1994-2023, UNH - ASRC/CUNY
 
 MDReservoir_Operation.c
 
+hbokhari@gc.cuny.edu
 bfekete@gc.cuny.edu
 
 ******************************************************************************/
@@ -184,38 +185,14 @@ static void _MDReservoirSNL (int itemID) {
 		
 	// MAIN RULES finish
 
-		// HB and AM created the following condition to catch low releases
-		current_month = MFDateGetCurrentMonth (); // Current Calendar Month
-		// low rls condition, decided to remove
-		//if (resReleaseBottom < (0.2 * resInflow)) {
-		//	if ((resStorage >= (0.75 * resCapacity)) && (resInflow > natFlowMeanMonthly)) {
-		//		if ((current_month >= 4) && (current_month <= 8)) {
-		//			resReleaseBottom = 1.05 * resInflow;
-		//			resStorage = prevResStorage + (discharge - resReleaseBottom) * dt / 1e9;
-		//		} else {
-		//			resReleaseBottom = 0.95 * resInflow;
-		//			resStorage = prevResStorage + (discharge - resReleaseBottom) * dt / 1e9;
-		//		}
-
-		//	} else {
-		//		resReleaseBottom = resReleaseBottom;
-		//	}
-		//}
-
 		// assume 10% envrionemntal flow minimum, and makes sure there is no negative flow (changed from 0.05 to 0.1).
 		if (resReleaseBottom < 0.10 * resInflow) {
 			resReleaseBottom = resInflow * 0.10;
 			resStorage = prevResStorage + (discharge - resReleaseBottom) * dt / 1e9;
 		}
 
-		// HB and AM created two additional sets of if statements to catch high release peaks
+		// HB and AM created set of if statements to catch high release peaks
 
-		// catching high releases
-		// if resReleaseBottom > 5 * natFlowMeanMonthly
-		// then if resStorageChg is positive (storage - prevstorage) and resStorage >= (0.9 * resCapacity) and resInflow > 2 * natFlowMeanMonthly
-		// continue or just resReleaseBottom = resReleaseBottom
-		// else, if 4 <= month <= 8, resReleaseBottom = 1.1 * resInflow, else resReleaseBottom = 0.9 * resInflow, recalculate storage at the end
-		
 		if (resReleaseBottom > 30 * natFlowMeanMonthly) {
 			if ((resInflow  > resReleaseBottom) && (resStorage >= resCapacity75)) {
 				resReleaseBottom = resReleaseBottom;
@@ -230,12 +207,8 @@ static void _MDReservoirSNL (int itemID) {
 			}
 		}
 
-
 		
 		// HB and AM created an additional set of if statements to catch large storage dips
-		// if resStorageChg < (-0.09 * capacity)
-		// then resReleaseBottom = ((0.09 * rescapacity) * 1e9 / dt) + resInflow
-		// resStorage either recalculate or set to = prevResStorage - (0.09 * resCapacity)
 		if ((resStorage - prevResStorage) < (-0.09 * resCapacity)) {
 			resReleaseBottom = ((0.09 * resCapacity) * 1e9 / dt) + resInflow;
 			resStorage = prevResStorage - (0.09 * resCapacity);
