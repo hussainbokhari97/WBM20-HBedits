@@ -50,7 +50,16 @@ static void _MDDischLevel3Muskingum (int itemID) {
 
 	storageChg  = (inDischCurrent - outDisch) * dt;
 
-	if (storageChg > 2 * storage)
+	// HB - want to prevent large single-day storage fill up
+	// if storage is increasing by X * storage,
+	// then store the additional storage fill in a temporary variable
+	// set storage change to X * storage
+	if (storageChg > 2 * storage) {
+		storage_mediator = storageChg - 2 * storage
+		storageChg = 2 * storage
+		outDisch = inDischCurrent - (storageChg / dt)
+
+	}
 		
 	
 	if (storage + storageChg > 0.0) storage += storageChg;
