@@ -25,6 +25,7 @@ static int _MDOutRouting_Discharge1ID   = MFUnset;
 static int _MDOutRouting_DischargeIntID = MFUnset;
 static int _MDOutRouting_RiverStorChgID = MFUnset;
 static int _MDOutRouting_RiverStorageID = MFUnset;
+static int _MDOutRouting_BankfullstorageID = MFUnset; // bank full storage
 
 static void _MDDischLevel3Muskingum (int itemID) {
 // Input
@@ -36,11 +37,11 @@ static void _MDDischLevel3Muskingum (int itemID) {
 	float inDischPrevious = MFVarGetFloat (_MDOutRouting_Discharge0ID,   itemID, 0.0); // Upstream discharge at the previous time step [m3/s]
 	float outDisch        = MFVarGetFloat (_MDOutRouting_Discharge1ID,   itemID, 0.0); // Downstream discharge [m3/s]
 	float storage         = MFVarGetFloat (_MDOutRouting_RiverStorageID, itemID, 0.0); // River Storage [m3]
+	float bank_full_storage  = MFVarGetFloat (_MDOutRouting_BankfullstorageID, itemID, 0.0); // Bank full storage [m3]
 // Route
 	float inDischCurrent  = MFVarGetFloat (_MDInRouting_DischargeID,     itemID, 0.0); // Upstream discharge at the current time step [m3/s]
 // Output
 	float storageChg;      // River Storage Change [m3]
-	float bank_full_storage  // HB - temporary allocation of large storage addition
 // Local
 	float dt = MFModelGet_dt ();
 
