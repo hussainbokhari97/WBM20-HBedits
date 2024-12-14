@@ -40,13 +40,16 @@ static void _MDDischLevel3Muskingum (int itemID) {
 	float inDischCurrent  = MFVarGetFloat (_MDInRouting_DischargeID,     itemID, 0.0); // Upstream discharge at the current time step [m3/s]
 // Output
 	float storageChg;      // River Storage Change [m3]
-	float storage_mediator  // HB - temporary allocation of large storage addition
+	float bank_full_storage  // HB - temporary allocation of large storage addition
 // Local
 	float dt = MFModelGet_dt ();
 
 	inDischCurrent += runoffFlow;
 	// negative C1 and C2 could cause negative discharge
 	outDisch = MDMaximum (C0 * inDischCurrent + C1 * inDischPrevious + C2 * outDisch, 0.0);
+
+	// distribute 1/5 of bank full storage to outgoing discharge
+	outDisch = outDisch + (bank_full_storage / 5)
 
 	storageChg  = (inDischCurrent - outDisch) * dt;
 
@@ -55,9 +58,8 @@ static void _MDDischLevel3Muskingum (int itemID) {
 	// then store the additional storage fill in a temporary variable
 	// set storage change to X * storage
 	if (storageChg > 2 * storage) {
-		storage_mediator = storageChg - 2 * storage
+		bank_full_storage = bank_full_storage + storageChg - 2 * storage
 		storageChg = 2 * storage
-		outDisch = inDischCurrent - (storageChg / dt)
 
 	}
 		
