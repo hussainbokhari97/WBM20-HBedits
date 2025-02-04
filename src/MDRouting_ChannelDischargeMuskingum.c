@@ -49,11 +49,11 @@ static void _MDDischLevel3Muskingum (int itemID) {
 // Local
 	float dt = MFModelGet_dt ();
 	char flood_plain_switch = 'T';
-	float dis_factor = 8;
+	float dis_factor = 8.0;
 
 	// TEST - define max dis using avg dis for order of magnitude greater than 2
 	if (discharge > 100) max_dis = dis_factor * discharge;
-	else max_dis = 20 * discharge;
+	else max_dis = 20.0 * discharge;
 
 	
 	inDischCurrent += runoffFlow;
@@ -64,7 +64,7 @@ static void _MDDischLevel3Muskingum (int itemID) {
 			inDischCurrent = max_dis;
 		}
 		else {
-			if (floodplain > 0){
+			if (floodplain > 0.0){
 				if ((max_dis - inDischCurrent) * dt < floodplain) {
 					floodplain -= (max_dis - inDischCurrent) * dt;
 					inDischCurrent = max_dis;
