@@ -34,7 +34,7 @@ static void _MDDischLevel3Muskingum (int itemID) {
 	float C1         = MFVarGetFloat (_MDInRouting_MuskingumC1ID, itemID, 0.0); // Muskingum C1 coefficient (previous inflow)
 	float C2         = MFVarGetFloat (_MDInRouting_MuskingumC2ID, itemID, 0.0); // MUskingum C2 coefficient (previous outflow) 
 	float runoffFlow = MFVarGetFloat (_MDInCore_RunoffFlowID,     itemID, 0.0); // Runoff flow [m3/s]
-	//float discharge = MFVarGetFloat(_MDInAux_MeanDischargeID,  itemID, 0.0); // Mean annual discharge [m3/s]
+	float discharge = MFVarGetFloat(_MDInAux_MeanDischargeID,  itemID, 0.0); // Mean annual discharge [m3/s]
 // Initial
 	float inDischPrevious = MFVarGetFloat (_MDOutRouting_Discharge0ID,   itemID, 0.0); // Upstream discharge at the previous time step [m3/s]
 	float outDisch        = MFVarGetFloat (_MDOutRouting_Discharge1ID,   itemID, 0.0); // Downstream discharge [m3/s]
@@ -52,8 +52,8 @@ static void _MDDischLevel3Muskingum (int itemID) {
 	float dis_factor = 8.0;
 
 	// TEST - define max dis using avg dis for order of magnitude greater than 2
-	//if (discharge > 100) max_dis = dis_factor * discharge;
-	//else max_dis = 20.0 * discharge;
+	if (discharge > 100) max_dis = dis_factor * discharge;
+	else max_dis = 20.0 * discharge;
 	
 	inDischCurrent += runoffFlow;
 
@@ -114,6 +114,7 @@ int MDRouting_ChannelDischargeMuskingumDef () {
 	MFDefEntering ("Discharge Routing - Muskingum");
 
 	if (((_MDInCore_RunoffFlowID       = MDCore_RunoffFlowDef())                        == CMfailed) ||
+	if (((_MDInAux_MeanDischargeID   = MDAux_DischargeMeanDef()) == CMfailed) ||
         ((_MDInRouting_MuskingumC0ID   = MDRouting_ChannelDischargeMuskingumCoeffDef()) == CMfailed) ||
         ((_MDInRouting_MuskingumC1ID   = MFVarGetID (MDVarRouting_MuskingumC1,     MFNoUnit, MFInput,  MFState, MFBoundary)) == CMfailed) ||
         ((_MDInRouting_MuskingumC2ID   = MFVarGetID (MDVarRouting_MuskingumC2,     MFNoUnit, MFInput,  MFState, MFBoundary)) == CMfailed) ||
