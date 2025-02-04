@@ -48,7 +48,7 @@ static void _MDDischLevel3Muskingum (int itemID) {
 	float max_dis; // Maximum discharge
 // Local
 	float dt = MFModelGet_dt ();
-	flood_plain_switch = "True";
+	char flood_plain_switch = "T";
 	float dis_factor = 8;
 
 	// TEST - define max dis using avg dis for order of magnitude greater than 2
@@ -58,7 +58,7 @@ static void _MDDischLevel3Muskingum (int itemID) {
 	
 	inDischCurrent += runoffFlow;
 
-	if (flood_plain_switch == "True") {
+	if (flood_plain_switch == "T") {
 		if (inDischCurrent > max_dis){
 			floodplain += (inDischCurrent - max_dis) * dt;
 			inDischCurrent = max_dis;
@@ -95,7 +95,7 @@ static void _MDDischLevel3Muskingum (int itemID) {
 	else {
 		storageChg = 0.0;
 		storage    = storage;
-		outDisch   = inDischCurrent
+		outDisch   = inDischCurrent;
 	}
 
 
@@ -119,7 +119,7 @@ int MDRouting_ChannelDischargeMuskingumDef () {
         ((_MDInRouting_MuskingumC1ID   = MFVarGetID (MDVarRouting_MuskingumC1,     MFNoUnit, MFInput,  MFState, MFBoundary)) == CMfailed) ||
         ((_MDInRouting_MuskingumC2ID   = MFVarGetID (MDVarRouting_MuskingumC2,     MFNoUnit, MFInput,  MFState, MFBoundary)) == CMfailed) ||
         ((_MDInRouting_DischargeID     = MFVarGetID (MDVarRouting_Discharge,       "m3/s",   MFRoute,  MFState, MFBoundary)) == CMfailed) ||
-		((_MDRouting_FloodPlainID      = MFVarGetID ("FloodPlain",                 "m3"      MFOutput, MFState, MFInitial))  == CMfailed) || 
+	((_MDOutRouting_FloodPlainID   = MFVarGetID ("FloodPlain",                 "m3",     MFOutput, MFState, MFInitial))  == CMfailed) || 
         ((_MDOutRouting_Discharge0ID   = MFVarGetID (MDVarRouting_Discharge0,      "m3/s",   MFOutput, MFState, MFInitial))  == CMfailed) ||
         ((_MDOutRouting_Discharge1ID   = MFVarGetID (MDVarRouting_Discharge1,      "m3/s",   MFOutput, MFState, MFInitial))  == CMfailed) ||
         ((_MDOutRouting_RiverStorChgID = MFVarGetID (MDVarRouting_RiverStorageChg, "m3",     MFOutput, MFFlux,  MFBoundary)) == CMfailed) ||
