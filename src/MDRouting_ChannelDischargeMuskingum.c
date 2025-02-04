@@ -48,7 +48,7 @@ static void _MDDischLevel3Muskingum (int itemID) {
 	float max_dis; // Maximum discharge
 // Local
 	float dt = MFModelGet_dt ();
-	char flood_plain_switch = "T";
+	char flood_plain_switch == "T";
 	float dis_factor = 8;
 
 	// TEST - define max dis using avg dis for order of magnitude greater than 2
