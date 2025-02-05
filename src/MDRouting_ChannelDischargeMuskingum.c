@@ -45,11 +45,11 @@ static void _MDDischLevel3Muskingum (int itemID) {
 	float inDischCurrent  = MFVarGetFloat (_MDInRouting_DischargeID,     itemID, 0.0); // Upstream discharge at the current time step [m3/s]
 // Output
 	float storageChg;      // River Storage Change [m3]
-	float max_dis = 8000; // Maximum discharge
+	float max_dis; // Maximum discharge
 // Local
 	float dt = MFModelGet_dt ();
 	char flood_plain_switch = 'T';
-	float dis_factor = 8.0;
+	float dis_factor = 6.0;
 
 	// TEST - define max dis using avg dis for order of magnitude greater than 2
 	if (discharge > 100) max_dis = dis_factor * discharge;
