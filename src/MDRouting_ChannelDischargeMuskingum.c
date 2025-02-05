@@ -112,7 +112,7 @@ int MDRouting_ChannelDischargeMuskingumDef () {
 	if (_MDOutRouting_DischargeIntID != MFUnset) return (_MDOutRouting_DischargeIntID);
 
 	MFDefEntering ("Discharge Routing - Muskingum");
-	if ((_MDInAux_MeanDischargeID   = MDAux_DischargeMeanDef()) == CMfailed) return (CMfailed) ||
+	if ((_MDInAux_MeanDischargeID   = MDAux_DischargeMeanDef()) == CMfailed) return (CMfailed);
 	if (((_MDInCore_RunoffFlowID       = MDCore_RunoffFlowDef())                        == CMfailed) ||
         ((_MDInRouting_MuskingumC0ID   = MDRouting_ChannelDischargeMuskingumCoeffDef()) == CMfailed) ||
         ((_MDInRouting_MuskingumC1ID   = MFVarGetID (MDVarRouting_MuskingumC1,     MFNoUnit, MFInput,  MFState, MFBoundary)) == CMfailed) ||
