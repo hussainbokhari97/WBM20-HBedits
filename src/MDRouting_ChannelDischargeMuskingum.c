@@ -49,7 +49,7 @@ static void _MDDischLevel3Muskingum (int itemID) {
 // Local
 	float dt = MFModelGet_dt ();
 	char flood_plain_switch = 'T';
-	float dis_factor = 6.0;
+	float dis_factor = 8.0;
 
 	// TEST - define max dis using avg dis for order of magnitude greater than 2
 	if (discharge > 100) max_dis = dis_factor * discharge;
@@ -77,7 +77,11 @@ static void _MDDischLevel3Muskingum (int itemID) {
 	}
 
 	// negative C1 and C2 could cause negative discharge
-	outDisch = MDMaximum (C0 * inDischCurrent + C1 * inDischPrevious + C2 * outDisch, 0.0);
+	// outDisch = MDMaximum (C0 * inDischCurrent + C1 * inDischPrevious + C2 * outDisch, 0.0);
+	outDisch = C0 * inDischCurrent + C1 * inDischPrevious + C2 * outDisch
+
+	if (outDisch < 0) outDisch = discharge;
+
 
 	storageChg  = (inDischCurrent - outDisch) * dt;
 
