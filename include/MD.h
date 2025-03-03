@@ -55,6 +55,8 @@ extern "C" {
 #define MDVarAux_DischargeMax                   "MaximumLongTermInflow"
 #define MDVarAux_StepCounter                    "StepCounter"
 #define MDVarAux_YearCount                      "YearCount"
+#define MDVarAux_BankfullDischarge              "BankfullDischarge"
+
 
 // Common variables
 #define MDVarCommon_AirTemperature              "AirTemperature"
@@ -415,6 +417,8 @@ int MDAux_DischargeMeanDef ();
 int MDAux_DischargeMinDef ();
 int MDAux_DischargeMaxDef ();
 int MDAux_RunoffMeanDef ();
+int MDAux_BankfullDischargeDef ();
+
 
 int MDCommon_AirTemperatureDef ();
 int MDCommon_CloudCoverDef ();
