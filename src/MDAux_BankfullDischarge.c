@@ -30,6 +30,10 @@ void* MFVarGetUserData(int varID) { return NULL; }
 void MFVarSetUserData(int varID, void* data) { }
 #endif
 
+int compareFloats(const void *a, const void *b) {
+    return (*(float*)a > *(float*)b) - (*(float*)a < *(float*)b);
+}
+
 static void _MDAux_BankfullDischarge(int itemID) {
     int   tStep      = MFVarGetInt   (_MDInAux_StepCounterID,    itemID,   0);
     float accumDisch = MFVarGetFloat (_MDInAux_AccumRunoffID,    itemID, 0.0);
@@ -53,10 +57,6 @@ static void _MDAux_BankfullDischarge(int itemID) {
         float bankfullDischarge = 10 * meanDisch;
         MFVarSetFloat (_MDOutAux_BankfullDischargeID, itemID, bankfullDischarge);
     }
-}
-
-int compareFloats(const void *a, const void *b) {
-    return (*(float*)a > *(float*)b) - (*(float*)a < *(float*)b);
 }
 
 int MDAux_BankfullDischargeDef () {
