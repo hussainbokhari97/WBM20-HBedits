@@ -11,6 +11,7 @@ bfekete@gc.cuny.edu
 #include <MF.h>
 #include <MD.h>
 #include <stdlib.h>
+#include <string.h>
 
 static int _MDInAux_StepCounterID        = MFUnset;
 static int _MDInAux_AccumRunoffID        = MFUnset;
@@ -19,6 +20,15 @@ static int _MDInAux_MeanDischargeID      = MFUnset;
 static int _MDOutAux_BankfullDischargeID = MFUnset;
 
 #define PERCENTILE 99
+
+// Dummy definitions for MFVarGetUserData and MFVarSetUserData if not available
+#ifndef MFVarGetUserData
+void* MFVarGetUserData(int varID) { return NULL; }
+#endif
+
+#ifndef MFVarSetUserData
+void MFVarSetUserData(int varID, void* data) { }
+#endif
 
 static void _MDAux_BankfullDischarge(int itemID) {
     int   tStep      = MFVarGetInt   (_MDInAux_StepCounterID,    itemID,   0);
