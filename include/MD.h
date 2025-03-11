@@ -57,6 +57,9 @@ extern "C" {
 #define MDVarAux_YearCount                      "YearCount"
 #define MDVarAux_BankfullDischarge              "BankfullDischarge"
 #define MDVarAux_DischargeStdDev                "DischargeStdDev"
+#define MDVarAux_SumSqDiffDev                   "SumSqDiff"
+
+
 
 
 
@@ -421,6 +424,7 @@ int MDAux_DischargeMaxDef ();
 int MDAux_RunoffMeanDef ();
 int MDAux_BankfullDischargeDef ();
 int MDAux_DischargeStdDevDef ();
+int MDAux_SumSqDiffDef ();
 
 
 int MDCommon_AirTemperatureDef ();
