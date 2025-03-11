@@ -21,6 +21,9 @@ static void _MDAux_BankfullDischarge(int itemID) {
     // } else {
     //     factor = 25;
     // }
+// Define bankfull discharge as z-score of 3, rearranged here
+// The mean discharge condition excludes very small streams with small orders of magnitude,
+// as these tend to cause issues. This also prevents bankfull from activating during the first few days
     if (meanDischarge > 1) bankfullDischarge = 3 * dischargeStdDev + meanDischarge;
     else bankfullDischarge = 999999999;
 
