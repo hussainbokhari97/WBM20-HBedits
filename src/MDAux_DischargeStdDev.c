@@ -1,7 +1,7 @@
 /******************************************************************************
 GHAAS Water Balance/Transport Model
 Global Hydrological Archive and Analysis System
-Copyright 1994-2023, UNH - ASRC/CUNY
+Copyright 4-2023, UNH - ASRC/CUNY
 
 MDAux_DischargeStdDev.c
 
@@ -11,7 +11,7 @@ bfekete@gc.cuny.edu
 
 #include <MF.h>
 #include <MD.h>
-#include <math.h> // Include math library for sqrt
+#include <math.h> // Include math library for pow
 
 static int _MDInAux_StepCounterID       = MFUnset;
 static int _MDInAux_AccumRunoffID       = MFUnset;
@@ -29,8 +29,8 @@ static void _MDAux_DischargeStdDev(int itemID) {
         // Update sum of squared differences
         sumSqDiff += (double)(accumDisch - dischMean) * (accumDisch - dischMean);
         
-        // Calculate standard deviation using sqrt
-        double stdDev = sqrt(sumSqDiff / (double)tStep); // Using tStep as n-1 since tStep is zero-based (starts from 0)
+        // Calculate standard deviation using pow for square root
+        double stdDev = pow(sumSqDiff / (double)tStep, 0.5); // Using tStep as n-1 since tStep is zero-based (starts from 0)
 
         // Set updated sum of squared differences and standard deviation
         MFVarSetFloat(_MDOutAux_SumSqDiffID, itemID, (float)sumSqDiff); // Store sumSqDiff back as float
