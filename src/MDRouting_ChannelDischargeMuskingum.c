@@ -83,7 +83,7 @@ static void _MDDischLevel3Muskingum (int itemID) {
 	// outDisch = MDMaximum (C0 * inDischCurrent + C1 * inDischPrevious + C2 * outDisch, 0.0);
 	outDisch = C0 * inDischCurrent + C1 * inDischPrevious + C2 * outDisch;
 
-	if (outDisch < 0) outDisch = discharge;
+	if (outDisch < 0) outDisch = inDischCurrent;
 
 
 	storageChg  = (inDischCurrent - outDisch) * dt;
