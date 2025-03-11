@@ -56,6 +56,7 @@ extern "C" {
 #define MDVarAux_StepCounter                    "StepCounter"
 #define MDVarAux_YearCount                      "YearCount"
 #define MDVarAux_BankfullDischarge              "BankfullDischarge"
+#define MDVarAux_DischargeStdDev                "DischargeStdDev"
 
 
 // Common variables
@@ -418,6 +419,7 @@ int MDAux_DischargeMinDef ();
 int MDAux_DischargeMaxDef ();
 int MDAux_RunoffMeanDef ();
 int MDAux_BankfullDischargeDef ();
+int MDAux_DischargeStdDevDef ();
 
 
 int MDCommon_AirTemperatureDef ();
