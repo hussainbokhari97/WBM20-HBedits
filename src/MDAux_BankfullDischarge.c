@@ -7,6 +7,7 @@ static int _MDOutAux_BankfullDischargeID = MFUnset;
 static void _MDAux_BankfullDischarge(int itemID) {
     float meanDischarge = MFVarGetFloat(_MDInAux_MeanDischargeID, itemID, 0.0);
     float factor;
+    float 8;
 
     if (meanDischarge >= 1000) {
         factor = 5;
