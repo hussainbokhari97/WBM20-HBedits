@@ -60,5 +60,6 @@ int MDAux_DischargeStdDevDef() {
             break;
     }
     MFDefLeaving("Discharge Std Dev");
+    MFDefLeaving("SumSqDiff"); // Add sumSqDiff to MFDefLeaving
     return (_MDOutAux_DischargeStdDevID);
 }
