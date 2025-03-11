@@ -9,18 +9,21 @@ static void _MDAux_BankfullDischarge(int itemID) {
     float meanDischarge = MFVarGetFloat(_MDInAux_MeanDischargeID, itemID, 0.0);
     float dischargeStdDev = MFVarGetFloat(_MDInAux_DischargeStdDevID, itemID, 0.0); // Retrieve discharge standard deviation
     float factor;
+    float bankfullDischarge;
+    
+// testing max:mean ratios
+//    if (meanDischarge >= 1000) {
+//        factor = 5;
+    // } else if (meanDischarge >= 100) {
+    //     factor = 8;
+    // } else if (meanDischarge >= 10) {
+    //     factor = 9;
+    // } else {
+    //     factor = 25;
+    // }
+    if (meanDischarge > 1) bankfullDischarge = 3 * dischargeStdDev + meanDischarge;
+    else bankfullDischarge = 999999999;
 
-    if (meanDischarge >= 1000) {
-        factor = 5;
-    } else if (meanDischarge >= 100) {
-        factor = 8;
-    } else if (meanDischarge >= 10) {
-        factor = 9;
-    } else {
-        factor = 25;
-    }
-
-    float bankfullDischarge = factor * meanDischarge + dischargeStdDev; // Include standard deviation in calculation
     MFVarSetFloat(_MDOutAux_BankfullDischargeID, itemID, bankfullDischarge);
 }
 
