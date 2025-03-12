@@ -8,7 +8,7 @@ static int _MDOutAux_BankfullDischargeID = MFUnset;
 static void _MDAux_BankfullDischarge(int itemID) {
     float meanDischarge = MFVarGetFloat(_MDInAux_MeanDischargeID, itemID, 0.0);
     float dischargeStdDev = MFVarGetFloat(_MDInAux_DischargeStdDevID, itemID, 0.0); // Retrieve discharge standard deviation
-    float factor;
+    float z_score = 3.0;
     float bankfullDischarge;
     
 // testing max:mean ratios
@@ -24,8 +24,8 @@ static void _MDAux_BankfullDischarge(int itemID) {
 // Define bankfull discharge as z-score of 3, rearranged here
 // The mean discharge condition excludes very small streams with small orders of magnitude,
 // as these tend to cause issues. This also prevents bankfull from activating during the first few days
-    if (meanDischarge > 1) bankfullDischarge = 3 * dischargeStdDev + meanDischarge;
-    else bankfullDischarge = 999999999;
+    if (meanDischarge > 1) bankfullDischarge = z_score * dischargeStdDev + meanDischarge;
+    else bankfullDischarge = 999999999.0;
 
     MFVarSetFloat(_MDOutAux_BankfullDischargeID, itemID, bankfullDischarge);
 }
